@@ -2,7 +2,7 @@
 YELLOW = (255, 215, 0)
 # Add bright blue color
 BRIGHT_BLUE = (0, 150, 255)
-FOOD_CHARS = list("snake")
+FOOD_CHARS = list("python")
 
 
 # Classic Snake game using Pygame
@@ -43,7 +43,7 @@ def random_foods(snake, count=6):
 	foods = set()
 	min_y = 0
 	max_y = GRID_HEIGHT - 4  # 4 snake widths from the bottom
-	while len(foods) < len(chars):
+	while len(foods) < 6:
 		pos = (random.randint(0, GRID_WIDTH-1), random.randint(min_y, max_y-1))
 		if list(pos) not in snake:
 			foods.add(pos)
@@ -60,7 +60,7 @@ def main():
 	start_y = GRID_HEIGHT - 3
 	snake = [[0, start_y], [1, start_y], [2, start_y]]
 	direction = (1, 0)
-	foods = random_foods(snake, 5)
+	foods = random_foods(snake, 6)
 	score = 0
 
 	# Track collected letters in order
@@ -69,6 +69,7 @@ def main():
 	pending_portal_respawn = False
 	running = True
 
+	submitted_word = None
 	while running:
 		clock.tick(FPS)
 		for event in pygame.event.get():
@@ -102,7 +103,11 @@ def main():
 			if pending_portal_respawn:
 				foods = random_foods(snake, 5)
 				pending_portal_respawn = False
-			# Reset collected letters so snake is all green again
+			# On portal, submit collected letters to bottom margin
+			if collected_letters:
+				submitted_word = ''.join(collected_letters)
+			else:
+				submitted_word = None
 			collected_letters = []
 
 		# Game over: wall or self (except for left wall emergence and blue portal)
@@ -198,7 +203,7 @@ def main():
 		score_surf = font.render(f'Score: {score}', True, WHITE)
 		screen.blit(score_surf, (10, 10))
 
-		# Draw word length underscores in the bottom margin
+		# Draw word length underscores in the bottom margin, and fill with submitted letters if any
 		font_underscore = pygame.font.SysFont(None, 48)
 		word_lengths = [3, 4, 5, 6]
 		spacing = 60
@@ -213,8 +218,13 @@ def main():
 		start_x = MARGIN_LEFT + (ARENA_WIDTH - total_width) // 2
 		x = start_x
 		for i, length in enumerate(word_lengths):
-			underscores = ' '.join(['_' for _ in range(length)])
-			surf = font_underscore.render(underscores, True, BLACK)
+			underscores = ['_' for _ in range(length)]
+			# If submitted_word matches this length, fill in the letters
+			if submitted_word and len(submitted_word) == length:
+				for j, letter in enumerate(submitted_word):
+					underscores[j] = letter
+			underscores_str = ' '.join(underscores)
+			surf = font_underscore.render(underscores_str, True, BLACK)
 			screen.blit(surf, (x, start_y))
 			x += surf.get_width() + spacing
 
