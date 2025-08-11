@@ -69,7 +69,8 @@ def main():
 	pending_portal_respawn = False
 	running = True
 
-	submitted_word = None
+	found_words = {3: None, 4: None, 5: None, 6: None}
+	win = False
 	while running:
 		clock.tick(FPS)
 		for event in pygame.event.get():
@@ -101,14 +102,19 @@ def main():
 			new_head[0] = yellow_x
 			# If food is pending respawn, respawn it now
 			if pending_portal_respawn:
-				foods = random_foods(snake, 5)
+				foods = random_foods(snake, 6)
 				pending_portal_respawn = False
 			# On portal, submit collected letters to bottom margin
 			if collected_letters:
-				submitted_word = ''.join(collected_letters)
-			else:
-				submitted_word = None
+				word = ''.join(collected_letters)
+				l = len(word)
+				if l in found_words and not found_words[l]:
+					found_words[l] = word
 			collected_letters = []
+			# Check win condition
+			if all(found_words.values()):
+				win = True
+				running = False
 
 		# Game over: wall or self (except for left wall emergence and blue portal)
 		if new_head[0] >= 2:
@@ -203,7 +209,7 @@ def main():
 		score_surf = font.render(f'Score: {score}', True, WHITE)
 		screen.blit(score_surf, (10, 10))
 
-		# Draw word length underscores in the bottom margin, and fill with submitted letters if any
+		# Draw word length underscores in the bottom margin, and fill with found words if any
 		font_underscore = pygame.font.SysFont(None, 48)
 		word_lengths = [3, 4, 5, 6]
 		spacing = 60
@@ -219,9 +225,9 @@ def main():
 		x = start_x
 		for i, length in enumerate(word_lengths):
 			underscores = ['_' for _ in range(length)]
-			# If submitted_word matches this length, fill in the letters
-			if submitted_word and len(submitted_word) == length:
-				for j, letter in enumerate(submitted_word):
+			# If found_words has a word for this length, fill in the letters
+			if found_words[length]:
+				for j, letter in enumerate(found_words[length]):
 					underscores[j] = letter
 			underscores_str = ' '.join(underscores)
 			surf = font_underscore.render(underscores_str, True, BLACK)
@@ -230,9 +236,12 @@ def main():
 
 		pygame.display.flip()
 
-	# Game over screen
+	# End screen
 	font = pygame.font.SysFont(None, 48)
-	msg = font.render(f'Game Over! Score: {score}', True, RED)
+	if win:
+		msg = font.render('Congratulations! You found all the words!', True, (0, 180, 0))
+	else:
+		msg = font.render(f'Game Over! Score: {score}', True, RED)
 	# Center horizontally, place just below the arena
 	msg_x = (WIDTH - msg.get_width()) // 2
 	msg_y = MARGIN_TOP + ARENA_HEIGHT + ((MARGIN_BOTTOM - msg.get_height()) // 2)
