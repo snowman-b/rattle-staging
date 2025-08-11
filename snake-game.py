@@ -172,6 +172,12 @@ def main():
 			screen, BRIGHT_BLUE,
 			(blue_x, blue_y_start, 10, blue_height)
 		)
+		# Draw 'submit word' text in right margin next to blue section
+		font_submit = pygame.font.SysFont(None, 36, bold=True)
+		submit_surf = font_submit.render("submit word", True, BRIGHT_BLUE)
+		submit_x = blue_x + 20
+		submit_y = blue_y_start + blue_height//2 - submit_surf.get_height()//2
+		screen.blit(submit_surf, (submit_x, submit_y))
 		# Draw yellow segment on left border, same dimensions
 		yellow_x = MARGIN_LEFT - 10
 		yellow_y_start = blue_y_start
