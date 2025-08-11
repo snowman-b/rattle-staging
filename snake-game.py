@@ -168,8 +168,8 @@ def main():
 		n = len(snake)
 		m = len(collected_letters)
 		for i, segment in enumerate(snake):
-			# Place collected letters so newest is closest to head
-			letter_idx = m - (n - i)
+			# Place collected letters so the first collected is on the tail, last on the head
+			letter_idx = i - (n - m)
 			if 0 <= letter_idx < m:
 				draw_rect(screen, DKGREEN, segment)
 				font_letter = pygame.font.SysFont(None, 36, bold=True)
