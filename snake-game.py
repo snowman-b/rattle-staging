@@ -2,7 +2,7 @@
 YELLOW = (255, 215, 0)
 # Add bright blue color
 BRIGHT_BLUE = (0, 150, 255)
-FOOD_CHARS = list("rattle")
+FOOD_CHARS = list("snake")
 
 
 # Classic Snake game using Pygame
@@ -27,7 +27,7 @@ FPS = 10
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
-GREEN = (0, 255, 0)
+DKGREEN = (0, 100, 0)
 RED = (255, 0, 0)
 
 def draw_rect(screen, color, pos):
@@ -58,7 +58,7 @@ def main():
 	start_y = GRID_HEIGHT - 3
 	snake = [[0, start_y], [1, start_y], [2, start_y]]
 	direction = (1, 0)
-	foods = random_foods(snake, 6)
+	foods = random_foods(snake, 5)
 	score = 0
 	running = True
 
@@ -106,7 +106,7 @@ def main():
 				break
 		if ate_food:
 			if len(foods) == 0:
-				foods = random_foods(snake, 6)
+				foods = random_foods(snake, 5)
 		else:
 			snake.pop()
 
@@ -149,7 +149,7 @@ def main():
 		)
 		# Draw snake
 		for segment in snake:
-			draw_rect(screen, GREEN, segment)
+			draw_rect(screen, DKGREEN, segment)
 		# Draw food
 		for food in foods:
 			fx, fy, fchar = food
