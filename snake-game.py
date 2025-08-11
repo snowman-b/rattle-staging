@@ -1,4 +1,8 @@
-FOOD_CHARS = list("snakes")
+# Add yellow color
+YELLOW = (255, 215, 0)
+# Add bright blue color
+BRIGHT_BLUE = (0, 150, 255)
+FOOD_CHARS = list("rattle")
 
 
 # Classic Snake game using Pygame
@@ -14,8 +18,8 @@ GRID_HEIGHT = 20
 ARENA_WIDTH = CELL_SIZE * GRID_WIDTH
 ARENA_HEIGHT = CELL_SIZE * GRID_HEIGHT
 MARGIN_TOP = 100
-MARGIN_LEFT = 100
-MARGIN_RIGHT = 100
+MARGIN_LEFT = 200
+MARGIN_RIGHT = 200
 MARGIN_BOTTOM = 500
 WIDTH = ARENA_WIDTH + MARGIN_LEFT + MARGIN_RIGHT
 HEIGHT = ARENA_HEIGHT + MARGIN_TOP + MARGIN_BOTTOM
@@ -50,7 +54,9 @@ def main():
 	pygame.display.set_caption('Snake Game')
 	clock = pygame.time.Clock()
 
-	snake = [[GRID_WIDTH//2, GRID_HEIGHT//2], [GRID_WIDTH//2-1, GRID_HEIGHT//2], [GRID_WIDTH//2-2, GRID_HEIGHT//2]]
+	# Snake spawns from the left border, three snake-widths above the bottom border
+	start_y = GRID_HEIGHT - 3
+	snake = [[0, start_y], [1, start_y], [2, start_y]]
 	direction = (1, 0)
 	foods = random_foods(snake, 6)
 	score = 0
@@ -74,14 +80,17 @@ def main():
 		# Move snake
 		new_head = [snake[0][0] + direction[0], snake[0][1] + direction[1]]
 
+
 		# Game over: wall or self
-		if (
-			new_head[0] < 0 or new_head[0] >= GRID_WIDTH or
-			new_head[1] < 0 or new_head[1] >= GRID_HEIGHT or
-			new_head in snake
-		):
-			running = False
-			continue
+		# Allow the snake to emerge from the left wall (x < 2) without game over
+		if new_head[0] >= 2:
+			if (
+				new_head[0] < 0 or new_head[0] >= GRID_WIDTH or
+				new_head[1] < 0 or new_head[1] >= GRID_HEIGHT or
+				new_head in snake
+			):
+				running = False
+				continue
 
 		snake.insert(0, new_head)
 
@@ -116,6 +125,22 @@ def main():
 		pygame.draw.rect(
 			screen, BLACK,
 			(MARGIN_LEFT-10, MARGIN_TOP-10, ARENA_WIDTH+20, ARENA_HEIGHT+20), 10
+		)
+		# Draw bright blue segment on right border
+		blue_x = MARGIN_LEFT + ARENA_WIDTH
+		blue_y_start = MARGIN_TOP + ARENA_HEIGHT - 4*CELL_SIZE
+		blue_height = 3*CELL_SIZE
+		pygame.draw.rect(
+			screen, BRIGHT_BLUE,
+			(blue_x, blue_y_start, 10, blue_height)
+		)
+		# Draw yellow segment on left border, same dimensions
+		yellow_x = MARGIN_LEFT - 10
+		yellow_y_start = blue_y_start
+		yellow_height = blue_height
+		pygame.draw.rect(
+			screen, YELLOW,
+			(yellow_x, yellow_y_start, 10, yellow_height)
 		)
 		# Fill arena background white (inside border)
 		pygame.draw.rect(
