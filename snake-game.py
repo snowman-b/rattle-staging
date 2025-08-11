@@ -60,7 +60,9 @@ def main():
 	start_y = GRID_HEIGHT - 3
 	snake = [[0, start_y], [1, start_y], [2, start_y]]
 	direction = (1, 0)
-	foods = random_foods(snake, 6)
+	# Generate and store initial food positions
+	initial_foods = random_foods(snake, 6)
+	foods = [f.copy() for f in initial_foods]
 	score = 0
 
 	# Track collected letters in order
@@ -100,16 +102,15 @@ def main():
 		# If snake hits blue border section, teleport to yellow border at same y
 		if new_head[0] == blue_x and blue_y_start <= new_head[1] < blue_y_end:
 			new_head[0] = yellow_x
-			# If food is pending respawn, respawn it now
-			if pending_portal_respawn:
-				foods = random_foods(snake, 6)
-				pending_portal_respawn = False
 			# On portal, submit collected letters to bottom margin
 			if collected_letters:
 				word = ''.join(collected_letters)
 				l = len(word)
 				if l in found_words and not found_words[l]:
 					found_words[l] = word
+			# Always reset food to all 6 letters in the same positions
+			foods = [f.copy() for f in initial_foods]
+			pending_portal_respawn = False
 			collected_letters = []
 			# Check win condition
 			if all(found_words.values()):
