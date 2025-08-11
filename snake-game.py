@@ -2,7 +2,7 @@
 YELLOW = (255, 215, 0)
 # Add bright blue color
 BRIGHT_BLUE = (0, 150, 255)
-FOOD_CHARS = list("python")
+FOOD_CHARS = list("rattle")
 
 
 # Classic Snake game using Pygame
