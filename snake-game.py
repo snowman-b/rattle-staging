@@ -1,17 +1,6 @@
 
-import operator
 
-def random_equation():
-	ops = [('+', operator.add), ('-', operator.sub)]
-	while True:
-		op_char, op_func = random.choice(ops)
-		a = random.randint(0, 9)
-		b = random.randint(0, 9)
-		if op_char == '-' and a < b:
-			a, b = b, a  # avoid negative results
-		result = op_func(a, b)
-		if 0 <= result <= 9:
-			return [str(a), op_char, str(b), '=', str(result)]
+FOOD_CHARS = list("snakes")
 
 
 # Classic Snake game using Pygame
@@ -19,12 +8,19 @@ import pygame
 import random
 import sys
 
+
 # Game settings
 CELL_SIZE = 20
 GRID_WIDTH = 30
 GRID_HEIGHT = 20
-WIDTH = CELL_SIZE * GRID_WIDTH
-HEIGHT = CELL_SIZE * GRID_HEIGHT
+ARENA_WIDTH = CELL_SIZE * GRID_WIDTH
+ARENA_HEIGHT = CELL_SIZE * GRID_HEIGHT
+MARGIN_TOP = 100
+MARGIN_LEFT = 100
+MARGIN_RIGHT = 100
+MARGIN_BOTTOM = 500
+WIDTH = ARENA_WIDTH + MARGIN_LEFT + MARGIN_RIGHT
+HEIGHT = ARENA_HEIGHT + MARGIN_TOP + MARGIN_BOTTOM
 FPS = 10
 
 WHITE = (255, 255, 255)
@@ -33,14 +29,17 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 
 def draw_rect(screen, color, pos):
-	rect = pygame.Rect(pos[0]*CELL_SIZE, pos[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE)
+	rect = pygame.Rect(
+		MARGIN_LEFT + pos[0]*CELL_SIZE,
+		MARGIN_TOP + pos[1]*CELL_SIZE,
+		CELL_SIZE, CELL_SIZE)
 	pygame.draw.rect(screen, color, rect)
 
 
-def random_foods(snake, count=5):
-	chars = random_equation()
+def random_foods(snake, count=6):
+	chars = FOOD_CHARS
 	foods = set()
-	while len(foods) < count:
+	while len(foods) < len(chars):
 		pos = (random.randint(0, GRID_WIDTH-1), random.randint(0, GRID_HEIGHT-1))
 		if list(pos) not in snake:
 			foods.add(pos)
@@ -55,7 +54,7 @@ def main():
 
 	snake = [[GRID_WIDTH//2, GRID_HEIGHT//2], [GRID_WIDTH//2-1, GRID_HEIGHT//2], [GRID_WIDTH//2-2, GRID_HEIGHT//2]]
 	direction = (1, 0)
-	foods = random_foods(snake, 5)
+	foods = random_foods(snake, 6)
 	score = 0
 	running = True
 
@@ -100,20 +99,33 @@ def main():
 				break
 		if ate_food:
 			if len(foods) == 0:
-				foods = random_foods(snake, 5)
+				foods = random_foods(snake, 6)
 		else:
 			snake.pop()
 
 
+
 		# Draw everything
-		screen.fill(BLACK)
+		screen.fill(WHITE)
+		# Draw arena border (10px black)
+		pygame.draw.rect(
+			screen, BLACK,
+			(MARGIN_LEFT-10, MARGIN_TOP-10, ARENA_WIDTH+20, ARENA_HEIGHT+20), 10
+		)
+		# Fill arena background white (inside border)
+		pygame.draw.rect(
+			screen, WHITE,
+			(MARGIN_LEFT, MARGIN_TOP, ARENA_WIDTH, ARENA_HEIGHT)
+		)
+		# Draw snake
 		for segment in snake:
 			draw_rect(screen, GREEN, segment)
+		# Draw food
 		for food in foods:
 			fx, fy, fchar = food
 			font = pygame.font.SysFont(None, 36)
 			char_surf = font.render(fchar, True, RED)
-			screen.blit(char_surf, (fx*CELL_SIZE, fy*CELL_SIZE))
+			screen.blit(char_surf, (MARGIN_LEFT + fx*CELL_SIZE, MARGIN_TOP + fy*CELL_SIZE))
 
 		# Draw score
 		font = pygame.font.SysFont(None, 36)
