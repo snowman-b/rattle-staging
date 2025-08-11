@@ -1,5 +1,3 @@
-
-
 FOOD_CHARS = list("snakes")
 
 
@@ -107,6 +105,13 @@ def main():
 
 		# Draw everything
 		screen.fill(WHITE)
+		# Draw 'RATTLE' at the top
+		DKGREEN = (0, 100, 0)
+		font_rattle = pygame.font.SysFont(None, 96, bold=True)
+		rattle_surf = font_rattle.render("RATTLE", True, DKGREEN)
+		rattle_x = (WIDTH - rattle_surf.get_width()) // 2
+		rattle_y = (MARGIN_TOP - rattle_surf.get_height()) // 2
+		screen.blit(rattle_surf, (rattle_x, rattle_y))
 		# Draw arena border (10px black)
 		pygame.draw.rect(
 			screen, BLACK,
@@ -126,18 +131,19 @@ def main():
 			font = pygame.font.SysFont(None, 36)
 			char_surf = font.render(fchar, True, RED)
 			screen.blit(char_surf, (MARGIN_LEFT + fx*CELL_SIZE, MARGIN_TOP + fy*CELL_SIZE))
-
 		# Draw score
 		font = pygame.font.SysFont(None, 36)
 		score_surf = font.render(f'Score: {score}', True, WHITE)
 		screen.blit(score_surf, (10, 10))
-
 		pygame.display.flip()
 
 	# Game over screen
 	font = pygame.font.SysFont(None, 48)
-	msg = font.render(f'Game Over! Score: {score}', True, WHITE)
-	screen.blit(msg, (WIDTH//2 - msg.get_width()//2, HEIGHT//2 - msg.get_height()//2))
+	msg = font.render(f'Game Over! Score: {score}', True, RED)
+	# Center horizontally, place just below the arena
+	msg_x = (WIDTH - msg.get_width()) // 2
+	msg_y = MARGIN_TOP + ARENA_HEIGHT + ((MARGIN_BOTTOM - msg.get_height()) // 2)
+	screen.blit(msg, (msg_x, msg_y))
 	pygame.display.flip()
 	pygame.time.wait(2000)
 	pygame.quit()
