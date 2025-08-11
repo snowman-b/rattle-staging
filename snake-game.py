@@ -41,8 +41,10 @@ def draw_rect(screen, color, pos):
 def random_foods(snake, count=6):
 	chars = FOOD_CHARS
 	foods = set()
+	min_y = 0
+	max_y = GRID_HEIGHT - 4  # 4 snake widths from the bottom
 	while len(foods) < len(chars):
-		pos = (random.randint(0, GRID_WIDTH-1), random.randint(0, GRID_HEIGHT-1))
+		pos = (random.randint(0, GRID_WIDTH-1), random.randint(min_y, max_y-1))
 		if list(pos) not in snake:
 			foods.add(pos)
 	foods = [list(f) for f in foods]
