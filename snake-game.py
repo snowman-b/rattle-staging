@@ -62,6 +62,9 @@ def main():
 	direction = (1, 0)
 	foods = random_foods(snake, 5)
 	score = 0
+
+	# Track collected letters in order
+	collected_letters = []
 	running = True
 
 	while running:
@@ -115,6 +118,7 @@ def main():
 			if new_head == [fx, fy]:
 				score += 1
 				foods.remove(food)
+				collected_letters.append(fchar)
 				ate_food = True
 				break
 		if ate_food:
@@ -161,8 +165,20 @@ def main():
 			(MARGIN_LEFT, MARGIN_TOP, ARENA_WIDTH, ARENA_HEIGHT)
 		)
 		# Draw snake
-		for segment in snake:
-			draw_rect(screen, DKGREEN, segment)
+		n = len(snake)
+		m = len(collected_letters)
+		for i, segment in enumerate(snake):
+			# Place collected letters so newest is closest to head
+			letter_idx = m - (n - i)
+			if 0 <= letter_idx < m:
+				draw_rect(screen, DKGREEN, segment)
+				font_letter = pygame.font.SysFont(None, 36, bold=True)
+				letter_surf = font_letter.render(collected_letters[letter_idx], True, WHITE)
+				x = MARGIN_LEFT + segment[0]*CELL_SIZE + (CELL_SIZE - letter_surf.get_width())//2
+				y = MARGIN_TOP + segment[1]*CELL_SIZE + (CELL_SIZE - letter_surf.get_height())//2
+				screen.blit(letter_surf, (x, y))
+			else:
+				draw_rect(screen, DKGREEN, segment)
 		# Draw food
 		for food in foods:
 			fx, fy, fchar = food
@@ -173,6 +189,27 @@ def main():
 		font = pygame.font.SysFont(None, 36)
 		score_surf = font.render(f'Score: {score}', True, WHITE)
 		screen.blit(score_surf, (10, 10))
+
+		# Draw word length underscores in the bottom margin
+		font_underscore = pygame.font.SysFont(None, 48)
+		word_lengths = [3, 4, 5, 6]
+		spacing = 60
+		start_y = MARGIN_TOP + ARENA_HEIGHT + 80
+		# Calculate total width for centering under the arena only
+		surf_widths = []
+		for length in word_lengths:
+			underscores = ' '.join(['_' for _ in range(length)])
+			surf = font_underscore.render(underscores, True, BLACK)
+			surf_widths.append(surf.get_width())
+		total_width = sum(surf_widths) + (len(word_lengths)-1)*spacing
+		start_x = MARGIN_LEFT + (ARENA_WIDTH - total_width) // 2
+		x = start_x
+		for i, length in enumerate(word_lengths):
+			underscores = ' '.join(['_' for _ in range(length)])
+			surf = font_underscore.render(underscores, True, BLACK)
+			screen.blit(surf, (x, start_y))
+			x += surf.get_width() + spacing
+
 		pygame.display.flip()
 
 	# Game over screen
