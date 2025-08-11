@@ -65,6 +65,8 @@ def main():
 
 	# Track collected letters in order
 	collected_letters = []
+	# Track if food should respawn after portal
+	pending_portal_respawn = False
 	running = True
 
 	while running:
@@ -96,6 +98,12 @@ def main():
 		# If snake hits blue border section, teleport to yellow border at same y
 		if new_head[0] == blue_x and blue_y_start <= new_head[1] < blue_y_end:
 			new_head[0] = yellow_x
+			# If food is pending respawn, respawn it now
+			if pending_portal_respawn:
+				foods = random_foods(snake, 5)
+				pending_portal_respawn = False
+			# Reset collected letters so snake is all green again
+			collected_letters = []
 
 		# Game over: wall or self (except for left wall emergence and blue portal)
 		if new_head[0] >= 2:
@@ -113,7 +121,7 @@ def main():
 
 		# Eat food (multiple foods)
 		ate_food = False
-		for food in foods:
+		for food in foods[:]:
 			fx, fy, fchar = food
 			if new_head == [fx, fy]:
 				score += 1
@@ -123,7 +131,8 @@ def main():
 				break
 		if ate_food:
 			if len(foods) == 0:
-				foods = random_foods(snake, 5)
+				# Do not respawn food until blue portal is crossed
+				pending_portal_respawn = True
 		else:
 			snake.pop()
 
