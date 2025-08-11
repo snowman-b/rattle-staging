@@ -51,6 +51,9 @@ def random_foods(snake, count=6):
 	return [food + [chars[i]] for i, food in enumerate(foods)]
 
 def main():
+	# Timer setup
+	start_ticks = pygame.time.get_ticks()
+	elapsed_seconds = 0
 	pygame.init()
 	screen = pygame.display.set_mode((WIDTH, HEIGHT))
 	pygame.display.set_caption('Snake Game')
@@ -172,11 +175,21 @@ def main():
 			screen, BRIGHT_BLUE,
 			(blue_x, blue_y_start, 10, blue_height)
 		)
+		# Draw timer above 'submit word' in right margin
+		if not win:
+			elapsed_seconds = (pygame.time.get_ticks() - start_ticks) // 1000
+		font_timer = pygame.font.SysFont(None, 36, bold=True)
+		timer_surf = font_timer.render(f"Time: {elapsed_seconds}s", True, BLACK)
+		timer_x = blue_x + 20
+		timer_y = blue_y_start + blue_height//2 - timer_surf.get_height() - 10
+		screen.blit(timer_surf, (timer_x, timer_y))
+
+
 		# Draw 'submit word' text in right margin next to blue section
 		font_submit = pygame.font.SysFont(None, 36, bold=True)
 		submit_surf = font_submit.render("submit word", True, BRIGHT_BLUE)
 		submit_x = blue_x + 20
-		submit_y = blue_y_start + blue_height//2 - submit_surf.get_height()//2
+		submit_y = blue_y_start + blue_height//2 - submit_surf.get_height()//2 + 30
 		screen.blit(submit_surf, (submit_x, submit_y))
 		# Draw yellow segment on left border, same dimensions
 		yellow_x = MARGIN_LEFT - 10
@@ -230,6 +243,7 @@ def main():
 		total_width = sum(surf_widths) + (len(word_lengths)-1)*spacing
 		start_x = MARGIN_LEFT + (ARENA_WIDTH - total_width) // 2
 		x = start_x
+
 		for i, length in enumerate(word_lengths):
 			underscores = ['_' for _ in range(length)]
 			# If found_words has a word for this length, fill in the letters
@@ -241,6 +255,21 @@ def main():
 			screen.blit(surf, (x, start_y))
 			x += surf.get_width() + spacing
 
+		# Draw leaderboard directly underneath the underscores
+		font_leader = pygame.font.SysFont(None, 40, bold=True)
+		leaderboard_lines = [
+			"LEADERBOARD",
+			"benja       0:25",
+			"WCasp    1:44",
+			"DBrandt  1:48"
+		]
+		leader_y = start_y + 60
+		for line in leaderboard_lines:
+			surf = font_leader.render(line, True, BLACK)
+			surf_x = (WIDTH - surf.get_width()) // 2
+			screen.blit(surf, (surf_x, leader_y))
+			leader_y += surf.get_height() + 5
+
 		pygame.display.flip()
 
 	# End screen
@@ -249,9 +278,10 @@ def main():
 		msg = font.render('Congratulations! You found all the words!', True, (0, 180, 0))
 	else:
 		msg = font.render(f'Game Over! Score: {score}', True, RED)
-	# Center horizontally, place just below the arena
+	# Center horizontally, place further down in the bottom margin
 	msg_x = (WIDTH - msg.get_width()) // 2
-	msg_y = MARGIN_TOP + ARENA_HEIGHT + ((MARGIN_BOTTOM - msg.get_height()) // 2)
+	# Move the message lower by adding extra offset (e.g., +100)
+	msg_y = MARGIN_TOP + ARENA_HEIGHT + ((MARGIN_BOTTOM - msg.get_height()) // 2) + 100
 	screen.blit(msg, (msg_x, msg_y))
 	pygame.display.flip()
 	pygame.time.wait(2000)
