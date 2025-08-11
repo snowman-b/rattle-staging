@@ -175,21 +175,20 @@ def main():
 			screen, BRIGHT_BLUE,
 			(blue_x, blue_y_start, 10, blue_height)
 		)
-		# Draw timer above 'submit word' in right margin
+		# Draw timer in right margin, moved up by 200 pixels
 		if not win:
 			elapsed_seconds = (pygame.time.get_ticks() - start_ticks) // 1000
 		font_timer = pygame.font.SysFont(None, 36, bold=True)
 		timer_surf = font_timer.render(f"Time: {elapsed_seconds}s", True, BLACK)
 		timer_x = blue_x + 20
-		timer_y = blue_y_start + blue_height//2 - timer_surf.get_height() - 10
+		timer_y = blue_y_start + blue_height//2 - timer_surf.get_height() - 210
 		screen.blit(timer_surf, (timer_x, timer_y))
 
-
-		# Draw 'submit word' text in right margin next to blue section
+		# Draw 'submit word' text in right margin, aligned with blue border
 		font_submit = pygame.font.SysFont(None, 36, bold=True)
 		submit_surf = font_submit.render("submit word", True, BRIGHT_BLUE)
 		submit_x = blue_x + 20
-		submit_y = blue_y_start + blue_height//2 - submit_surf.get_height()//2 + 30
+		submit_y = blue_y_start + blue_height//2 - submit_surf.get_height()//2
 		screen.blit(submit_surf, (submit_x, submit_y))
 		# Draw yellow segment on left border, same dimensions
 		yellow_x = MARGIN_LEFT - 10
@@ -263,7 +262,7 @@ def main():
 			"WCasp    1:44",
 			"DBrandt  1:48"
 		]
-		leader_y = start_y + 60
+		leader_y = start_y + 110
 		for line in leaderboard_lines:
 			surf = font_leader.render(line, True, BLACK)
 			surf_x = (WIDTH - surf.get_width()) // 2
