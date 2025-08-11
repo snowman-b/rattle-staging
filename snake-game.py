@@ -83,9 +83,20 @@ def main():
 		new_head = [snake[0][0] + direction[0], snake[0][1] + direction[1]]
 
 
-		# Game over: wall or self
-		# Allow the snake to emerge from the left wall (x < 2) without game over
+
+		# Portal logic for blue and yellow border
+		blue_x = GRID_WIDTH - 1
+		blue_y_start = GRID_HEIGHT - 4
+		blue_y_end = GRID_HEIGHT - 1
+		yellow_x = 0
+
+		# If snake hits blue border section, teleport to yellow border at same y
+		if new_head[0] == blue_x and blue_y_start <= new_head[1] < blue_y_end:
+			new_head[0] = yellow_x
+
+		# Game over: wall or self (except for left wall emergence and blue portal)
 		if new_head[0] >= 2:
+			# Game over if snake hits any black border or itself
 			if (
 				new_head[0] < 0 or new_head[0] >= GRID_WIDTH or
 				new_head[1] < 0 or new_head[1] >= GRID_HEIGHT or
