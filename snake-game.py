@@ -112,15 +112,18 @@ def main():
 				l = len(word)
 				if l in found_words and not found_words[l]:
 					found_words[l] = word
-			# Always reset food to all 6 letters in the same positions
-			# Restore the original food positions and letter assignment
-			foods = [f.copy() for f in initial_foods]
-			pending_portal_respawn = False
-			collected_letters = []
-			# Check win condition
+			# Check win condition BEFORE respawning food
 			if all(found_words.values()):
 				win = True
 				running = False
+			collected_letters = []
+			# Only respawn food if the game is not already over
+			if not win and running:
+				# Restore the original food positions and letter assignment
+				foods = [f.copy() for f in initial_foods]
+				pending_portal_respawn = False
+			# If the game is won, do not respawn food
+			# collected_letters already cleared above
 
 		# Game over: wall or self (except for left wall emergence and blue portal)
 		if new_head[0] >= 2:
