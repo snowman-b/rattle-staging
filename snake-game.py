@@ -38,8 +38,10 @@ def draw_rect(screen, color, pos):
 	pygame.draw.rect(screen, color, rect)
 
 
-def random_foods_even_row(snake, count=6):
-	chars = FOOD_CHARS
+import random
+def get_fixed_foods():
+	chars = FOOD_CHARS[:]
+	random.shuffle(chars)
 	row = GRID_HEIGHT // 2  # Middle row
 	spacing = GRID_WIDTH // (len(chars) + 1)
 	foods = []
@@ -62,7 +64,8 @@ def main():
 	snake = [[0, start_y], [1, start_y], [2, start_y]]
 	direction = (1, 0)
 	# Generate and store initial food positions (evenly spaced)
-	initial_foods = random_foods_even_row(snake, 6)
+	# Generate and store initial food positions and letter assignment (fixed for the game)
+	initial_foods = get_fixed_foods()
 	foods = [f.copy() for f in initial_foods]
 	score = 0
 
@@ -110,6 +113,7 @@ def main():
 				if l in found_words and not found_words[l]:
 					found_words[l] = word
 			# Always reset food to all 6 letters in the same positions
+			# Restore the original food positions and letter assignment
 			foods = [f.copy() for f in initial_foods]
 			pending_portal_respawn = False
 			collected_letters = []
