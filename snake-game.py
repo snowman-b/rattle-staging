@@ -233,9 +233,9 @@ def main():
 			draw_rounded_rect(screen, color, segment, radius=8, shadow=True)
 			if i < m:
 				try:
-					font_letter = pygame.font.SysFont("Avenir Next", 36, bold=True)
+					font_letter = pygame.font.SysFont("Avenir Next", 24, bold=True)
 				except:
-					font_letter = pygame.font.SysFont(None, 36, bold=True)
+					font_letter = pygame.font.SysFont(None, 24, bold=True)
 				letter_surf = font_letter.render(collected_letters[-(i+1)], True, (255,255,255))
 				x = MARGIN_LEFT + segment[0]*CELL_SIZE + (CELL_SIZE - letter_surf.get_width())//2
 				y = MARGIN_TOP + segment[1]*CELL_SIZE + (CELL_SIZE - letter_surf.get_height())//2
@@ -245,9 +245,9 @@ def main():
 			fx, fy, fchar = food
 			draw_rounded_rect(screen, (255, 80, 80), (fx, fy), radius=10, shadow=True)
 			try:
-				font = pygame.font.SysFont("Avenir Next", 32, bold=True)
+				font = pygame.font.SysFont("Avenir Next", 24, bold=True)
 			except:
-				font = pygame.font.SysFont(None, 32, bold=True)
+				font = pygame.font.SysFont(None, 24, bold=True)
 			char_surf = font.render(fchar, True, (255,255,255))
 			x = MARGIN_LEFT + fx*CELL_SIZE + (CELL_SIZE - char_surf.get_width())//2
 			y = MARGIN_TOP + fy*CELL_SIZE + (CELL_SIZE - char_surf.get_height())//2
