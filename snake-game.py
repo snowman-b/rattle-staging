@@ -324,7 +324,8 @@ def main():
 		msg = font.render(f'Game Over! Score: {score}', True, RED)
 		shadow = font.render(f'Game Over! Score: {score}', True, (0,0,0))
 	msg_x = (WIDTH - msg.get_width()) // 2
-	msg_y = MARGIN_TOP + ARENA_HEIGHT + ((MARGIN_BOTTOM - msg.get_height()) // 2) + 100
+	# Place message at the top of the arena, with a little padding
+	msg_y = MARGIN_TOP + 20
 	screen.blit(shadow, (msg_x+3, msg_y+3))
 	screen.blit(msg, (msg_x, msg_y))
 	pygame.display.flip()
