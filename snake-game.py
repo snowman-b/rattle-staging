@@ -38,17 +38,15 @@ def draw_rect(screen, color, pos):
 	pygame.draw.rect(screen, color, rect)
 
 
-def random_foods(snake, count=6):
+def random_foods_even_row(snake, count=6):
 	chars = FOOD_CHARS
-	foods = set()
-	min_y = 0
-	max_y = GRID_HEIGHT - 4  # 4 snake widths from the bottom
-	while len(foods) < 6:
-		pos = (random.randint(0, GRID_WIDTH-1), random.randint(min_y, max_y-1))
-		if list(pos) not in snake:
-			foods.add(pos)
-	foods = [list(f) for f in foods]
-	return [food + [chars[i]] for i, food in enumerate(foods)]
+	row = GRID_HEIGHT // 2  # Middle row
+	spacing = GRID_WIDTH // (len(chars) + 1)
+	foods = []
+	for i, char in enumerate(chars):
+		x = spacing * (i + 1)
+		foods.append([x, row, char])
+	return foods
 
 def main():
 	# Timer setup
@@ -63,8 +61,8 @@ def main():
 	start_y = GRID_HEIGHT - 3
 	snake = [[0, start_y], [1, start_y], [2, start_y]]
 	direction = (1, 0)
-	# Generate and store initial food positions
-	initial_foods = random_foods(snake, 6)
+	# Generate and store initial food positions (evenly spaced)
+	initial_foods = random_foods_even_row(snake, 6)
 	foods = [f.copy() for f in initial_foods]
 	score = 0
 
