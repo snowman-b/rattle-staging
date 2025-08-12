@@ -318,16 +318,40 @@ def main():
 	except:
 		font = pygame.font.SysFont(None, 48, bold=True)
 	if win:
-		msg = font.render('Congratulations! You found all the words!', True, (0, 180, 0))
-		shadow = font.render('Congratulations! You found all the words!', True, (0,0,0))
+		# Split message into two lines
+		msg_lines = ["Congratulations!", "You found all the words!"]
+		msg_surfs = []
+		outline_surfs = []
+		color = (0, 180, 0)
+		for line in msg_lines:
+			# Render outline by drawing text multiple times offset by 2px in all directions
+			outline = pygame.Surface((font.size(line)[0]+8, font.size(line)[1]+8), pygame.SRCALPHA)
+			for dx in [-2, 0, 2]:
+				for dy in [-2, 0, 2]:
+					if dx != 0 or dy != 0:
+						outline.blit(font.render(line, True, (0,0,0)), (dx+4, dy+4))
+			msg = font.render(line, True, color)
+			outline.blit(msg, (4,4))
+			outline_surfs.append(outline)
+		# Calculate total height
+		total_height = sum(s.get_height() for s in outline_surfs)
+		y = MARGIN_TOP + 20
+		for surf in outline_surfs:
+			x = (WIDTH - surf.get_width()) // 2
+			screen.blit(surf, (x, y))
+			y += surf.get_height() + 2
 	else:
 		msg = font.render(f'Game Over! Score: {score}', True, RED)
-		shadow = font.render(f'Game Over! Score: {score}', True, (0,0,0))
-	msg_x = (WIDTH - msg.get_width()) // 2
-	# Place message at the top of the arena, with a little padding
-	msg_y = MARGIN_TOP + 20
-	screen.blit(shadow, (msg_x+3, msg_y+3))
-	screen.blit(msg, (msg_x, msg_y))
+		# Render outline for game over
+		outline = pygame.Surface((msg.get_width()+8, msg.get_height()+8), pygame.SRCALPHA)
+		for dx in [-2, 0, 2]:
+			for dy in [-2, 0, 2]:
+				if dx != 0 or dy != 0:
+					outline.blit(font.render(f'Game Over! Score: {score}', True, (0,0,0)), (dx+4, dy+4))
+		outline.blit(msg, (4,4))
+		msg_x = (WIDTH - outline.get_width()) // 2
+		msg_y = MARGIN_TOP + 20
+		screen.blit(outline, (msg_x, msg_y))
 	pygame.display.flip()
 	pygame.time.wait(2000)
 	pygame.quit()
