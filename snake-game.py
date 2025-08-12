@@ -30,12 +30,18 @@ BLACK = (0, 0, 0)
 DKGREEN = (0, 100, 0)
 RED = (255, 0, 0)
 
-def draw_rect(screen, color, pos):
+
+# Draw a rounded rectangle with optional shadow
+def draw_rounded_rect(screen, color, pos, radius=8, shadow=True, shadow_offset=3, shadow_alpha=80):
 	rect = pygame.Rect(
 		MARGIN_LEFT + pos[0]*CELL_SIZE,
 		MARGIN_TOP + pos[1]*CELL_SIZE,
 		CELL_SIZE, CELL_SIZE)
-	pygame.draw.rect(screen, color, rect)
+	if shadow:
+		shadow_surf = pygame.Surface((CELL_SIZE, CELL_SIZE), pygame.SRCALPHA)
+		pygame.draw.rect(shadow_surf, (0,0,0,shadow_alpha), shadow_surf.get_rect(), border_radius=radius)
+		screen.blit(shadow_surf, (rect.x+shadow_offset, rect.y+shadow_offset))
+	pygame.draw.rect(screen, color, rect, border_radius=radius)
 
 
 import random
@@ -160,25 +166,34 @@ def main():
 
 		# Draw everything
 		screen.fill(WHITE)
-		# Draw 'RATTLE' at the top
+		# Draw 'RATTLE' at the top with a modern font and drop shadow
 		DKGREEN = (0, 100, 0)
-		font_rattle = pygame.font.SysFont(None, 96, bold=True)
+		try:
+			font_rattle = pygame.font.SysFont("Avenir Next", 96, bold=True)
+		except:
+			font_rattle = pygame.font.SysFont(None, 96, bold=True)
 		rattle_surf = font_rattle.render("RATTLE", True, DKGREEN)
+		# Drop shadow
+		shadow = font_rattle.render("RATTLE", True, (0,0,0))
 		rattle_x = (WIDTH - rattle_surf.get_width()) // 2
 		rattle_y = (MARGIN_TOP - rattle_surf.get_height()) // 2
+		screen.blit(shadow, (rattle_x+4, rattle_y+4))
 		screen.blit(rattle_surf, (rattle_x, rattle_y))
-		# Draw arena border (10px black)
-		pygame.draw.rect(
-			screen, BLACK,
-			(MARGIN_LEFT-10, MARGIN_TOP-10, ARENA_WIDTH+20, ARENA_HEIGHT+20), 10
-		)
-		# Draw bright blue segment on right border
+		# Draw arena border as a thick rounded rectangle with gradient
+		border_rect = pygame.Rect(MARGIN_LEFT-10, MARGIN_TOP-10, ARENA_WIDTH+20, ARENA_HEIGHT+20)
+		border_surf = pygame.Surface((border_rect.width, border_rect.height), pygame.SRCALPHA)
+		for i in range(10):
+			alpha = 180 - i*15
+			color = (30,30,30,alpha)
+			pygame.draw.rect(border_surf, color, border_surf.get_rect().inflate(-i*2,-i*2), border_radius=24)
+		screen.blit(border_surf, (border_rect.x, border_rect.y))
+		# Draw bright blue segment on right border (rounded)
 		blue_x = MARGIN_LEFT + ARENA_WIDTH
 		blue_y_start = MARGIN_TOP + ARENA_HEIGHT - 4*CELL_SIZE
 		blue_height = 3*CELL_SIZE
 		pygame.draw.rect(
 			screen, BRIGHT_BLUE,
-			(blue_x, blue_y_start, 10, blue_height)
+			(blue_x, blue_y_start, 14, blue_height), border_radius=7
 		)
 		# Draw timer in right margin, moved up by 200 pixels
 		if not win:
@@ -195,46 +210,63 @@ def main():
 		submit_x = blue_x + 20
 		submit_y = blue_y_start + blue_height//2 - submit_surf.get_height()//2
 		screen.blit(submit_surf, (submit_x, submit_y))
-		# Draw yellow segment on left border, same dimensions
+		# Draw yellow segment on left border, same dimensions (rounded)
 		yellow_x = MARGIN_LEFT - 10
 		yellow_y_start = blue_y_start
 		yellow_height = blue_height
 		pygame.draw.rect(
 			screen, YELLOW,
-			(yellow_x, yellow_y_start, 10, yellow_height)
+			(yellow_x, yellow_y_start, 14, yellow_height), border_radius=7
 		)
-		# Fill arena background white (inside border)
-		pygame.draw.rect(
-			screen, WHITE,
-			(MARGIN_LEFT, MARGIN_TOP, ARENA_WIDTH, ARENA_HEIGHT)
-		)
-		# Draw snake
+		# Fill arena background with a soft gradient
+		arena_rect = pygame.Rect(MARGIN_LEFT, MARGIN_TOP, ARENA_WIDTH, ARENA_HEIGHT)
+		arena_surf = pygame.Surface((ARENA_WIDTH, ARENA_HEIGHT))
+		for y in range(ARENA_HEIGHT):
+			shade = 245 - int(20 * (y / ARENA_HEIGHT))
+			pygame.draw.line(arena_surf, (shade, shade, 255), (0, y), (ARENA_WIDTH, y))
+		screen.blit(arena_surf, (MARGIN_LEFT, MARGIN_TOP))
+		# Draw snake with rounded segments and shadow
 		n = len(snake)
 		m = len(collected_letters)
-		# Place collected_letters[0] on the head, collected_letters[1] next, ..., collected_letters[-1] further toward the tail
 		for i, segment in enumerate(snake):
+			color = (60, 180, 90) if i == 0 else (80, 200, 120)
+			draw_rounded_rect(screen, color, segment, radius=8, shadow=True)
 			if i < m:
-				draw_rect(screen, DKGREEN, segment)
-				font_letter = pygame.font.SysFont(None, 36, bold=True)
-				letter_surf = font_letter.render(collected_letters[-(i+1)], True, WHITE)
+				try:
+					font_letter = pygame.font.SysFont("Avenir Next", 36, bold=True)
+				except:
+					font_letter = pygame.font.SysFont(None, 36, bold=True)
+				letter_surf = font_letter.render(collected_letters[-(i+1)], True, (255,255,255))
 				x = MARGIN_LEFT + segment[0]*CELL_SIZE + (CELL_SIZE - letter_surf.get_width())//2
 				y = MARGIN_TOP + segment[1]*CELL_SIZE + (CELL_SIZE - letter_surf.get_height())//2
 				screen.blit(letter_surf, (x, y))
-			else:
-				draw_rect(screen, DKGREEN, segment)
-		# Draw food
+		# Draw food as rounded, shaded, and with modern font
 		for food in foods:
 			fx, fy, fchar = food
-			font = pygame.font.SysFont(None, 36)
-			char_surf = font.render(fchar, True, RED)
-			screen.blit(char_surf, (MARGIN_LEFT + fx*CELL_SIZE, MARGIN_TOP + fy*CELL_SIZE))
-		# Draw score
-		font = pygame.font.SysFont(None, 36)
-		score_surf = font.render(f'Score: {score}', True, WHITE)
+			draw_rounded_rect(screen, (255, 80, 80), (fx, fy), radius=10, shadow=True)
+			try:
+				font = pygame.font.SysFont("Avenir Next", 32, bold=True)
+			except:
+				font = pygame.font.SysFont(None, 32, bold=True)
+			char_surf = font.render(fchar, True, (255,255,255))
+			x = MARGIN_LEFT + fx*CELL_SIZE + (CELL_SIZE - char_surf.get_width())//2
+			y = MARGIN_TOP + fy*CELL_SIZE + (CELL_SIZE - char_surf.get_height())//2
+			screen.blit(char_surf, (x, y))
+		# Draw score with modern font and shadow
+		try:
+			font = pygame.font.SysFont("Avenir Next", 36, bold=True)
+		except:
+			font = pygame.font.SysFont(None, 36, bold=True)
+		score_surf = font.render(f'Score: {score}', True, (40,40,40))
+		shadow = font.render(f'Score: {score}', True, (200,200,200))
+		screen.blit(shadow, (14, 14))
 		screen.blit(score_surf, (10, 10))
 
 		# Draw word length underscores in the bottom margin, and fill with found words if any
-		font_underscore = pygame.font.SysFont(None, 48)
+		try:
+			font_underscore = pygame.font.SysFont("Avenir Next", 48, bold=True)
+		except:
+			font_underscore = pygame.font.SysFont(None, 48, bold=True)
 		word_lengths = [3, 4, 5, 6]
 		spacing = 60
 		start_y = MARGIN_TOP + ARENA_HEIGHT + 80
@@ -260,7 +292,10 @@ def main():
 			x += surf.get_width() + spacing
 
 		# Draw leaderboard directly underneath the underscores
-		font_leader = pygame.font.SysFont(None, 40, bold=True)
+		try:
+			font_leader = pygame.font.SysFont("Avenir Next", 40, bold=True)
+		except:
+			font_leader = pygame.font.SysFont(None, 40, bold=True)
 		leaderboard_lines = [
 			"LEADERBOARD",
 			"benja       0:25",
@@ -274,18 +309,23 @@ def main():
 			screen.blit(surf, (surf_x, leader_y))
 			leader_y += surf.get_height() + 5
 
+		# Update the display every frame
 		pygame.display.flip()
 
-	# End screen
-	font = pygame.font.SysFont(None, 48)
+	# End screen with modern font and shadow
+	try:
+		font = pygame.font.SysFont("Avenir Next", 48, bold=True)
+	except:
+		font = pygame.font.SysFont(None, 48, bold=True)
 	if win:
 		msg = font.render('Congratulations! You found all the words!', True, (0, 180, 0))
+		shadow = font.render('Congratulations! You found all the words!', True, (0,0,0))
 	else:
 		msg = font.render(f'Game Over! Score: {score}', True, RED)
-	# Center horizontally, place further down in the bottom margin
+		shadow = font.render(f'Game Over! Score: {score}', True, (0,0,0))
 	msg_x = (WIDTH - msg.get_width()) // 2
-	# Move the message lower by adding extra offset (e.g., +100)
 	msg_y = MARGIN_TOP + ARENA_HEIGHT + ((MARGIN_BOTTOM - msg.get_height()) // 2) + 100
+	screen.blit(shadow, (msg_x+3, msg_y+3))
 	screen.blit(msg, (msg_x, msg_y))
 	pygame.display.flip()
 	pygame.time.wait(2000)
