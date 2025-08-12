@@ -69,6 +69,7 @@ def main():
 	start_y = GRID_HEIGHT - 3
 	snake = [[0, start_y], [1, start_y], [2, start_y]]
 	direction = (1, 0)
+	direction_queue = []
 	# Generate and store initial food positions (evenly spaced)
 	# Generate and store initial food positions and letter assignment (fixed for the game)
 	initial_foods = get_fixed_foods()
@@ -89,15 +90,22 @@ def main():
 			if event.type == pygame.QUIT:
 				running = False
 			elif event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_UP and direction != (0, 1):
-					direction = (0, -1)
-				elif event.key == pygame.K_DOWN and direction != (0, -1):
-					direction = (0, 1)
-				elif event.key == pygame.K_LEFT and direction != (1, 0):
-					direction = (-1, 0)
-				elif event.key == pygame.K_RIGHT and direction != (-1, 0):
-					direction = (1, 0)
+				# Add valid direction changes to the queue, but don't allow reversing
+				if event.key == pygame.K_UP and (not direction_queue and direction != (0, 1) or direction_queue and direction_queue[-1] != (0, 1)):
+					direction_queue.append((0, -1))
+				elif event.key == pygame.K_DOWN and (not direction_queue and direction != (0, -1) or direction_queue and direction_queue[-1] != (0, -1)):
+					direction_queue.append((0, 1))
+				elif event.key == pygame.K_LEFT and (not direction_queue and direction != (1, 0) or direction_queue and direction_queue[-1] != (1, 0)):
+					direction_queue.append((-1, 0))
+				elif event.key == pygame.K_RIGHT and (not direction_queue and direction != (-1, 0) or direction_queue and direction_queue[-1] != (-1, 0)):
+					direction_queue.append((1, 0))
 
+		# Apply the next direction in the queue, if any
+		if direction_queue:
+			next_dir = direction_queue.pop(0)
+			# Prevent reversing into itself
+			if (next_dir[0] != -direction[0] or next_dir[1] != -direction[1]):
+				direction = next_dir
 		# Move snake
 		new_head = [snake[0][0] + direction[0], snake[0][1] + direction[1]]
 
