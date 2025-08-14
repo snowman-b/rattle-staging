@@ -57,14 +57,71 @@ def get_fixed_foods():
 	return foods
 
 def main():
+	global DKGREEN
 	# Timer setup
-	start_ticks = pygame.time.get_ticks()
-	elapsed_seconds = 0
 	pygame.init()
 	screen = pygame.display.set_mode((WIDTH, HEIGHT))
 	pygame.display.set_caption('Snake Game')
 	clock = pygame.time.Clock()
 
+	# Landing page loop
+	landing = True
+	while landing:
+		screen.fill(WHITE)
+		# Draw game name 'RATTLE' at the top
+		font_rattle = pygame.font.SysFont("Avenir Next", 96, bold=True)
+		rattle_surf = font_rattle.render("RATTLE", True, DKGREEN)
+		rattle_shadow = font_rattle.render("RATTLE", True, BLACK)
+		rattle_x = (WIDTH - rattle_surf.get_width()) // 2
+		rattle_y = 40
+		screen.blit(rattle_shadow, (rattle_x+4, rattle_y+4))
+		screen.blit(rattle_surf, (rattle_x, rattle_y))
+		# Draw snake logo (large green S with shadow)
+		font_logo = pygame.font.SysFont("Avenir Next", 160, bold=True)
+		logo_surf = font_logo.render("S", True, DKGREEN)
+		logo_shadow = font_logo.render("S", True, BLACK)
+		logo_x = (WIDTH - logo_surf.get_width()) // 2
+		logo_y = rattle_y + rattle_surf.get_height() + 10
+		screen.blit(logo_shadow, (logo_x+6, logo_y+6))
+		screen.blit(logo_surf, (logo_x, logo_y))
+		# Draw title
+		font_title = pygame.font.SysFont("Avenir Next", 72, bold=True)
+		title_surf = font_title.render("Time Trial", True, BLACK)
+		title_x = (WIDTH - title_surf.get_width()) // 2
+		title_y = logo_y + logo_surf.get_height() + 30
+		screen.blit(title_surf, (title_x, title_y))
+		# Draw play button
+		button_w, button_h = 300, 80
+		button_x = (WIDTH - button_w) // 2
+		button_y = title_y + title_surf.get_height() + 60
+		button_rect = pygame.Rect(button_x, button_y, button_w, button_h)
+		pygame.draw.rect(screen, BLACK, button_rect, border_radius=40)
+		font_btn = pygame.font.SysFont("Avenir Next", 48, bold=True)
+		btn_surf = font_btn.render("Play", True, WHITE)
+		btn_x = button_x + (button_w - btn_surf.get_width()) // 2
+		btn_y = button_y + (button_h - btn_surf.get_height()) // 2
+		screen.blit(btn_surf, (btn_x, btn_y))
+		# Change cursor to hand if hovering over Play, else default
+		mouse_pos = pygame.mouse.get_pos()
+		if button_rect.collidepoint(mouse_pos):
+			pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+		else:
+			pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+		pygame.display.flip()
+		for event in pygame.event.get():
+			if event.type == pygame.QUIT:
+				pygame.quit()
+				sys.exit()
+			elif event.type == pygame.MOUSEBUTTONDOWN:
+				if button_rect.collidepoint(event.pos):
+					landing = False
+			elif event.type == pygame.KEYDOWN:
+				if event.key == pygame.K_RETURN:
+					landing = False
+
+	# Game setup after landing page
+	start_ticks = pygame.time.get_ticks()
+	elapsed_seconds = 0
 	# Snake spawns from the left border, three snake-widths above the bottom border
 	start_y = GRID_HEIGHT - 3
 	snake = [[0, start_y], [1, start_y], [2, start_y]]
@@ -251,12 +308,12 @@ def main():
 		# Draw food as rounded, shaded, and with modern font
 		for food in foods:
 			fx, fy, fchar = food
-			draw_rounded_rect(screen, (255, 80, 80), (fx, fy), radius=10, shadow=True)
+			draw_rounded_rect(screen, (50, 50, 50), (fx, fy), radius=10, shadow=True)
 			try:
-				font = pygame.font.SysFont("Avenir Next", 24, bold=True)
+				font = pygame.font.SysFont("Avenir Next", 18, bold=True)
 			except:
-				font = pygame.font.SysFont(None, 24, bold=True)
-			char_surf = font.render(fchar, True, (255,255,255))
+				font = pygame.font.SysFont(None, 18, bold=True)
+			char_surf = font.render(str(fchar).upper(), True, (255,255,255))
 			x = MARGIN_LEFT + fx*CELL_SIZE + (CELL_SIZE - char_surf.get_width())//2
 			y = MARGIN_TOP + fy*CELL_SIZE + (CELL_SIZE - char_surf.get_height())//2
 			screen.blit(char_surf, (x, y))
