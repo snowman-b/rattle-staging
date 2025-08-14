@@ -106,8 +106,8 @@ def main():
 		screen.blit(title_surf, (title_x, title_y))
 		# Add instruction text under Time Trial
 		font_instr_left = pygame.font.SysFont("Avenir Next", 20)
-		instr_text_left1 = "Find as many words as possible from"
-		instr_text_left2 = "the scrambled letters"
+		instr_text_left1 = "Quickly find seven words"
+		instr_text_left2 = "from the scrambled letters"
 		instr_surf_left1 = font_instr_left.render(instr_text_left1, True, (80, 80, 80))
 		instr_surf_left2 = font_instr_left.render(instr_text_left2, True, (80, 80, 80))
 		instr_x_left1 = left_center_x - instr_surf_left1.get_width()//2
@@ -135,6 +135,18 @@ def main():
 		title_surf_right = font_title_right.render("Highest Score", True, BLACK)
 		title_x_r = right_center_x - title_surf_right.get_width()//2
 		screen.blit(title_surf_right, (title_x_r, title_y))
+		# Add instruction text under Highest Score
+		font_instr_right = pygame.font.SysFont("Avenir Next", 20)
+		instr_text_right1 = "Find as many words as possible from"
+		instr_text_right2 = "the scrambled letters"
+		instr_surf_right1 = font_instr_right.render(instr_text_right1, True, (80, 80, 80))
+		instr_surf_right2 = font_instr_right.render(instr_text_right2, True, (80, 80, 80))
+		instr_x_right1 = right_center_x - instr_surf_right1.get_width()//2
+		instr_x_right2 = right_center_x - instr_surf_right2.get_width()//2
+		instr_y_right1 = title_y + title_surf_right.get_height() + 8
+		instr_y_right2 = instr_y_right1 + instr_surf_right1.get_height() + 2
+		screen.blit(instr_surf_right1, (instr_x_right1, instr_y_right1))
+		screen.blit(instr_surf_right2, (instr_x_right2, instr_y_right2))
 		button_x_r = right_center_x - button_w//2
 		button_rect_right = pygame.Rect(button_x_r, button_y, button_w, button_h)
 		pygame.draw.rect(screen, BLACK, button_rect_right, border_radius=20)
