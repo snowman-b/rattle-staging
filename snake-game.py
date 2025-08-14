@@ -66,6 +66,7 @@ def main():
 
 	# Landing page loop
 	landing = True
+	import datetime
 	while landing:
 		screen.fill(WHITE)
 		# Draw game name 'RATTLE' at the top
@@ -76,34 +77,59 @@ def main():
 		rattle_y = 40
 		screen.blit(rattle_shadow, (rattle_x+4, rattle_y+4))
 		screen.blit(rattle_surf, (rattle_x, rattle_y))
-		# Draw snake logo (large green S with shadow)
-		font_logo = pygame.font.SysFont("Avenir Next", 160, bold=True)
+		# Draw today's date under RATTLE
+		today = datetime.datetime.now().strftime('%B %d, %Y')
+		font_date = pygame.font.SysFont("Avenir Next", 36)
+		date_surf = font_date.render(today, True, BLACK)
+		date_x = (WIDTH - date_surf.get_width()) // 2
+		date_y = rattle_y + rattle_surf.get_height() + 10
+		screen.blit(date_surf, (date_x, date_y))
+		# Draw two smaller sets side by side
+		# Set sizes
+		logo_size = 80
+		title_size = 36
+		btn_size = 32
+		button_w, button_h = 150, 40
+		# Left set
+		left_center_x = WIDTH//4
+		logo_y = date_y + date_surf.get_height() + 30
+		font_logo = pygame.font.SysFont("Avenir Next", logo_size, bold=True)
 		logo_surf = font_logo.render("S", True, DKGREEN)
 		logo_shadow = font_logo.render("S", True, BLACK)
-		logo_x = (WIDTH - logo_surf.get_width()) // 2
-		logo_y = rattle_y + rattle_surf.get_height() + 10
-		screen.blit(logo_shadow, (logo_x+6, logo_y+6))
+		logo_x = left_center_x - logo_surf.get_width()//2
+		screen.blit(logo_shadow, (logo_x+3, logo_y+3))
 		screen.blit(logo_surf, (logo_x, logo_y))
-		# Draw title
-		font_title = pygame.font.SysFont("Avenir Next", 72, bold=True)
+		font_title = pygame.font.SysFont("Avenir Next", title_size, bold=True)
 		title_surf = font_title.render("Time Trial", True, BLACK)
-		title_x = (WIDTH - title_surf.get_width()) // 2
-		title_y = logo_y + logo_surf.get_height() + 30
+		title_x = left_center_x - title_surf.get_width()//2
+		title_y = logo_y + logo_surf.get_height() + 10
 		screen.blit(title_surf, (title_x, title_y))
-		# Draw play button
-		button_w, button_h = 300, 80
-		button_x = (WIDTH - button_w) // 2
-		button_y = title_y + title_surf.get_height() + 60
-		button_rect = pygame.Rect(button_x, button_y, button_w, button_h)
-		pygame.draw.rect(screen, BLACK, button_rect, border_radius=40)
-		font_btn = pygame.font.SysFont("Avenir Next", 48, bold=True)
+		button_x = left_center_x - button_w//2
+		button_y = title_y + title_surf.get_height() + 20
+		button_rect_left = pygame.Rect(button_x, button_y, button_w, button_h)
+		pygame.draw.rect(screen, BLACK, button_rect_left, border_radius=20)
+		font_btn = pygame.font.SysFont("Avenir Next", btn_size, bold=True)
 		btn_surf = font_btn.render("Play", True, WHITE)
 		btn_x = button_x + (button_w - btn_surf.get_width()) // 2
 		btn_y = button_y + (button_h - btn_surf.get_height()) // 2
 		screen.blit(btn_surf, (btn_x, btn_y))
-		# Change cursor to hand if hovering over Play, else default
+		# Right set
+		right_center_x = 3*WIDTH//4
+		logo_x_r = right_center_x - logo_surf.get_width()//2
+		screen.blit(logo_shadow, (logo_x_r+3, logo_y+3))
+		screen.blit(logo_surf, (logo_x_r, logo_y))
+		font_title_right = pygame.font.SysFont("Avenir Next", title_size, bold=True)
+		title_surf_right = font_title_right.render("Highest Score", True, BLACK)
+		title_x_r = right_center_x - title_surf_right.get_width()//2
+		screen.blit(title_surf_right, (title_x_r, title_y))
+		button_x_r = right_center_x - button_w//2
+		button_rect_right = pygame.Rect(button_x_r, button_y, button_w, button_h)
+		pygame.draw.rect(screen, BLACK, button_rect_right, border_radius=20)
+		btn_x_r = button_x_r + (button_w - btn_surf.get_width()) // 2
+		screen.blit(btn_surf, (btn_x_r, btn_y))
+		# Change cursor to hand if hovering over either Play, else default
 		mouse_pos = pygame.mouse.get_pos()
-		if button_rect.collidepoint(mouse_pos):
+		if button_rect_left.collidepoint(mouse_pos) or button_rect_right.collidepoint(mouse_pos):
 			pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
 		else:
 			pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
@@ -113,7 +139,7 @@ def main():
 				pygame.quit()
 				sys.exit()
 			elif event.type == pygame.MOUSEBUTTONDOWN:
-				if button_rect.collidepoint(event.pos):
+				if button_rect_left.collidepoint(event.pos) or button_rect_right.collidepoint(event.pos):
 					landing = False
 			elif event.type == pygame.KEYDOWN:
 				if event.key == pygame.K_RETURN:
