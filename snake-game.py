@@ -159,6 +159,7 @@ def main():
 		else:
 			pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
 		pygame.display.flip()
+		endless_mode = False
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				pygame.quit()
@@ -166,6 +167,10 @@ def main():
 			elif event.type == pygame.MOUSEBUTTONDOWN:
 				if button_rect_left.collidepoint(event.pos):
 					landing = False
+					endless_mode = False
+				elif button_rect_right.collidepoint(event.pos):
+					landing = False
+					endless_mode = True
 
 	# Game setup after landing page
 	start_ticks = pygame.time.get_ticks()
@@ -231,10 +236,11 @@ def main():
 				l = len(word)
 				if l in found_words and not found_words[l]:
 					found_words[l] = word
-			# Win only if all 6 word lengths are filled
-			if all(found_words.values()):
-				win = True
-				running = False
+			if not endless_mode:
+				# Win only if all 6 word lengths are filled
+				if all(found_words.values()):
+					win = True
+					running = False
 			collected_letters = []
 			# Only respawn food if the game is not already over
 			if not win and running:
@@ -425,16 +431,16 @@ def main():
 
 		# Draw leaderboard directly underneath the underscores
 		try:
-			font_leader = pygame.font.SysFont("Avenir Next", 40, bold=True)
+			font_leader = pygame.font.SysFont("Avenir Next", 20, bold=True)
 		except:
-			font_leader = pygame.font.SysFont(None, 40, bold=True)
+			font_leader = pygame.font.SysFont(None, 20, bold=True)
 		leaderboard_lines = [
 			"LEADERBOARD",
 			"benja       0:25",
 			"WCasp    1:44",
 			"DBrandt  1:48"
 		]
-		leader_y = start_y + 110
+		leader_y = start_y + 170  # Move down another 20 pixels
 		for line in leaderboard_lines:
 			surf = font_leader.render(line, True, BLACK)
 			surf_x = (WIDTH - surf.get_width()) // 2
