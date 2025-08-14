@@ -164,10 +164,7 @@ def main():
 				pygame.quit()
 				sys.exit()
 			elif event.type == pygame.MOUSEBUTTONDOWN:
-				if button_rect_left.collidepoint(event.pos) or button_rect_right.collidepoint(event.pos):
-					landing = False
-			elif event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_RETURN:
+				if button_rect_left.collidepoint(event.pos):
 					landing = False
 
 	# Game setup after landing page
@@ -190,7 +187,7 @@ def main():
 	pending_portal_respawn = False
 	running = True
 
-	found_words = {3: None, 4: None, 5: None, 6: None}
+	found_words = {1: None, 2: None, 3: None, 4: None, 5: None, 6: None}
 	win = False
 	while running:
 		clock.tick(FPS)
@@ -234,7 +231,7 @@ def main():
 				l = len(word)
 				if l in found_words and not found_words[l]:
 					found_words[l] = word
-			# Check win condition BEFORE respawning food
+			# Win only if all 6 word lengths are filled
 			if all(found_words.values()):
 				win = True
 				running = False
@@ -383,29 +380,48 @@ def main():
 			font_underscore = pygame.font.SysFont("Avenir Next", 48, bold=True)
 		except:
 			font_underscore = pygame.font.SysFont(None, 48, bold=True)
-		word_lengths = [3, 4, 5, 6]
+		word_lengths = [1, 2, 3, 4, 5, 6]
 		spacing = 60
 		start_y = MARGIN_TOP + ARENA_HEIGHT + 80
-		# Calculate total width for centering under the arena only
-		surf_widths = []
-		for length in word_lengths:
+		# Split onto two lines
+		line1 = word_lengths[:3]  # 1,2,3
+		line2 = word_lengths[3:]  # 4,5,6
+		# Calculate total width for centering each line
+		surf_widths1 = []
+		for length in line1:
 			underscores = ' '.join(['_' for _ in range(length)])
 			surf = font_underscore.render(underscores, True, BLACK)
-			surf_widths.append(surf.get_width())
-		total_width = sum(surf_widths) + (len(word_lengths)-1)*spacing
-		start_x = MARGIN_LEFT + (ARENA_WIDTH - total_width) // 2
-		x = start_x
-
-		for i, length in enumerate(word_lengths):
+			surf_widths1.append(surf.get_width())
+		total_width1 = sum(surf_widths1) + (len(line1)-1)*spacing
+		start_x1 = MARGIN_LEFT + (ARENA_WIDTH - total_width1) // 2
+		x1 = start_x1
+		for i, length in enumerate(line1):
 			underscores = ['_' for _ in range(length)]
-			# If found_words has a word for this length, fill in the letters
-			if found_words[length]:
+			if found_words.get(length):
 				for j, letter in enumerate(found_words[length]):
 					underscores[j] = letter
 			underscores_str = ' '.join(underscores)
 			surf = font_underscore.render(underscores_str, True, BLACK)
-			screen.blit(surf, (x, start_y))
-			x += surf.get_width() + spacing
+			screen.blit(surf, (x1, start_y))
+			x1 += surf.get_width() + spacing
+		# Second line
+		surf_widths2 = []
+		for length in line2:
+			underscores = ' '.join(['_' for _ in range(length)])
+			surf = font_underscore.render(underscores, True, BLACK)
+			surf_widths2.append(surf.get_width())
+		total_width2 = sum(surf_widths2) + (len(line2)-1)*spacing
+		start_x2 = MARGIN_LEFT + (ARENA_WIDTH - total_width2) // 2
+		x2 = start_x2
+		for i, length in enumerate(line2):
+			underscores = ['_' for _ in range(length)]
+			if found_words.get(length):
+				for j, letter in enumerate(found_words[length]):
+					underscores[j] = letter
+			underscores_str = ' '.join(underscores)
+			surf = font_underscore.render(underscores_str, True, BLACK)
+			screen.blit(surf, (x2, start_y + 70))
+			x2 += surf.get_width() + spacing
 
 		# Draw leaderboard directly underneath the underscores
 		try:
