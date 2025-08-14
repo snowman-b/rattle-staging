@@ -20,7 +20,8 @@ def is_valid_word(word):
 	word = word.strip()
 	if len(word) == 1:
 		return word.upper() in {"A", "I"}
-	return zipf_frequency(word.lower(), 'en') > 0.0
+	# Only accept common English words (zipf_frequency > 3.0 is a good threshold)
+	return zipf_frequency(word.lower(), 'en') > 3.0
 
 
 # Game settings
