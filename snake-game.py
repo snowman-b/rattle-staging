@@ -9,6 +9,19 @@ FOOD_CHARS = list("rattle")
 import pygame
 import random
 import sys
+import os
+# Load word set for validation
+
+
+# Use wordfreq for word validation
+from wordfreq import zipf_frequency
+
+def is_valid_word(word):
+	word = word.strip()
+	if len(word) == 1:
+		return word.upper() in {"A", "I"}
+	# Accept English words with zipf_frequency > 2
+	return zipf_frequency(word.lower(), 'en') > 2.0
 
 
 # Game settings
@@ -234,7 +247,7 @@ def main():
 			if collected_letters:
 				word = ''.join(collected_letters)
 				l = len(word)
-				if l in found_words and not found_words[l]:
+				if l in found_words and not found_words[l] and is_valid_word(word):
 					found_words[l] = word
 			if not endless_mode:
 				# Win only if all 6 word lengths are filled
