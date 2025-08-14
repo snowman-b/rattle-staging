@@ -104,8 +104,21 @@ def main():
 		title_x = left_center_x - title_surf.get_width()//2
 		title_y = logo_y + logo_surf.get_height() + 10
 		screen.blit(title_surf, (title_x, title_y))
+		# Add instruction text under Time Trial
+		font_instr_left = pygame.font.SysFont("Avenir Next", 20)
+		instr_text_left1 = "Find as many words as possible from"
+		instr_text_left2 = "the scrambled letters"
+		instr_surf_left1 = font_instr_left.render(instr_text_left1, True, (80, 80, 80))
+		instr_surf_left2 = font_instr_left.render(instr_text_left2, True, (80, 80, 80))
+		instr_x_left1 = left_center_x - instr_surf_left1.get_width()//2
+		instr_x_left2 = left_center_x - instr_surf_left2.get_width()//2
+		instr_y_left1 = title_y + title_surf.get_height() + 8
+		instr_y_left2 = instr_y_left1 + instr_surf_left1.get_height() + 2
+		screen.blit(instr_surf_left1, (instr_x_left1, instr_y_left1))
+		screen.blit(instr_surf_left2, (instr_x_left2, instr_y_left2))
+		# Lower the Play button in the left box
 		button_x = left_center_x - button_w//2
-		button_y = title_y + title_surf.get_height() + 20
+		button_y = instr_y_left2 + instr_surf_left2.get_height() + 20
 		button_rect_left = pygame.Rect(button_x, button_y, button_w, button_h)
 		pygame.draw.rect(screen, BLACK, button_rect_left, border_radius=20)
 		font_btn = pygame.font.SysFont("Avenir Next", btn_size, bold=True)
