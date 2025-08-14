@@ -164,10 +164,7 @@ def main():
 				pygame.quit()
 				sys.exit()
 			elif event.type == pygame.MOUSEBUTTONDOWN:
-				if button_rect_left.collidepoint(event.pos) or button_rect_right.collidepoint(event.pos):
-					landing = False
-			elif event.type == pygame.KEYDOWN:
-				if event.key == pygame.K_RETURN:
+				if button_rect_left.collidepoint(event.pos):
 					landing = False
 
 	# Game setup after landing page
