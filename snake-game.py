@@ -132,7 +132,7 @@ def main():
 		screen.blit(logo_shadow, (logo_x_r+3, logo_y+3))
 		screen.blit(logo_surf, (logo_x_r, logo_y))
 		font_title_right = pygame.font.SysFont("Avenir Next", title_size, bold=True)
-		title_surf_right = font_title_right.render("Highest Score", True, BLACK)
+		title_surf_right = font_title_right.render("Endless Mode", True, BLACK)
 		title_x_r = right_center_x - title_surf_right.get_width()//2
 		screen.blit(title_surf_right, (title_x_r, title_y))
 		# Add instruction text under Highest Score
@@ -149,15 +149,36 @@ def main():
 		screen.blit(instr_surf_right2, (instr_x_right2, instr_y_right2))
 		button_x_r = right_center_x - button_w//2
 		button_rect_right = pygame.Rect(button_x_r, button_y, button_w, button_h)
-		pygame.draw.rect(screen, BLACK, button_rect_right, border_radius=20)
-		btn_x_r = button_x_r + (button_w - btn_surf.get_width()) // 2
-		screen.blit(btn_surf, (btn_x_r, btn_y))
-		# Change cursor to hand if hovering over either Play, else default
+		# Gray-out and disable Endless Mode button
+		disabled_color = (180, 180, 180)
+		pygame.draw.rect(screen, disabled_color, button_rect_right, border_radius=20)
+		btn_surf_disabled = font_btn.render("Play", True, (120, 120, 120))
+		btn_x_r = button_x_r + (button_w - btn_surf_disabled.get_width()) // 2
+		btn_y = button_y + (button_h - btn_surf_disabled.get_height()) // 2
+		screen.blit(btn_surf_disabled, (btn_x_r, btn_y))
+		# Change cursor and show tooltip for Endless Mode button
 		mouse_pos = pygame.mouse.get_pos()
-		if button_rect_left.collidepoint(mouse_pos) or button_rect_right.collidepoint(mouse_pos):
+		show_tooltip = False
+		if button_rect_left.collidepoint(mouse_pos):
 			pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_HAND)
+		elif button_rect_right.collidepoint(mouse_pos):
+			pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_NO)
+			show_tooltip = True
 		else:
 			pygame.mouse.set_cursor(pygame.SYSTEM_CURSOR_ARROW)
+		# Tooltip for Endless Mode
+		if show_tooltip:
+			tooltip_text = "First play the Time Trial to unlock Endless Mode"
+			font_tooltip = pygame.font.SysFont("Avenir Next", 18, bold=True)
+			tooltip_surf = font_tooltip.render(tooltip_text, True, (80, 80, 80))
+			tooltip_bg = pygame.Surface((tooltip_surf.get_width()+16, tooltip_surf.get_height()+12))
+			tooltip_bg.fill((240, 240, 240))
+			pygame.draw.rect(tooltip_bg, (180,180,180), tooltip_bg.get_rect(), 2, border_radius=8)
+			tooltip_bg.blit(tooltip_surf, (8,6))
+			# Position tooltip above the button
+			tooltip_x = button_rect_right.centerx - tooltip_bg.get_width()//2
+			tooltip_y = button_rect_right.top - tooltip_bg.get_height() - 8
+			screen.blit(tooltip_bg, (tooltip_x, tooltip_y))
 		pygame.display.flip()
 		endless_mode = False
 		for event in pygame.event.get():
@@ -168,9 +189,7 @@ def main():
 				if button_rect_left.collidepoint(event.pos):
 					landing = False
 					endless_mode = False
-				elif button_rect_right.collidepoint(event.pos):
-					landing = False
-					endless_mode = True
+				# Endless Mode button is disabled, do nothing on click
 
 	# Game setup after landing page
 	start_ticks = pygame.time.get_ticks()
@@ -492,8 +511,8 @@ def main():
 		screen.blit(outline, (msg_x, msg_y))
 	pygame.display.flip()
 	pygame.time.wait(2000)
-	pygame.quit()
-	sys.exit()
+	# Instead of quitting, return to splash screen
+	main()
 
 if __name__ == "__main__":
 	main()
