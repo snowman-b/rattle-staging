@@ -507,12 +507,14 @@ def main():
 		except:
 			font_garbage = pygame.font.SysFont(None, 32, bold=True)
 		for i, letter in enumerate(garbage_letters):
-			# Random position inside trapezoid
-			frac_x = random.uniform(0.15, 0.85)
-			frac_y = random.uniform(0.1, 0.85)
+			# Use a fixed seed per letter so position/rotation is static
+			seed = hash((letter, i))
+			rng = random.Random(seed)
+			frac_x = rng.uniform(0.15, 0.85)
+			frac_y = rng.uniform(0.1, 0.85)
 			x = brim_x + frac_x * brim_w - 16
 			y = brim_y + frac_y * (base_y - brim_y) - 16
-			angle = random.randint(-35, 35)
+			angle = rng.randint(-35, 35)
 			surf = font_garbage.render(letter, True, (80,80,80))
 			surf = pygame.transform.rotate(surf, angle)
 			screen.blit(surf, (int(x), int(y)))
