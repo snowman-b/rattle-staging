@@ -220,9 +220,9 @@ def main():
 	# Game setup after landing page
 	start_ticks = pygame.time.get_ticks()
 	elapsed_seconds = 0
-	# Snake spawns from the left border, three snake-widths above the bottom border
+	# Snake spawns 3 segments deep into the arena, three snake-widths above the bottom border
 	start_y = GRID_HEIGHT - 3
-	snake = [[0, start_y], [1, start_y], [2, start_y]]
+	snake = [[3, start_y], [2, start_y], [1, start_y]]
 	direction = (1, 0)
 	direction_queue = []
 	# Generate and store initial food positions (evenly spaced)
@@ -273,8 +273,10 @@ def main():
 		yellow_x = 0
 
 		# If snake hits blue border section, teleport to yellow border at same y
+		portal_used = False
 		if new_head[0] == blue_x and blue_y_start <= new_head[1] < blue_y_end:
 			new_head[0] = yellow_x
+			portal_used = True
 			# On portal, submit collected letters to bottom margin
 			if collected_letters:
 				word = ''.join(collected_letters)
@@ -295,14 +297,10 @@ def main():
 			# If the game is won, do not respawn food
 			# collected_letters already cleared above
 
-		# Game over: wall or self (except for left wall emergence and blue portal)
-		if new_head[0] >= 2:
-			# Game over if snake hits any black border or itself
-			if (
-				new_head[0] < 0 or new_head[0] >= GRID_WIDTH or
-				new_head[1] < 0 or new_head[1] >= GRID_HEIGHT or
-				new_head in snake
-			):
+		# Game over: wall or self (except for left wall emergence via portal)
+		# Only allow passing through left wall if just teleported by portal
+		if not portal_used:
+			if new_head[0] < 0 or new_head[0] >= GRID_WIDTH or new_head[1] < 0 or new_head[1] >= GRID_HEIGHT or new_head in snake:
 				running = False
 				continue
 
