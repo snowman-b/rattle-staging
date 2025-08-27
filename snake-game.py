@@ -341,13 +341,15 @@ def main():
 		rattle_y = (MARGIN_TOP - rattle_surf.get_height()) // 2
 		screen.blit(shadow, (rattle_x+4, rattle_y+4))
 		screen.blit(rattle_surf, (rattle_x, rattle_y))
-		# Draw arena border as a thick rounded rectangle with gradient
+		# Draw arena border as a thick rectangle with gradient, no rounded corners
 		border_rect = pygame.Rect(MARGIN_LEFT-10, MARGIN_TOP-10, ARENA_WIDTH+20, ARENA_HEIGHT+20)
 		border_surf = pygame.Surface((border_rect.width, border_rect.height), pygame.SRCALPHA)
 		for i in range(10):
 			alpha = 180 - i*15
 			color = (30,30,30,alpha)
-			pygame.draw.rect(border_surf, color, border_surf.get_rect().inflate(-i*2,-i*2), border_radius=24)
+			pygame.draw.rect(border_surf, color, border_surf.get_rect().inflate(-i*2,-i*2), border_radius=0)
+		# Draw a solid dark border on top
+		pygame.draw.rect(border_surf, (10,10,10,255), border_surf.get_rect(), 4, border_radius=0)
 		screen.blit(border_surf, (border_rect.x, border_rect.y))
 		# Draw bright blue segment on right border (rounded)
 		blue_x = MARGIN_LEFT + ARENA_WIDTH
@@ -355,7 +357,7 @@ def main():
 		blue_height = 3*CELL_SIZE
 		pygame.draw.rect(
 			screen, BRIGHT_BLUE,
-			(blue_x, blue_y_start, 14, blue_height), border_radius=7
+			(blue_x, blue_y_start, 8, blue_height), border_radius=0
 		)
 		# Draw timer in right margin, moved up by 200 pixels
 		if not win:
@@ -381,7 +383,7 @@ def main():
 		yellow_height = blue_height
 		pygame.draw.rect(
 			screen, YELLOW,
-			(yellow_x, yellow_y_start, 14, yellow_height), border_radius=7
+			(yellow_x, yellow_y_start, 14, yellow_height), border_radius=0
 		)
 		# Fill arena background with a soft gradient
 		arena_rect = pygame.Rect(MARGIN_LEFT, MARGIN_TOP, ARENA_WIDTH, ARENA_HEIGHT)
