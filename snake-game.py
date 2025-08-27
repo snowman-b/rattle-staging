@@ -122,7 +122,7 @@ def main():
 		screen.blit(title_surf, (title_x, title_y))
 		# Add instruction text under Time Trial
 		font_instr_left = pygame.font.SysFont("Avenir Next", 20)
-		instr_text_left1 = "Quickly find seven words"
+		instr_text_left1 = "Quickly find six words"
 		instr_text_left2 = "from the scrambled letters"
 		instr_surf_left1 = font_instr_left.render(instr_text_left1, True, (80, 80, 80))
 		instr_surf_left2 = font_instr_left.render(instr_text_left2, True, (80, 80, 80))
@@ -153,8 +153,8 @@ def main():
 		screen.blit(title_surf_right, (title_x_r, title_y))
 		# Add instruction text under Highest Score
 		font_instr_right = pygame.font.SysFont("Avenir Next", 20)
-		instr_text_right1 = "Find as many words as possible from"
-		instr_text_right2 = "the scrambled letters"
+		instr_text_right1 = "Find as many words as possible"
+		instr_text_right2 = "from the scrambled letters"
 		instr_surf_right1 = font_instr_right.render(instr_text_right1, True, (80, 80, 80))
 		instr_surf_right2 = font_instr_right.render(instr_text_right2, True, (80, 80, 80))
 		instr_x_right1 = right_center_x - instr_surf_right1.get_width()//2
