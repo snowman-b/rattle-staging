@@ -437,52 +437,32 @@ def main():
 		word_lengths = [1, 2, 3, 4, 5, 6]
 		box_size = 60
 		box_radius = 12
-		group_spacing = 60  # Space between groups
-		intra_spacing = 8   # Space between boxes in a group
+		group_spacing = 60
+		intra_spacing = 8
 		start_y = MARGIN_TOP + ARENA_HEIGHT + 80
-		# Split onto two lines
-		line1 = word_lengths[:3]
-		line2 = word_lengths[3:]
-		# Calculate total width for centering each line
-		def line_total_width(line):
-			return sum(line) * box_size + (sum(line) - len(line)) * intra_spacing + (len(line)-1) * group_spacing
-		total_width1 = line_total_width(line1)
-		start_x1 = MARGIN_LEFT + (ARENA_WIDTH - total_width1) // 2
-		x1 = start_x1
-		for length in line1:
-			for j in range(length):
-				rect = pygame.Rect(x1, start_y, box_size, box_size)
-				pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
-				pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
-				if found_words.get(length) and j < len(found_words[length]):
-					letter = found_words[length][j]
-					surf = font_box.render(letter, True, BLACK)
-				else:
-					surf = font_box.render('_', True, (120,120,120))
-				sx = rect.x + (box_size - surf.get_width())//2
-				sy = rect.y + (box_size - surf.get_height())//2
-				screen.blit(surf, (sx, sy))
-				x1 += box_size + (intra_spacing if j < length-1 else 0)
-			x1 += group_spacing if length != line1[-1] else 0
-		# Second line
-		total_width2 = line_total_width(line2)
-		start_x2 = MARGIN_LEFT + (ARENA_WIDTH - total_width2) // 2
-		x2 = start_x2
-		for length in line2:
-			for j in range(length):
-				rect = pygame.Rect(x2, start_y + 70, box_size, box_size)
-				pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
-				pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
-				if found_words.get(length) and j < len(found_words[length]):
-					letter = found_words[length][j]
-					surf = font_box.render(letter, True, BLACK)
-				else:
-					surf = font_box.render('_', True, (120,120,120))
-				sx = rect.x + (box_size - surf.get_width())//2
-				sy = rect.y + (box_size - surf.get_height())//2
-				screen.blit(surf, (sx, sy))
-				x2 += box_size + (intra_spacing if j < length-1 else 0)
-			x2 += group_spacing if length != line2[-1] else 0
+		# Define rows
+		rows = [[1,2,3], [4,5], [6]]
+		row_offsets = [0, 70, 140]
+		for row_idx, row in enumerate(rows):
+			total_boxes = sum(row)
+			total_width = total_boxes * box_size + (total_boxes - len(row)) * intra_spacing + (len(row)-1) * group_spacing
+			start_x = MARGIN_LEFT + (ARENA_WIDTH - total_width) // 2
+			x = start_x
+			for length in row:
+				for j in range(length):
+					rect = pygame.Rect(x, start_y + row_offsets[row_idx], box_size, box_size)
+					pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
+					pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
+					if found_words.get(length) and j < len(found_words[length]):
+						letter = found_words[length][j]
+						surf = font_box.render(letter, True, BLACK)
+					else:
+						surf = font_box.render('_', True, (120,120,120))
+					sx = rect.x + (box_size - surf.get_width())//2
+					sy = rect.y + (box_size - surf.get_height())//2
+					screen.blit(surf, (sx, sy))
+					x += box_size + (intra_spacing if j < length-1 else 0)
+				x += group_spacing if length != row[-1] else 0
 
 		# Draw leaderboard directly underneath the underscores
 		try:
