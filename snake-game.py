@@ -360,8 +360,11 @@ def main():
 		# Draw timer in right margin, moved up by 200 pixels
 		if not win:
 			elapsed_seconds = (pygame.time.get_ticks() - start_ticks) // 1000
-		font_timer = pygame.font.SysFont(None, 36, bold=True)
-		timer_surf = font_timer.render(f"Time: {elapsed_seconds}s", True, BLACK)
+		minutes = elapsed_seconds // 60
+		seconds = elapsed_seconds % 60
+		time_str = f"{minutes:02}:{seconds:02}"
+		font_timer = pygame.font.SysFont("Avenir Next", 32, bold=False)
+		timer_surf = font_timer.render(time_str, True, BLACK)
 		timer_x = blue_x + 20
 		timer_y = blue_y_start + blue_height//2 - timer_surf.get_height() - 210
 		screen.blit(timer_surf, (timer_x, timer_y))
