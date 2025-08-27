@@ -122,7 +122,7 @@ def main():
 		screen.blit(title_surf, (title_x, title_y))
 		# Add instruction text under Time Trial
 		font_instr_left = pygame.font.SysFont("Avenir Next", 20)
-		instr_text_left1 = "Quickly find seven words"
+		instr_text_left1 = "Quickly find six words"
 		instr_text_left2 = "from the scrambled letters"
 		instr_surf_left1 = font_instr_left.render(instr_text_left1, True, (80, 80, 80))
 		instr_surf_left2 = font_instr_left.render(instr_text_left2, True, (80, 80, 80))
@@ -153,8 +153,8 @@ def main():
 		screen.blit(title_surf_right, (title_x_r, title_y))
 		# Add instruction text under Highest Score
 		font_instr_right = pygame.font.SysFont("Avenir Next", 20)
-		instr_text_right1 = "Find as many words as possible from"
-		instr_text_right2 = "the scrambled letters"
+		instr_text_right1 = "Find as many words as possible"
+		instr_text_right2 = "from the scrambled letters"
 		instr_surf_right1 = font_instr_right.render(instr_text_right1, True, (80, 80, 80))
 		instr_surf_right2 = font_instr_right.render(instr_text_right2, True, (80, 80, 80))
 		instr_x_right1 = right_center_x - instr_surf_right1.get_width()//2
@@ -341,13 +341,15 @@ def main():
 		rattle_y = (MARGIN_TOP - rattle_surf.get_height()) // 2
 		screen.blit(shadow, (rattle_x+4, rattle_y+4))
 		screen.blit(rattle_surf, (rattle_x, rattle_y))
-		# Draw arena border as a thick rounded rectangle with gradient
+		# Draw arena border as a thick rectangle with gradient, no rounded corners
 		border_rect = pygame.Rect(MARGIN_LEFT-10, MARGIN_TOP-10, ARENA_WIDTH+20, ARENA_HEIGHT+20)
 		border_surf = pygame.Surface((border_rect.width, border_rect.height), pygame.SRCALPHA)
 		for i in range(10):
 			alpha = 180 - i*15
 			color = (30,30,30,alpha)
-			pygame.draw.rect(border_surf, color, border_surf.get_rect().inflate(-i*2,-i*2), border_radius=24)
+			pygame.draw.rect(border_surf, color, border_surf.get_rect().inflate(-i*2,-i*2), border_radius=0)
+		# Draw a solid dark border on top
+		pygame.draw.rect(border_surf, (10,10,10,255), border_surf.get_rect(), 4, border_radius=0)
 		screen.blit(border_surf, (border_rect.x, border_rect.y))
 		# Draw bright blue segment on right border (rounded)
 		blue_x = MARGIN_LEFT + ARENA_WIDTH
@@ -355,15 +357,18 @@ def main():
 		blue_height = 3*CELL_SIZE
 		pygame.draw.rect(
 			screen, BRIGHT_BLUE,
-			(blue_x, blue_y_start, 14, blue_height), border_radius=7
+			(blue_x, blue_y_start, 8, blue_height), border_radius=0
 		)
 		# Draw timer in right margin, moved up by 200 pixels
 		if not win:
 			elapsed_seconds = (pygame.time.get_ticks() - start_ticks) // 1000
-		font_timer = pygame.font.SysFont(None, 36, bold=True)
-		timer_surf = font_timer.render(f"Time: {elapsed_seconds}s", True, BLACK)
-		timer_x = blue_x + 20
-		timer_y = blue_y_start + blue_height//2 - timer_surf.get_height() - 210
+		minutes = elapsed_seconds // 60
+		seconds = elapsed_seconds % 60
+		time_str = f"{minutes:02}:{seconds:02}"
+		font_timer = pygame.font.SysFont("Avenir Next", 32, bold=False)
+		timer_surf = font_timer.render(time_str, True, BLACK)
+		timer_x = blue_x + 80
+		timer_y = blue_y_start + blue_height//2 - timer_surf.get_height() - 390
 		screen.blit(timer_surf, (timer_x, timer_y))
 
 		# Draw 'submit word' text in right margin, aligned with blue border
@@ -378,7 +383,7 @@ def main():
 		yellow_height = blue_height
 		pygame.draw.rect(
 			screen, YELLOW,
-			(yellow_x, yellow_y_start, 14, yellow_height), border_radius=7
+			(yellow_x, yellow_y_start, 14, yellow_height), border_radius=0
 		)
 		# Fill arena background with a soft gradient
 		arena_rect = pygame.Rect(MARGIN_LEFT, MARGIN_TOP, ARENA_WIDTH, ARENA_HEIGHT)
@@ -424,71 +429,59 @@ def main():
 		screen.blit(shadow, (14, 14))
 		screen.blit(score_surf, (10, 10))
 
-		# Draw word length underscores in the bottom margin, and fill with found words if any
+		# Draw word collection boxes grouped by word length
 		try:
-			font_underscore = pygame.font.SysFont("Avenir Next", 48, bold=True)
+			font_box = pygame.font.SysFont("Avenir Next", 48, bold=True)
 		except:
-			font_underscore = pygame.font.SysFont(None, 48, bold=True)
+			font_box = pygame.font.SysFont(None, 48, bold=True)
 		word_lengths = [1, 2, 3, 4, 5, 6]
-		spacing = 60
+		box_size = 60
+		box_radius = 12
+		group_spacing = 60
+		intra_spacing = 8
 		start_y = MARGIN_TOP + ARENA_HEIGHT + 80
-		# Split onto two lines
-		line1 = word_lengths[:3]  # 1,2,3
-		line2 = word_lengths[3:]  # 4,5,6
-		# Calculate total width for centering each line
-		surf_widths1 = []
-		for length in line1:
-			underscores = ' '.join(['_' for _ in range(length)])
-			surf = font_underscore.render(underscores, True, BLACK)
-			surf_widths1.append(surf.get_width())
-		total_width1 = sum(surf_widths1) + (len(line1)-1)*spacing
-		start_x1 = MARGIN_LEFT + (ARENA_WIDTH - total_width1) // 2
-		x1 = start_x1
-		for i, length in enumerate(line1):
-			underscores = ['_' for _ in range(length)]
-			if found_words.get(length):
-				for j, letter in enumerate(found_words[length]):
-					underscores[j] = letter
-			underscores_str = ' '.join(underscores)
-			surf = font_underscore.render(underscores_str, True, BLACK)
-			screen.blit(surf, (x1, start_y))
-			x1 += surf.get_width() + spacing
-		# Second line
-		surf_widths2 = []
-		for length in line2:
-			underscores = ' '.join(['_' for _ in range(length)])
-			surf = font_underscore.render(underscores, True, BLACK)
-			surf_widths2.append(surf.get_width())
-		total_width2 = sum(surf_widths2) + (len(line2)-1)*spacing
-		start_x2 = MARGIN_LEFT + (ARENA_WIDTH - total_width2) // 2
-		x2 = start_x2
-		for i, length in enumerate(line2):
-			underscores = ['_' for _ in range(length)]
-			if found_words.get(length):
-				for j, letter in enumerate(found_words[length]):
-					underscores[j] = letter
-			underscores_str = ' '.join(underscores)
-			surf = font_underscore.render(underscores_str, True, BLACK)
-			screen.blit(surf, (x2, start_y + 70))
-			x2 += surf.get_width() + spacing
+		# Define rows
+		rows = [[1,2,3], [4,5], [6]]
+		row_offsets = [0, 70, 140]
+		for row_idx, row in enumerate(rows):
+			total_boxes = sum(row)
+			total_width = total_boxes * box_size + (total_boxes - len(row)) * intra_spacing + (len(row)-1) * group_spacing
+			start_x = MARGIN_LEFT + (ARENA_WIDTH - total_width) // 2
+			x = start_x
+			for length in row:
+				for j in range(length):
+					rect = pygame.Rect(x, start_y + row_offsets[row_idx], box_size, box_size)
+					pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
+					pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
+					if found_words.get(length) and j < len(found_words[length]):
+						letter = found_words[length][j]
+						surf = font_box.render(letter, True, BLACK)
+					else:
+						surf = font_box.render('_', True, (120,120,120))
+					sx = rect.x + (box_size - surf.get_width())//2
+					sy = rect.y + (box_size - surf.get_height())//2
+					screen.blit(surf, (sx, sy))
+					x += box_size + (intra_spacing if j < length-1 else 0)
+				x += group_spacing if length != row[-1] else 0
 
 		# Draw leaderboard directly underneath the underscores
-		try:
-			font_leader = pygame.font.SysFont("Avenir Next", 20, bold=True)
-		except:
-			font_leader = pygame.font.SysFont(None, 20, bold=True)
-		leaderboard_lines = [
-			"LEADERBOARD",
-			"benja       0:25",
-			"WCasp    1:44",
-			"DBrandt  1:48"
-		]
-		leader_y = start_y + 170  # Move down another 20 pixels
-		for line in leaderboard_lines:
-			surf = font_leader.render(line, True, BLACK)
-			surf_x = (WIDTH - surf.get_width()) // 2
-			screen.blit(surf, (surf_x, leader_y))
-			leader_y += surf.get_height() + 5
+		# Leaderboard rendering (commented out)
+		# try:
+		# 	font_leader = pygame.font.SysFont("Avenir Next", 20, bold=True)
+		# except:
+		# 	font_leader = pygame.font.SysFont(None, 20, bold=True)
+		# leaderboard_lines = [
+		# 	"LEADERBOARD",
+		# 	"benja       0:25",
+		# 	"WCasp    1:44",
+		# 	"DBrandt  1:48"
+		# ]
+		# leader_y = start_y + 170  # Move down another 20 pixels
+		# for line in leaderboard_lines:
+		# 	surf = font_leader.render(line, True, BLACK)
+		# 	surf_x = (WIDTH - surf.get_width()) // 2
+		# 	screen.blit(surf, (surf_x, leader_y))
+		# 	leader_y += surf.get_height() + 5
 
 		# Update the display every frame
 		pygame.display.flip()
