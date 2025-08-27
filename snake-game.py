@@ -365,8 +365,8 @@ def main():
 		time_str = f"{minutes:02}:{seconds:02}"
 		font_timer = pygame.font.SysFont("Avenir Next", 32, bold=False)
 		timer_surf = font_timer.render(time_str, True, BLACK)
-		timer_x = blue_x + 20
-		timer_y = blue_y_start + blue_height//2 - timer_surf.get_height() - 210
+		timer_x = blue_x + 80
+		timer_y = blue_y_start + blue_height//2 - timer_surf.get_height() - 390
 		screen.blit(timer_surf, (timer_x, timer_y))
 
 		# Draw 'submit word' text in right margin, aligned with blue border
