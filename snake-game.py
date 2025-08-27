@@ -429,53 +429,60 @@ def main():
 		screen.blit(shadow, (14, 14))
 		screen.blit(score_surf, (10, 10))
 
-		# Draw word length underscores in the bottom margin, and fill with found words if any
+		# Draw word collection boxes grouped by word length
 		try:
-			font_underscore = pygame.font.SysFont("Avenir Next", 48, bold=True)
+			font_box = pygame.font.SysFont("Avenir Next", 48, bold=True)
 		except:
-			font_underscore = pygame.font.SysFont(None, 48, bold=True)
+			font_box = pygame.font.SysFont(None, 48, bold=True)
 		word_lengths = [1, 2, 3, 4, 5, 6]
-		spacing = 60
+		box_size = 60
+		box_radius = 12
+		group_spacing = 60  # Space between groups
+		intra_spacing = 8   # Space between boxes in a group
 		start_y = MARGIN_TOP + ARENA_HEIGHT + 80
 		# Split onto two lines
-		line1 = word_lengths[:3]  # 1,2,3
-		line2 = word_lengths[3:]  # 4,5,6
+		line1 = word_lengths[:3]
+		line2 = word_lengths[3:]
 		# Calculate total width for centering each line
-		surf_widths1 = []
-		for length in line1:
-			underscores = ' '.join(['_' for _ in range(length)])
-			surf = font_underscore.render(underscores, True, BLACK)
-			surf_widths1.append(surf.get_width())
-		total_width1 = sum(surf_widths1) + (len(line1)-1)*spacing
+		def line_total_width(line):
+			return sum(line) * box_size + (sum(line) - len(line)) * intra_spacing + (len(line)-1) * group_spacing
+		total_width1 = line_total_width(line1)
 		start_x1 = MARGIN_LEFT + (ARENA_WIDTH - total_width1) // 2
 		x1 = start_x1
-		for i, length in enumerate(line1):
-			underscores = ['_' for _ in range(length)]
-			if found_words.get(length):
-				for j, letter in enumerate(found_words[length]):
-					underscores[j] = letter
-			underscores_str = ' '.join(underscores)
-			surf = font_underscore.render(underscores_str, True, BLACK)
-			screen.blit(surf, (x1, start_y))
-			x1 += surf.get_width() + spacing
+		for length in line1:
+			for j in range(length):
+				rect = pygame.Rect(x1, start_y, box_size, box_size)
+				pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
+				pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
+				if found_words.get(length) and j < len(found_words[length]):
+					letter = found_words[length][j]
+					surf = font_box.render(letter, True, BLACK)
+				else:
+					surf = font_box.render('_', True, (120,120,120))
+				sx = rect.x + (box_size - surf.get_width())//2
+				sy = rect.y + (box_size - surf.get_height())//2
+				screen.blit(surf, (sx, sy))
+				x1 += box_size + (intra_spacing if j < length-1 else 0)
+			x1 += group_spacing if length != line1[-1] else 0
 		# Second line
-		surf_widths2 = []
-		for length in line2:
-			underscores = ' '.join(['_' for _ in range(length)])
-			surf = font_underscore.render(underscores, True, BLACK)
-			surf_widths2.append(surf.get_width())
-		total_width2 = sum(surf_widths2) + (len(line2)-1)*spacing
+		total_width2 = line_total_width(line2)
 		start_x2 = MARGIN_LEFT + (ARENA_WIDTH - total_width2) // 2
 		x2 = start_x2
-		for i, length in enumerate(line2):
-			underscores = ['_' for _ in range(length)]
-			if found_words.get(length):
-				for j, letter in enumerate(found_words[length]):
-					underscores[j] = letter
-			underscores_str = ' '.join(underscores)
-			surf = font_underscore.render(underscores_str, True, BLACK)
-			screen.blit(surf, (x2, start_y + 70))
-			x2 += surf.get_width() + spacing
+		for length in line2:
+			for j in range(length):
+				rect = pygame.Rect(x2, start_y + 70, box_size, box_size)
+				pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
+				pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
+				if found_words.get(length) and j < len(found_words[length]):
+					letter = found_words[length][j]
+					surf = font_box.render(letter, True, BLACK)
+				else:
+					surf = font_box.render('_', True, (120,120,120))
+				sx = rect.x + (box_size - surf.get_width())//2
+				sy = rect.y + (box_size - surf.get_height())//2
+				screen.blit(surf, (sx, sy))
+				x2 += box_size + (intra_spacing if j < length-1 else 0)
+			x2 += group_spacing if length != line2[-1] else 0
 
 		# Draw leaderboard directly underneath the underscores
 		try:
