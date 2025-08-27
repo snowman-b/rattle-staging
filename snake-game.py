@@ -70,6 +70,8 @@ def get_fixed_foods():
 	return foods
 
 def main():
+	# Track invalid word letters for garbage can
+	garbage_letters = []
 	global DKGREEN
 	# Timer setup
 	pygame.init()
@@ -283,6 +285,9 @@ def main():
 				l = len(word)
 				if l in found_words and not found_words[l] and is_valid_word(word):
 					found_words[l] = word
+				else:
+					# Add invalid letters to garbage can
+					garbage_letters += list(word)
 			if not endless_mode:
 				# Win only if all 6 word lengths are filled
 				if all(found_words.values()):
@@ -463,6 +468,32 @@ def main():
 					screen.blit(surf, (sx, sy))
 					x += box_size + (intra_spacing if j < length-1 else 0)
 				x += group_spacing if length != row[-1] else 0
+
+		# Draw garbage can underneath word boxes
+		garbage_can_w = 90
+		garbage_can_h = 120
+		garbage_can_x = MARGIN_LEFT + (ARENA_WIDTH//2) - (garbage_can_w//2)
+		garbage_can_y = start_y + row_offsets[-1] + 80
+		# Draw can body
+		pygame.draw.rect(screen, (120,120,120), (garbage_can_x, garbage_can_y, garbage_can_w, garbage_can_h), border_radius=18)
+		pygame.draw.rect(screen, (40,40,40), (garbage_can_x, garbage_can_y, garbage_can_w, garbage_can_h), 4, border_radius=18)
+		# Draw can lid
+		pygame.draw.rect(screen, (80,80,80), (garbage_can_x-8, garbage_can_y-18, garbage_can_w+16, 22), border_radius=10)
+		pygame.draw.rect(screen, (40,40,40), (garbage_can_x-8, garbage_can_y-18, garbage_can_w+16, 22), 3, border_radius=10)
+		# Draw handle
+		pygame.draw.rect(screen, (60,60,60), (garbage_can_x+garbage_can_w//2-14, garbage_can_y-28, 28, 10), border_radius=5)
+		# Draw overlapping, lopsided, rotated invalid letters inside can
+		try:
+			font_garbage = pygame.font.SysFont("Avenir Next", 32, bold=True)
+		except:
+			font_garbage = pygame.font.SysFont(None, 32, bold=True)
+		for i, letter in enumerate(garbage_letters):
+			lx = garbage_can_x + 10 + random.randint(-10, garbage_can_w-30)
+			ly = garbage_can_y + 10 + random.randint(-10, garbage_can_h-40)
+			angle = random.randint(-35, 35)
+			surf = font_garbage.render(letter, True, (80,80,80))
+			surf = pygame.transform.rotate(surf, angle)
+			screen.blit(surf, (lx, ly))
 
 		# Draw leaderboard directly underneath the underscores
 		# Leaderboard rendering (commented out)
