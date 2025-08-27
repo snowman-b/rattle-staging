@@ -473,27 +473,49 @@ def main():
 		garbage_can_w = 90
 		garbage_can_h = 120
 		garbage_can_x = MARGIN_LEFT + (ARENA_WIDTH//2) - (garbage_can_w//2)
-		garbage_can_y = start_y + row_offsets[-1] + 80
-		# Draw can body
-		pygame.draw.rect(screen, (120,120,120), (garbage_can_x, garbage_can_y, garbage_can_w, garbage_can_h), border_radius=18)
-		pygame.draw.rect(screen, (40,40,40), (garbage_can_x, garbage_can_y, garbage_can_w, garbage_can_h), 4, border_radius=18)
-		# Draw can lid
-		pygame.draw.rect(screen, (80,80,80), (garbage_can_x-8, garbage_can_y-18, garbage_can_w+16, 22), border_radius=10)
-		pygame.draw.rect(screen, (40,40,40), (garbage_can_x-8, garbage_can_y-18, garbage_can_w+16, 22), 3, border_radius=10)
-		# Draw handle
-		pygame.draw.rect(screen, (60,60,60), (garbage_can_x+garbage_can_w//2-14, garbage_can_y-28, 28, 10), border_radius=5)
+		garbage_can_y = start_y + row_offsets[-1] + 100  # Move down 20 pixels
+		# Draw can body as a trapezoid (brim wider than base)
+		brim_w = garbage_can_w + 30
+		base_w = garbage_can_w - 20
+		brim_x = garbage_can_x - 15
+		base_x = garbage_can_x + 10
+		brim_y = garbage_can_y
+		base_y = garbage_can_y + garbage_can_h
+		points = [
+			(brim_x, brim_y),
+			(brim_x + brim_w, brim_y),
+			(base_x + base_w, base_y),
+			(base_x, base_y)
+		]
+		pygame.draw.polygon(screen, (180,150,90), points)
+		pygame.draw.polygon(screen, (100,80,40), points, 4)
+		# Wicker-style pattern: draw horizontal and vertical lines
+		for i in range(8):
+			y = brim_y + int((base_y - brim_y) * i / 7)
+			x1 = brim_x + int((brim_w - base_w) * (base_y - y) / (base_y - brim_y) / 2)
+			x2 = brim_x + brim_w - int((brim_w - base_w) * (base_y - y) / (base_y - brim_y) / 2)
+			pygame.draw.line(screen, (140,110,60), (x1, y), (x2, y), 2)
+		for i in range(7):
+			frac = i / 6
+			x = brim_x + int(frac * brim_w)
+			y1 = brim_y
+			y2 = base_y
+			pygame.draw.line(screen, (140,110,60), (x, y1), (base_x + int(frac * base_w), y2), 2)
 		# Draw overlapping, lopsided, rotated invalid letters inside can
 		try:
 			font_garbage = pygame.font.SysFont("Avenir Next", 32, bold=True)
 		except:
 			font_garbage = pygame.font.SysFont(None, 32, bold=True)
 		for i, letter in enumerate(garbage_letters):
-			lx = garbage_can_x + 10 + random.randint(-10, garbage_can_w-30)
-			ly = garbage_can_y + 10 + random.randint(-10, garbage_can_h-40)
+			# Random position inside trapezoid
+			frac_x = random.uniform(0.15, 0.85)
+			frac_y = random.uniform(0.1, 0.85)
+			x = brim_x + frac_x * brim_w - 16
+			y = brim_y + frac_y * (base_y - brim_y) - 16
 			angle = random.randint(-35, 35)
 			surf = font_garbage.render(letter, True, (80,80,80))
 			surf = pygame.transform.rotate(surf, angle)
-			screen.blit(surf, (lx, ly))
+			screen.blit(surf, (int(x), int(y)))
 
 		# Draw leaderboard directly underneath the underscores
 		# Leaderboard rendering (commented out)
