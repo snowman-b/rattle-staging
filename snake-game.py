@@ -8,11 +8,12 @@ def load_six_letter_word():
 	# You can use '/usr/share/dict/words' on macOS or provide your own
 	dict_path = '/usr/share/dict/words'
 	try:
+		from wordfreq import zipf_frequency
 		with open(dict_path) as f:
-			words = [w.strip() for w in f if len(w.strip()) == 6 and w.strip().isalpha() and w.strip().islower()]
+			words = [w.strip() for w in f if len(w.strip()) == 6 and w.strip().isalpha() and w.strip().islower() and ('a' in w or 'i' in w) and zipf_frequency(w.strip(), 'en') > 3.5]
 	except Exception:
 		# Fallback: use a hardcoded list if file not found
-		words = ['planet', 'forest', 'castle', 'rocket', 'animal', 'bridge', 'circle', 'danger', 'friend', 'garden']
+		words = [w for w in ['planet', 'animal', 'danger', 'friend', 'garden'] if 'a' in w or 'i' in w]
 	return random.choice(words)
 
 
