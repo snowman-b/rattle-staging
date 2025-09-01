@@ -462,7 +462,7 @@ def main():
 				else:
 					surf = font_box.render('_', True, (120,120,120))
 				sx = rect.x + (box_size - surf.get_width())//2
-				sy = rect.y + (box_size - surf.get_height())//2
+				sy = rect.y + (box_size - surf.get_height())//2 + 2
 				screen.blit(surf, (sx, sy))
 			list_y += box_size + 12
 
