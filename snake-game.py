@@ -331,9 +331,25 @@ def main():
 		# Game over: wall or self (except for left wall emergence via portal)
 		# Only allow passing through left wall if just teleported by portal
 		if not portal_used:
-			if new_head[0] < 0 or new_head[0] >= GRID_WIDTH or new_head[1] < 0 or new_head[1] >= GRID_HEIGHT or new_head in snake:
-				running = False
-				continue
+			collided = (new_head[0] < 0 or new_head[0] >= GRID_WIDTH or new_head[1] < 0 or new_head[1] >= GRID_HEIGHT or new_head in snake)
+			if collided:
+				if not endless_mode:  # Only for Time Trial
+					# Wait 2000 ms before respawn
+					pygame.display.flip()
+					pygame.time.wait(2000)
+					# Respawn snake and food as if starting a new game, but retain submitted words, timer, and score
+					start_y = GRID_HEIGHT - 3
+					snake = [[3, start_y], [2, start_y], [1, start_y]]
+					direction = (1, 0)
+					direction_queue = []
+					foods = [f.copy() for f in initial_foods]
+					collected_letters = []
+					pending_portal_respawn = False
+					# Continue running (clock and score are retained)
+					continue
+				else:
+					running = False
+					continue
 
 		snake.insert(0, new_head)
 
