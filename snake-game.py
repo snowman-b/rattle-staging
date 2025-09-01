@@ -413,15 +413,14 @@ def main():
 				x = MARGIN_LEFT + segment[0]*CELL_SIZE + (CELL_SIZE - letter_surf.get_width())//2
 				y = MARGIN_TOP + segment[1]*CELL_SIZE + (CELL_SIZE - letter_surf.get_height())//2
 				screen.blit(letter_surf, (x, y))
-		# Draw food as rounded, shaded, and with modern font
+		# Draw food as black letters, standing alone
 		for food in foods:
 			fx, fy, fchar = food
-			draw_rounded_rect(screen, (50, 50, 50), (fx, fy), radius=10, shadow=True)
 			try:
-				font = pygame.font.SysFont("Avenir Next", 18, bold=True)
+				font = pygame.font.SysFont("Avenir Next", 24, bold=True)
 			except:
-				font = pygame.font.SysFont(None, 18, bold=True)
-			char_surf = font.render(str(fchar).upper(), True, (255,255,255))
+				font = pygame.font.SysFont(None, 24, bold=True)
+			char_surf = font.render(str(fchar).upper(), True, BLACK)
 			x = MARGIN_LEFT + fx*CELL_SIZE + (CELL_SIZE - char_surf.get_width())//2
 			y = MARGIN_TOP + fy*CELL_SIZE + (CELL_SIZE - char_surf.get_height())//2
 			screen.blit(char_surf, (x, y))
