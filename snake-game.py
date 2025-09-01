@@ -274,9 +274,10 @@ def main():
 		blue_y_end = GRID_HEIGHT - 1
 		yellow_x = 0
 
-		# If snake hits blue border section, teleport to yellow border at same y ONLY if moving right
+		# If snake head is on blue border section, teleport next frame
 		portal_used = False
-		if new_head[0] == blue_x and blue_y_start <= new_head[1] < blue_y_end and direction[0] == 1:
+		if snake[0][0] == blue_x and blue_y_start <= snake[0][1] < blue_y_end and direction[0] == 1:
+			# Teleport after drawing on blue
 			new_head[0] = yellow_x
 			portal_used = True
 			# On portal, submit collected letters to bottom margin
