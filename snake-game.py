@@ -439,14 +439,14 @@ def main():
 
 		# Draw word collection boxes grouped by word length
 		try:
-			font_box = pygame.font.SysFont("Avenir Next", 48, bold=True)
+			font_box = pygame.font.SysFont("Avenir Next", 18, bold=True)
 		except:
-			font_box = pygame.font.SysFont(None, 48, bold=True)
+			font_box = pygame.font.SysFont(None, 18, bold=True)
 		word_lengths = [1, 2, 3, 4, 5, 6]
-		box_size = 60
-		box_radius = 12
-		group_spacing = 60
-		intra_spacing = 8
+		box_size = CELL_SIZE + 8  # Only a little bigger than snake segment
+		box_radius = 8
+		group_spacing = 32
+		intra_spacing = 4
 		start_y = MARGIN_TOP + ARENA_HEIGHT + 80
 		# Define rows
 		rows = [[1,2,3], [4,5], [6]]
