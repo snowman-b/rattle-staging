@@ -406,12 +406,15 @@ def main():
 			draw_rounded_rect(screen, color, segment, radius=8, shadow=True)
 			if i < m:
 				try:
-					font_letter = pygame.font.SysFont("Avenir Next", 24, bold=True)
+					font_letter = pygame.font.SysFont("Avenir Next", 18, bold=True)
 				except:
-					font_letter = pygame.font.SysFont(None, 24, bold=True)
-				letter_surf = font_letter.render(collected_letters[-(i+1)], True, (255,255,255))
-				x = MARGIN_LEFT + segment[0]*CELL_SIZE + (CELL_SIZE - letter_surf.get_width())//2
-				y = MARGIN_TOP + segment[1]*CELL_SIZE + (CELL_SIZE - letter_surf.get_height())//2
+					font_letter = pygame.font.SysFont(None, 18, bold=True)
+				letter_surf = font_letter.render(collected_letters[-(i+1)].upper(), True, BLACK)
+				# Center the letter in the segment
+				seg_x = MARGIN_LEFT + segment[0]*CELL_SIZE
+				seg_y = MARGIN_TOP + segment[1]*CELL_SIZE
+				x = seg_x + (CELL_SIZE - letter_surf.get_width()) // 2 + 1
+				y = seg_y + (CELL_SIZE - letter_surf.get_height()) // 2 + 3
 				screen.blit(letter_surf, (x, y))
 		# Draw food as black letters, standing alone
 		for food in foods:
