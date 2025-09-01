@@ -462,7 +462,7 @@ def main():
 					pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
 					pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
 					if found_words.get(length) and j < len(found_words[length]):
-						letter = found_words[length][j]
+						letter = found_words[length][j].upper()
 						surf = font_box.render(letter, True, BLACK)
 					else:
 						surf = font_box.render('_', True, (120,120,120))
