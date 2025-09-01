@@ -448,35 +448,30 @@ def main():
 		group_spacing = 32
 		intra_spacing = 4
 		start_y = MARGIN_TOP + ARENA_HEIGHT + 80
-		# Define rows
-		rows = [[1,2,3], [4,5], [6]]
-		row_offsets = [0, 70, 140]
-		for row_idx, row in enumerate(rows):
-			total_boxes = sum(row)
-			total_width = total_boxes * box_size + (total_boxes - len(row)) * intra_spacing + (len(row)-1) * group_spacing
-			start_x = MARGIN_LEFT + (ARENA_WIDTH - total_width) // 2
-			x = start_x
-			for length in row:
-				for j in range(length):
-					rect = pygame.Rect(x, start_y + row_offsets[row_idx], box_size, box_size)
-					pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
-					pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
-					if found_words.get(length) and j < len(found_words[length]):
-						letter = found_words[length][j].upper()
-						surf = font_box.render(letter, True, BLACK)
-					else:
-						surf = font_box.render('_', True, (120,120,120))
-					sx = rect.x + (box_size - surf.get_width())//2
-					sy = rect.y + (box_size - surf.get_height())//2
-					screen.blit(surf, (sx, sy))
-					x += box_size + (intra_spacing if j < length-1 else 0)
-				x += group_spacing if length != row[-1] else 0
+		# Display submitted word list vertically, one word per line, from 1 to 6 letters
+		list_x = MARGIN_LEFT + ARENA_WIDTH + 40 - 650
+		list_y = MARGIN_TOP + 40 + 400
+		for length in range(1, 7):
+			for j in range(length):
+				rect = pygame.Rect(list_x + j * (box_size + intra_spacing), list_y, box_size, box_size)
+				pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
+				pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
+				if found_words.get(length) and j < len(found_words[length]):
+					letter = found_words[length][j].upper()
+					surf = font_box.render(letter, True, BLACK)
+				else:
+					surf = font_box.render('_', True, (120,120,120))
+				sx = rect.x + (box_size - surf.get_width())//2
+				sy = rect.y + (box_size - surf.get_height())//2
+				screen.blit(surf, (sx, sy))
+			list_y += box_size + 12
 
 		# Draw garbage can underneath word boxes
 		garbage_can_w = 90
 		garbage_can_h = 120
 		garbage_can_x = MARGIN_LEFT + (ARENA_WIDTH//2) - (garbage_can_w//2)
-		garbage_can_y = start_y + row_offsets[-1] + 100  # Move down 20 pixels
+		# Place garbage can below the last word list row
+		garbage_can_y = list_y + 40  # Move down 40 pixels after last row
 		# Draw can body as a trapezoid (brim wider than base)
 		brim_w = garbage_can_w + 30
 		base_w = garbage_can_w - 20
