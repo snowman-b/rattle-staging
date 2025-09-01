@@ -3,18 +3,25 @@ YELLOW = (255, 215, 0)
 # Add bright blue color
 BRIGHT_BLUE = (0, 150, 255)
 
-def load_six_letter_word():
-	# Try to load a random six-letter word from a local dictionary file
-	# You can use '/usr/share/dict/words' on macOS or provide your own
-	dict_path = '/usr/share/dict/words'
+import csv
+def load_six_letter_word_for_today():
+	import datetime
+	today = datetime.datetime.now().strftime('%Y-%m-%d')
+	csv_path = os.path.join(os.path.dirname(__file__), 'word_of_the_day.csv')
+	word = None
 	try:
-		from wordfreq import zipf_frequency
-		with open(dict_path) as f:
-			words = [w.strip() for w in f if len(w.strip()) == 6 and w.strip().isalpha() and w.strip().islower() and ('a' in w or 'i' in w) and zipf_frequency(w.strip(), 'en') > 3.5]
+		with open(csv_path, newline='') as csvfile:
+			reader = csv.DictReader(csvfile)
+			for row in reader:
+				if row['date'] == today:
+					word = row['word']
+					break
 	except Exception:
-		# Fallback: use a hardcoded list if file not found
-		words = [w for w in ['planet', 'animal', 'danger', 'friend', 'garden'] if 'a' in w or 'i' in w]
-	return random.choice(words)
+		pass
+	if not word:
+		# Fallback: pick a default word
+		word = 'animal'
+	return word
 
 
 
@@ -72,16 +79,20 @@ def draw_rounded_rect(screen, color, pos, radius=8, shadow=True, shadow_offset=3
 
 import random
 def get_fixed_foods():
-	word = load_six_letter_word()
-	chars = list(word)
-	random.shuffle(chars)
-	row = GRID_HEIGHT // 2  # Middle row
-	spacing = GRID_WIDTH // (len(chars) + 1)
-	foods = []
-	for i, char in enumerate(chars):
-		x = spacing * (i + 1)
-		foods.append([x, row, char])
-	return foods
+		word = load_six_letter_word_for_today()
+		# Arrange letters identically for each date by using a fixed seed
+		import datetime
+		today = datetime.datetime.now().strftime('%Y-%m-%d')
+		rng = random.Random(today)
+		chars = list(word)
+		rng.shuffle(chars)
+		row = GRID_HEIGHT // 2  # Middle row
+		spacing = GRID_WIDTH // (len(chars) + 1)
+		foods = []
+		for i, char in enumerate(chars):
+			x = spacing * (i + 1)
+			foods.append([x, row, char])
+		return foods
 
 def main():
 	# Track invalid word letters for garbage can
