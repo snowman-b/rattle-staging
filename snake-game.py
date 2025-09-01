@@ -6,8 +6,8 @@ BRIGHT_BLUE = (0, 150, 255)
 import csv
 def load_six_letter_word_for_today():
 	import datetime
-	today = datetime.datetime.now().strftime('%Y-%m-%d')
-	csv_path = os.path.join(os.path.dirname(__file__), 'word_of_the_day.csv')
+	today = datetime.datetime.now().strftime('%-m/%-d/%Y')
+	csv_path = os.path.join(os.path.dirname(__file__), 'word-list.csv')
 	word = None
 	try:
 		with open(csv_path, newline='') as csvfile:
