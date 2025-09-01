@@ -442,16 +442,16 @@ def main():
 			font_box = pygame.font.SysFont("Avenir Next", 18, bold=True)
 		except:
 			font_box = pygame.font.SysFont(None, 18, bold=True)
-		word_lengths = [1, 2, 3, 4, 5, 6]
+		word_lengths = [6, 5, 4, 3, 2, 1]
 		box_size = CELL_SIZE + 8  # Only a little bigger than snake segment
 		box_radius = 8
 		group_spacing = 32
 		intra_spacing = 4
 		start_y = MARGIN_TOP + ARENA_HEIGHT + 80
-		# Display submitted word list vertically, one word per line, from 1 to 6 letters
+		# Display submitted word list vertically, one word per line, from 6 to 1 letters
 		list_x = MARGIN_LEFT + ARENA_WIDTH + 40 - 650
 		list_y = MARGIN_TOP + 40 + 400
-		for length in range(1, 7):
+		for length in word_lengths:
 			for j in range(length):
 				rect = pygame.Rect(list_x + j * (box_size + intra_spacing), list_y, box_size, box_size)
 				pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
