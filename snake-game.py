@@ -402,7 +402,7 @@ def main():
 		n = len(snake)
 		m = len(collected_letters)
 		for i, segment in enumerate(snake):
-			color = (60, 180, 90) if i == 0 else (80, 200, 120)
+			color = (80, 200, 120)
 			draw_rounded_rect(screen, color, segment, radius=8, shadow=True)
 			if i < m:
 				try:
