@@ -2,7 +2,19 @@
 YELLOW = (255, 215, 0)
 # Add bright blue color
 BRIGHT_BLUE = (0, 150, 255)
-FOOD_CHARS = list("rattle")
+
+def load_six_letter_word():
+	# Try to load a random six-letter word from a local dictionary file
+	# You can use '/usr/share/dict/words' on macOS or provide your own
+	dict_path = '/usr/share/dict/words'
+	try:
+		with open(dict_path) as f:
+			words = [w.strip() for w in f if len(w.strip()) == 6 and w.strip().isalpha() and w.strip().islower()]
+	except Exception:
+		# Fallback: use a hardcoded list if file not found
+		words = ['planet', 'forest', 'castle', 'rocket', 'animal', 'bridge', 'circle', 'danger', 'friend', 'garden']
+	return random.choice(words)
+
 
 
 # Classic Snake game using Pygame
@@ -59,7 +71,8 @@ def draw_rounded_rect(screen, color, pos, radius=8, shadow=True, shadow_offset=3
 
 import random
 def get_fixed_foods():
-	chars = FOOD_CHARS[:]
+	word = load_six_letter_word()
+	chars = list(word)
 	random.shuffle(chars)
 	row = GRID_HEIGHT // 2  # Middle row
 	spacing = GRID_WIDTH // (len(chars) + 1)
