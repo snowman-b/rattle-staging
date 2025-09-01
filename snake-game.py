@@ -2,7 +2,27 @@
 YELLOW = (255, 215, 0)
 # Add bright blue color
 BRIGHT_BLUE = (0, 150, 255)
-FOOD_CHARS = list("rattle")
+
+import csv
+def load_six_letter_word_for_today():
+	import datetime
+	today = datetime.datetime.now().strftime('%Y-%m-%d')
+	csv_path = os.path.join(os.path.dirname(__file__), 'word_of_the_day.csv')
+	word = None
+	try:
+		with open(csv_path, newline='') as csvfile:
+			reader = csv.DictReader(csvfile)
+			for row in reader:
+				if row['date'] == today:
+					word = row['word']
+					break
+	except Exception:
+		pass
+	if not word:
+		# Fallback: pick a default word
+		word = 'animal'
+	return word
+
 
 
 # Classic Snake game using Pygame
@@ -59,15 +79,20 @@ def draw_rounded_rect(screen, color, pos, radius=8, shadow=True, shadow_offset=3
 
 import random
 def get_fixed_foods():
-	chars = FOOD_CHARS[:]
-	random.shuffle(chars)
-	row = GRID_HEIGHT // 2  # Middle row
-	spacing = GRID_WIDTH // (len(chars) + 1)
-	foods = []
-	for i, char in enumerate(chars):
-		x = spacing * (i + 1)
-		foods.append([x, row, char])
-	return foods
+		word = load_six_letter_word_for_today()
+		# Arrange letters identically for each date by using a fixed seed
+		import datetime
+		today = datetime.datetime.now().strftime('%Y-%m-%d')
+		rng = random.Random(today)
+		chars = list(word)
+		rng.shuffle(chars)
+		row = GRID_HEIGHT // 2  # Middle row
+		spacing = GRID_WIDTH // (len(chars) + 1)
+		foods = []
+		for i, char in enumerate(chars):
+			x = spacing * (i + 1)
+			foods.append([x, row, char])
+		return foods
 
 def main():
 	# Track invalid word letters for garbage can
