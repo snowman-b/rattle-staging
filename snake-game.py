@@ -274,9 +274,10 @@ def main():
 		blue_y_end = GRID_HEIGHT - 1
 		yellow_x = 0
 
-		# If snake hits blue border section, teleport to yellow border at same y ONLY if moving right
+		# If snake head is on blue border section, teleport next frame
 		portal_used = False
-		if new_head[0] == blue_x and blue_y_start <= new_head[1] < blue_y_end and direction[0] == 1:
+		if snake[0][0] == blue_x and blue_y_start <= snake[0][1] < blue_y_end and direction[0] == 1:
+			# Teleport after drawing on blue
 			new_head[0] = yellow_x
 			portal_used = True
 			# On portal, submit collected letters to bottom margin
@@ -401,26 +402,28 @@ def main():
 		n = len(snake)
 		m = len(collected_letters)
 		for i, segment in enumerate(snake):
-			color = (60, 180, 90) if i == 0 else (80, 200, 120)
+			color = (80, 200, 120)
 			draw_rounded_rect(screen, color, segment, radius=8, shadow=True)
 			if i < m:
 				try:
-					font_letter = pygame.font.SysFont("Avenir Next", 24, bold=True)
+					font_letter = pygame.font.SysFont("Avenir Next", 18, bold=True)
 				except:
-					font_letter = pygame.font.SysFont(None, 24, bold=True)
-				letter_surf = font_letter.render(collected_letters[-(i+1)], True, (255,255,255))
-				x = MARGIN_LEFT + segment[0]*CELL_SIZE + (CELL_SIZE - letter_surf.get_width())//2
-				y = MARGIN_TOP + segment[1]*CELL_SIZE + (CELL_SIZE - letter_surf.get_height())//2
+					font_letter = pygame.font.SysFont(None, 18, bold=True)
+				letter_surf = font_letter.render(collected_letters[-(i+1)].upper(), True, BLACK)
+				# Center the letter in the segment
+				seg_x = MARGIN_LEFT + segment[0]*CELL_SIZE
+				seg_y = MARGIN_TOP + segment[1]*CELL_SIZE
+				x = seg_x + (CELL_SIZE - letter_surf.get_width()) // 2 + 1
+				y = seg_y + (CELL_SIZE - letter_surf.get_height()) // 2 + 3
 				screen.blit(letter_surf, (x, y))
-		# Draw food as rounded, shaded, and with modern font
+		# Draw food as black letters, standing alone
 		for food in foods:
 			fx, fy, fchar = food
-			draw_rounded_rect(screen, (50, 50, 50), (fx, fy), radius=10, shadow=True)
 			try:
-				font = pygame.font.SysFont("Avenir Next", 18, bold=True)
+				font = pygame.font.SysFont("Avenir Next", 24, bold=True)
 			except:
-				font = pygame.font.SysFont(None, 18, bold=True)
-			char_surf = font.render(str(fchar).upper(), True, (255,255,255))
+				font = pygame.font.SysFont(None, 24, bold=True)
+			char_surf = font.render(str(fchar).upper(), True, BLACK)
 			x = MARGIN_LEFT + fx*CELL_SIZE + (CELL_SIZE - char_surf.get_width())//2
 			y = MARGIN_TOP + fy*CELL_SIZE + (CELL_SIZE - char_surf.get_height())//2
 			screen.blit(char_surf, (x, y))
@@ -436,48 +439,44 @@ def main():
 
 		# Draw word collection boxes grouped by word length
 		try:
-			font_box = pygame.font.SysFont("Avenir Next", 48, bold=True)
+			font_box = pygame.font.SysFont("Avenir Next", 18, bold=True)
 		except:
-			font_box = pygame.font.SysFont(None, 48, bold=True)
-		word_lengths = [1, 2, 3, 4, 5, 6]
-		box_size = 60
-		box_radius = 12
-		group_spacing = 60
-		intra_spacing = 8
+			font_box = pygame.font.SysFont(None, 18, bold=True)
+		word_lengths = [6, 5, 4, 3, 2, 1]
+		box_size = CELL_SIZE + 8  # Only a little bigger than snake segment
+		box_radius = 8
+		group_spacing = 32
+		intra_spacing = 4
 		start_y = MARGIN_TOP + ARENA_HEIGHT + 80
-		# Define rows
-		rows = [[1,2,3], [4,5], [6]]
-		row_offsets = [0, 70, 140]
-		for row_idx, row in enumerate(rows):
-			total_boxes = sum(row)
-			total_width = total_boxes * box_size + (total_boxes - len(row)) * intra_spacing + (len(row)-1) * group_spacing
-			start_x = MARGIN_LEFT + (ARENA_WIDTH - total_width) // 2
-			x = start_x
-			for length in row:
-				for j in range(length):
-					rect = pygame.Rect(x, start_y + row_offsets[row_idx], box_size, box_size)
-					pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
-					pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
-					if found_words.get(length) and j < len(found_words[length]):
-						letter = found_words[length][j]
-						surf = font_box.render(letter, True, BLACK)
-					else:
-						surf = font_box.render('_', True, (120,120,120))
-					sx = rect.x + (box_size - surf.get_width())//2
-					sy = rect.y + (box_size - surf.get_height())//2
-					screen.blit(surf, (sx, sy))
-					x += box_size + (intra_spacing if j < length-1 else 0)
-				x += group_spacing if length != row[-1] else 0
+		# Display submitted word list vertically, one word per line, from 6 to 1 letters
+		list_x = MARGIN_LEFT + ARENA_WIDTH + 40 - 650
+		list_y = MARGIN_TOP + 40 + 400
+		for length in word_lengths:
+			for j in range(length):
+				rect = pygame.Rect(list_x + j * (box_size + intra_spacing), list_y, box_size, box_size)
+				pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
+				pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
+				if found_words.get(length) and j < len(found_words[length]):
+					letter = found_words[length][j].upper()
+					surf = font_box.render(letter, True, BLACK)
+				else:
+					surf = font_box.render('_', True, (120,120,120))
+				sx = rect.x + (box_size - surf.get_width())//2
+				sy = rect.y + (box_size - surf.get_height())//2 + 2
+				screen.blit(surf, (sx, sy))
+			list_y += box_size + 12
 
 		# Draw garbage can underneath word boxes
-		garbage_can_w = 90
-		garbage_can_h = 120
-		garbage_can_x = MARGIN_LEFT + (ARENA_WIDTH//2) - (garbage_can_w//2)
-		garbage_can_y = start_y + row_offsets[-1] + 100  # Move down 20 pixels
-		# Draw can body as a trapezoid (brim wider than base)
-		brim_w = garbage_can_w + 30
-		base_w = garbage_can_w - 20
-		brim_x = garbage_can_x - 15
+		# Make garbage can 20% bigger overall
+		garbage_can_w = int(90 * 1.2)
+		garbage_can_h = int(120 * 1.2)
+		garbage_can_x = MARGIN_LEFT + (ARENA_WIDTH//2) - (garbage_can_w//2) + 200
+		# Place garbage can below the last word list row
+		garbage_can_y = list_y + 40 - 250  # Move up 100 pixels
+		# Draw can body as a trapezoid (brim much wider than base)
+		brim_w = int(garbage_can_w * 1.7)  # much wider at top
+		base_w = garbage_can_w - 20        # same width at bottom
+		brim_x = garbage_can_x - (brim_w - garbage_can_w)//2
 		base_x = garbage_can_x + 10
 		brim_y = garbage_can_y
 		base_y = garbage_can_y + garbage_can_h
