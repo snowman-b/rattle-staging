@@ -467,15 +467,16 @@ def main():
 			list_y += box_size + 12
 
 		# Draw garbage can underneath word boxes
-		garbage_can_w = 90
-		garbage_can_h = 120
-		garbage_can_x = MARGIN_LEFT + (ARENA_WIDTH//2) - (garbage_can_w//2) + 240
+		# Make garbage can 20% bigger overall
+		garbage_can_w = int(90 * 1.2)
+		garbage_can_h = int(120 * 1.2)
+		garbage_can_x = MARGIN_LEFT + (ARENA_WIDTH//2) - (garbage_can_w//2) + 200
 		# Place garbage can below the last word list row
 		garbage_can_y = list_y + 40 - 250  # Move up 100 pixels
-		# Draw can body as a trapezoid (brim wider than base)
-		brim_w = garbage_can_w + 30
-		base_w = garbage_can_w - 20
-		brim_x = garbage_can_x - 15
+		# Draw can body as a trapezoid (brim much wider than base)
+		brim_w = int(garbage_can_w * 1.7)  # much wider at top
+		base_w = garbage_can_w - 20        # same width at bottom
+		brim_x = garbage_can_x - (brim_w - garbage_can_w)//2
 		base_x = garbage_can_x + 10
 		brim_y = garbage_can_y
 		base_y = garbage_can_y + garbage_can_h
