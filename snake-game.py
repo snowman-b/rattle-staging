@@ -334,9 +334,178 @@ def main():
 			collided = (new_head[0] < 0 or new_head[0] >= GRID_WIDTH or new_head[1] < 0 or new_head[1] >= GRID_HEIGHT or new_head in snake)
 			if collided:
 				if not endless_mode:  # Only for Time Trial
-					# Wait 2000 ms before respawn
-					pygame.display.flip()
-					pygame.time.wait(2000)
+					# Pause for 2000 ms, keeping snake in final-collision state and updating timer
+					pause_start = pygame.time.get_ticks()
+					while pygame.time.get_ticks() - pause_start < 2000:
+						# Draw everything as usual, but do not update snake position
+						# --- Begin full redraw ---
+						screen.fill(WHITE)
+						# Draw 'RATTLE' at the top
+						DKGREEN = (0, 100, 0)
+						try:
+							font_rattle = pygame.font.SysFont("Avenir Next", 96, bold=True)
+						except:
+							font_rattle = pygame.font.SysFont(None, 96, bold=True)
+						rattle_surf = font_rattle.render("RATTLE", True, DKGREEN)
+						shadow = font_rattle.render("RATTLE", True, (0,0,0))
+						rattle_x = (WIDTH - rattle_surf.get_width()) // 2
+						rattle_y = (MARGIN_TOP - rattle_surf.get_height()) // 2
+						screen.blit(shadow, (rattle_x+4, rattle_y+4))
+						screen.blit(rattle_surf, (rattle_x, rattle_y))
+						# Draw arena border
+						border_rect = pygame.Rect(MARGIN_LEFT-10, MARGIN_TOP-10, ARENA_WIDTH+20, ARENA_HEIGHT+20)
+						border_surf = pygame.Surface((border_rect.width, border_rect.height), pygame.SRCALPHA)
+						for i in range(10):
+							alpha = 180 - i*15
+							color = (30,30,30,alpha)
+							pygame.draw.rect(border_surf, color, border_surf.get_rect().inflate(-i*2,-i*2), border_radius=0)
+						pygame.draw.rect(border_surf, (10,10,10,255), border_surf.get_rect(), 4, border_radius=0)
+						screen.blit(border_surf, (border_rect.x, border_rect.y))
+						# Draw blue and yellow border segments
+						blue_x = MARGIN_LEFT + ARENA_WIDTH
+						blue_y_start = MARGIN_TOP + ARENA_HEIGHT - 4*CELL_SIZE
+						blue_height = 3*CELL_SIZE
+						pygame.draw.rect(
+							screen, BRIGHT_BLUE,
+							(blue_x, blue_y_start, 8, blue_height), border_radius=0
+						)
+						yellow_x = MARGIN_LEFT - 10
+						yellow_y_start = blue_y_start
+						yellow_height = blue_height
+						pygame.draw.rect(
+							screen, YELLOW,
+							(yellow_x, yellow_y_start, 14, yellow_height), border_radius=0
+						)
+						# Fill arena background
+						arena_rect = pygame.Rect(MARGIN_LEFT, MARGIN_TOP, ARENA_WIDTH, ARENA_HEIGHT)
+						arena_surf = pygame.Surface((ARENA_WIDTH, ARENA_HEIGHT))
+						for y in range(ARENA_HEIGHT):
+							shade = 245 - int(20 * (y / ARENA_HEIGHT))
+							pygame.draw.line(arena_surf, (shade, shade, 255), (0, y), (ARENA_WIDTH, y))
+						screen.blit(arena_surf, (MARGIN_LEFT, MARGIN_TOP))
+						# Draw food
+						for food in foods:
+							fx, fy, fchar = food
+							try:
+								font = pygame.font.SysFont("Avenir Next", 18, bold=True)
+							except:
+								font = pygame.font.SysFont(None, 18, bold=True)
+							char_surf = font.render(str(fchar).upper(), True, BLACK)
+							x = MARGIN_LEFT + fx*CELL_SIZE + (CELL_SIZE - char_surf.get_width())//2
+							y = MARGIN_TOP + fy*CELL_SIZE + (CELL_SIZE - char_surf.get_height())//2
+							screen.blit(char_surf, (x, y))
+						# Draw snake in its final-collision state
+						n = len(snake)
+						m = len(collected_letters)
+						for i, segment in enumerate(snake):
+							color = (80, 200, 120)
+							draw_rounded_rect(screen, color, segment, radius=8, shadow=True)
+							if i < m:
+								try:
+									font_letter = pygame.font.SysFont("Avenir Next", 18, bold=True)
+								except:
+									font_letter = pygame.font.SysFont(None, 18, bold=True)
+								letter_surf = font_letter.render(collected_letters[-(i+1)].upper(), True, BLACK)
+								seg_x = MARGIN_LEFT + segment[0]*CELL_SIZE
+								seg_y = MARGIN_TOP + segment[1]*CELL_SIZE
+								x = seg_x + (CELL_SIZE - letter_surf.get_width()) // 2 + 1
+								y = seg_y + (CELL_SIZE - letter_surf.get_height()) // 2 + 3
+								screen.blit(letter_surf, (x, y))
+						# Draw score
+						try:
+							font = pygame.font.SysFont("Avenir Next", 36, bold=True)
+						except:
+							font = pygame.font.SysFont(None, 36, bold=True)
+						score_surf = font.render(f'Score: {score}', True, (40,40,40))
+						shadow = font.render(f'Score: {score}', True, (200,200,200))
+						screen.blit(shadow, (14, 14))
+						screen.blit(score_surf, (10, 10))
+						# Draw word collection boxes
+						try:
+							font_box = pygame.font.SysFont("Avenir Next", 18, bold=True)
+						except:
+							font_box = pygame.font.SysFont(None, 18, bold=True)
+						word_lengths = [6, 5, 4, 3, 2, 1]
+						box_size = CELL_SIZE + 8
+						box_radius = 8
+						intra_spacing = 4
+						list_x = MARGIN_LEFT + ARENA_WIDTH + 40 - 650
+						list_y = MARGIN_TOP + 40 + 400
+						for length in word_lengths:
+							for j in range(length):
+								rect = pygame.Rect(list_x + j * (box_size + intra_spacing), list_y, box_size, box_size)
+								pygame.draw.rect(screen, (235,235,235), rect, border_radius=box_radius)
+								pygame.draw.rect(screen, (40,40,40), rect, 3, border_radius=box_radius)
+								if found_words.get(length) and j < len(found_words[length]):
+									letter = found_words[length][j].upper()
+									surf = font_box.render(letter, True, BLACK)
+								else:
+									surf = font_box.render('_', True, (120,120,120))
+								sx = rect.x + (box_size - surf.get_width())//2
+								sy = rect.y + (box_size - surf.get_height())//2 + 2
+								screen.blit(surf, (sx, sy))
+							list_y += box_size + 12
+						# Draw garbage can
+						garbage_can_w = int(90 * 1.2)
+						garbage_can_h = int(120 * 1.2)
+						garbage_can_x = MARGIN_LEFT + (ARENA_WIDTH//2) - (garbage_can_w//2) + 200
+						garbage_can_y = list_y + 40 - 250
+						brim_w = int(garbage_can_w * 1.7)
+						base_w = garbage_can_w - 20
+						brim_x = garbage_can_x - (brim_w - garbage_can_w)//2
+						base_x = garbage_can_x + 10
+						brim_y = garbage_can_y
+						base_y = garbage_can_y + garbage_can_h
+						points = [
+							(brim_x, brim_y),
+							(brim_x + brim_w, brim_y),
+							(base_x + base_w, base_y),
+							(base_x, base_y)
+						]
+						pygame.draw.polygon(screen, (180,150,90), points)
+						pygame.draw.polygon(screen, (100,80,40), points, 4)
+						for i in range(8):
+							y = brim_y + int((base_y - brim_y) * i / 7)
+							x1 = brim_x + int((brim_w - base_w) * (base_y - y) / (base_y - brim_y) / 2)
+							x2 = brim_x + brim_w - int((brim_w - base_w) * (base_y - y) / (base_y - brim_y) / 2)
+							pygame.draw.line(screen, (140,110,60), (x1, y), (x2, y), 2)
+						for i in range(7):
+							frac = i / 6
+							x = brim_x + int(frac * brim_w)
+							y1 = brim_y
+							y2 = base_y
+							pygame.draw.line(screen, (140,110,60), (x, y1), (base_x + int(frac * base_w), y2), 2)
+						try:
+							font_garbage = pygame.font.SysFont("Avenir Next", 32, bold=True)
+						except:
+							font_garbage = pygame.font.SysFont(None, 32, bold=True)
+						for i, letter in enumerate(garbage_letters):
+							seed = hash((letter, i))
+							rng = random.Random(seed)
+							frac_x = rng.uniform(0.15, 0.85)
+							frac_y = rng.uniform(0.1, 0.85)
+							x = brim_x + frac_x * brim_w - 16
+							y = brim_y + frac_y * (base_y - brim_y) - 16
+							angle = rng.randint(-35, 35)
+							surf = font_garbage.render(letter, True, (80,80,80))
+							surf = pygame.transform.rotate(surf, angle)
+							screen.blit(surf, (int(x), int(y)))
+						# Draw timer (clock keeps running)
+						elapsed_seconds = (pygame.time.get_ticks() - start_ticks) // 1000
+						minutes = elapsed_seconds // 60
+						seconds = elapsed_seconds % 60
+						time_str = f"{minutes:02}:{seconds:02}"
+						font_timer = pygame.font.SysFont("Avenir Next", 32, bold=False)
+						timer_surf = font_timer.render(time_str, True, BLACK)
+						timer_x = MARGIN_LEFT + ARENA_WIDTH + 80
+						timer_y = MARGIN_TOP + ARENA_HEIGHT - 4*CELL_SIZE + 3*CELL_SIZE//2 - timer_surf.get_height() - 390
+						screen.blit(timer_surf, (timer_x, timer_y))
+						pygame.display.flip()
+						for event in pygame.event.get():
+							if event.type == pygame.QUIT:
+								pygame.quit()
+								sys.exit()
+						clock.tick(FPS)
 					# Respawn snake and food as if starting a new game, but retain submitted words, timer, and score
 					start_y = GRID_HEIGHT - 3
 					snake = [[3, start_y], [2, start_y], [1, start_y]]
