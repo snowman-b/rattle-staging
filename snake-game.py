@@ -630,9 +630,9 @@ def main():
 		for food in foods:
 			fx, fy, fchar = food
 			try:
-				font = pygame.font.SysFont("Avenir Next", 24, bold=True)
+				font = pygame.font.SysFont("Avenir Next", 18, bold=True)
 			except:
-				font = pygame.font.SysFont(None, 24, bold=True)
+				font = pygame.font.SysFont(None, 18, bold=True)
 			char_surf = font.render(str(fchar).upper(), True, BLACK)
 			x = MARGIN_LEFT + fx*CELL_SIZE + (CELL_SIZE - char_surf.get_width())//2
 			y = MARGIN_TOP + fy*CELL_SIZE + (CELL_SIZE - char_surf.get_height())//2
