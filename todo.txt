@@ -5,6 +5,43 @@ Todo
 # arrow keys under arena
 # computer or phone
 # squarespace template
-# Copilot autopay
 # squarespace autopay
-# renew llc with new card 
+
+"""
+Core Gameplay
+Food spawning and eating (fixed positions, letter assignment)
+Score tracking and display
+Timer (elapsed time, highest time reached)
+Game over detection (wall/self collision, portal logic)
+Win condition (collecting all required words)
+Word & Letter Logic
+Word collection from food letters
+Word validation (using a word list or frequency check)
+Display collected words by length
+Garbage can for invalid letters
+Portal logic for submitting words and respawning food
+UI & Visuals
+Modern UI styling (rounded rectangles, drop shadows, color themes)
+"RATTLE" title and date display
+Splash/landing page with Time Trial and Endless Mode selection
+Instructions and tooltips
+Score and timer display
+Word collection boxes and garbage can visuals
+Modal & End Screens
+Share modal after Time Trial and Endless Mode
+Covers entire screen
+Shows "RATTLE" and date
+Displays final score and highest time
+"Return Home" button (returns to splash)
+"X" button (shows view-only final game screen)
+Congratulation text on win
+Game over text on loss
+Controls & Usability
+Responsive keyboard controls
+Ability to repeatedly speed up/slow down with arrow keys
+Return to splash page or view-only screen from modal
+Maintainability & Security
+Modular, readable code structure
+No unsafe DOM manipulation or global variables
+Efficient rendering and game loop
+
