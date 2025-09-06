@@ -9,6 +9,7 @@ Todo
 
 """
 Core Gameplay
+speedup and slowdown fucntionality - 2 consecutive, then every one push
 Food spawning and eating (fixed positions, letter assignment)
 Score tracking and display
 Timer (elapsed time, highest time reached)
