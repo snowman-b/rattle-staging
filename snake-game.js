@@ -33,11 +33,72 @@ let win = false;
 let endlessMode = false;
 let snakeInMotion = false;
 
+// Example: today's word
+const TODAY_WORD = 'SNAKE';
+
 function startSnakeMotion() {
   snakeInMotion = true;
 }
 function stopSnakeMotion() {
   snakeInMotion = false;
+}
+
+function getTodayWord() {
+  // Hardcoded for demo; in production, fetch and parse word-list.csv
+  const today = new Date();
+  const todayStr = `${today.getMonth()+1}/${today.getDate()}/${today.getFullYear()}`;
+  // Map of date to word (should be loaded from CSV)
+  const wordMap = {
+    '8/31/2025': 'happen',
+    '9/1/2025': 'yanked',
+    '9/2/2025': 'images',
+    '9/3/2025': 'linked',
+    '9/4/2025': 'limits',
+    '9/5/2025': 'escape',
+    '9/6/2025': 'farmed',
+    '9/7/2025': 'driven',
+    '9/8/2025': 'detail'
+  };
+  return wordMap[todayStr] || 'SNAKE';
+}
+
+function getFoodPositionsForWord(word) {
+  // Evenly space letters across a horizontal row (row 10)
+  const row = 10;
+  const spacing = Math.floor(GRID_WIDTH / (word.length + 1));
+  // Deterministic shuffle based on today's date
+  function seededShuffle(array, seed) {
+    let arr = array.slice();
+    let rng = mulberry32(seed);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+  // Simple seeded RNG
+  function mulberry32(a) {
+    return function() {
+      var t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+  }
+  // Use date as seed
+  const today = new Date();
+  const seed = today.getFullYear() * 10000 + (today.getMonth()+1) * 100 + today.getDate();
+  let letters = word.split('');
+  letters = seededShuffle(letters, seed);
+  let positions = [];
+  for (let i = 0; i < letters.length; i++) {
+    positions.push({
+      x: spacing * (i + 1),
+      y: row,
+      letter: letters[i].toUpperCase()
+    });
+  }
+  return positions;
 }
 
 function resetGame() {
@@ -48,7 +109,9 @@ function resetGame() {
     {x: 2, y: GRID_HEIGHT - 3},
     {x: 1, y: GRID_HEIGHT - 3}
   ];
-  foods = [];
+  // Use today's word from word-list
+  const todayWord = getTodayWord();
+  foods = getFoodPositionsForWord(todayWord);
   score = 0;
   elapsedSeconds = 0;
   startTime = Date.now();
@@ -80,9 +143,12 @@ function drawSnake() {
 
 function drawFoods() {
   ctx.save();
-  ctx.fillStyle = '#222';
+  ctx.font = '20px Avenir Next, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
   for (let food of foods) {
-    ctx.fillRect(food.x * CELL_SIZE, food.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    ctx.fillStyle = '#000';
+    ctx.fillText(food.letter, food.x * CELL_SIZE + CELL_SIZE/2, food.y * CELL_SIZE + CELL_SIZE/2);
   }
   ctx.restore();
 }
@@ -182,8 +248,20 @@ function update() {
       return;
     }
   }
+  // Food eating
+  let ateFood = false;
+  for (let i = 0; i < foods.length; i++) {
+    if (foods[i].x === newHead.x && foods[i].y === newHead.y) {
+      score++;
+      foods.splice(i, 1); // Remove eaten food
+      ateFood = true;
+      break;
+    }
+  }
   snake.unshift(newHead);
-  snake.pop(); // Remove tail for now (no food logic yet)
+  if (!ateFood) {
+    snake.pop(); // Only grow if food was eaten
+  }
   lastDirection = direction;
 }
 
