@@ -29,6 +29,7 @@ let foods = [];
 let score = 0;
 let elapsedSeconds = 0;
 let startTime = null;
+let timerInterval = null;
 let win = false;
 let endlessMode = false;
 let snakeInMotion = false;
@@ -118,7 +119,22 @@ function resetGame() {
   win = false;
   endlessMode = false;
   startSnakeMotion(); // Start motion on game start
+  // Start timer
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (running) {
+      elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+      drawTimer();
+    }
+  }, 1000);
+  drawTimer();
   // TODO: Add word logic, food placement, etc.
+function drawTimer() {
+  const timerDiv = document.getElementById('timer');
+  if (timerDiv) {
+    timerDiv.textContent = 'Time: ' + elapsedSeconds + 's';
+  }
+}
 }
 
 function drawArena() {
@@ -234,18 +250,20 @@ function update() {
     newHead.x < 0 || newHead.x >= GRID_WIDTH ||
     newHead.y < 0 || newHead.y >= GRID_HEIGHT
   ) {
-    running = false;
-    stopSnakeMotion(); // Stop motion on game over
-    showShareModal();
-    return;
+  running = false;
+  stopSnakeMotion(); // Stop motion on game over
+  if (timerInterval) clearInterval(timerInterval);
+  showShareModal();
+  return;
   }
   // Self collision
   for (let i = 0; i < snake.length; i++) {
     if (snake[i].x === newHead.x && snake[i].y === newHead.y) {
-      running = false;
-      stopSnakeMotion(); // Stop motion on game over
-      showShareModal();
-      return;
+  running = false;
+  stopSnakeMotion(); // Stop motion on game over
+  if (timerInterval) clearInterval(timerInterval);
+  showShareModal();
+  return;
     }
   }
   // Food eating
