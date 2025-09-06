@@ -43,16 +43,35 @@ function stopSnakeMotion() {
   snakeInMotion = false;
 }
 
+function getTodayWord() {
+  // Hardcoded for demo; in production, fetch and parse word-list.csv
+  const today = new Date();
+  const todayStr = `${today.getMonth()+1}/${today.getDate()}/${today.getFullYear()}`;
+  // Map of date to word (should be loaded from CSV)
+  const wordMap = {
+    '8/31/2025': 'happen',
+    '9/1/2025': 'yanked',
+    '9/2/2025': 'images',
+    '9/3/2025': 'linked',
+    '9/4/2025': 'limits',
+    '9/5/2025': 'escape',
+    '9/6/2025': 'farmed',
+    '9/7/2025': 'driven',
+    '9/8/2025': 'detail'
+  };
+  return wordMap[todayStr] || 'SNAKE';
+}
+
 function getFoodPositionsForWord(word) {
   // Evenly space letters across a horizontal row (row 10)
-  const row = 10; // was 9, now 10
+  const row = 10;
   const spacing = Math.floor(GRID_WIDTH / (word.length + 1));
   let positions = [];
   for (let i = 0; i < word.length; i++) {
     positions.push({
       x: spacing * (i + 1),
       y: row,
-      letter: word[i]
+      letter: word[i].toUpperCase()
     });
   }
   return positions;
@@ -66,8 +85,9 @@ function resetGame() {
     {x: 2, y: GRID_HEIGHT - 3},
     {x: 1, y: GRID_HEIGHT - 3}
   ];
-  // Spawn foods for today's word
-  foods = getFoodPositionsForWord(TODAY_WORD);
+  // Use today's word from word-list
+  const todayWord = getTodayWord();
+  foods = getFoodPositionsForWord(todayWord);
   score = 0;
   elapsedSeconds = 0;
   startTime = Date.now();
@@ -103,9 +123,7 @@ function drawFoods() {
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   for (let food of foods) {
-    ctx.fillStyle = '#222';
-    ctx.fillRect(food.x * CELL_SIZE, food.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-    ctx.fillStyle = '#fff';
+    ctx.fillStyle = '#000';
     ctx.fillText(food.letter, food.x * CELL_SIZE + CELL_SIZE/2, food.y * CELL_SIZE + CELL_SIZE/2);
   }
   ctx.restore();
