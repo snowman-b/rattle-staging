@@ -33,11 +33,29 @@ let win = false;
 let endlessMode = false;
 let snakeInMotion = false;
 
+// Example: today's word
+const TODAY_WORD = 'SNAKE';
+
 function startSnakeMotion() {
   snakeInMotion = true;
 }
 function stopSnakeMotion() {
   snakeInMotion = false;
+}
+
+function getFoodPositionsForWord(word) {
+  // Evenly space letters across a horizontal row (row 5)
+  const row = 5;
+  const spacing = Math.floor(GRID_WIDTH / (word.length + 1));
+  let positions = [];
+  for (let i = 0; i < word.length; i++) {
+    positions.push({
+      x: spacing * (i + 1),
+      y: row,
+      letter: word[i]
+    });
+  }
+  return positions;
 }
 
 function resetGame() {
@@ -48,7 +66,8 @@ function resetGame() {
     {x: 2, y: GRID_HEIGHT - 3},
     {x: 1, y: GRID_HEIGHT - 3}
   ];
-  foods = [];
+  // Spawn foods for today's word
+  foods = getFoodPositionsForWord(TODAY_WORD);
   score = 0;
   elapsedSeconds = 0;
   startTime = Date.now();
@@ -80,9 +99,14 @@ function drawSnake() {
 
 function drawFoods() {
   ctx.save();
-  ctx.fillStyle = '#222';
+  ctx.font = '20px Avenir Next, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
   for (let food of foods) {
+    ctx.fillStyle = '#222';
     ctx.fillRect(food.x * CELL_SIZE, food.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    ctx.fillStyle = '#fff';
+    ctx.fillText(food.letter, food.x * CELL_SIZE + CELL_SIZE/2, food.y * CELL_SIZE + CELL_SIZE/2);
   }
   ctx.restore();
 }
@@ -182,8 +206,20 @@ function update() {
       return;
     }
   }
+  // Food eating
+  let ateFood = false;
+  for (let i = 0; i < foods.length; i++) {
+    if (foods[i].x === newHead.x && foods[i].y === newHead.y) {
+      score++;
+      foods.splice(i, 1); // Remove eaten food
+      ateFood = true;
+      break;
+    }
+  }
   snake.unshift(newHead);
-  snake.pop(); // Remove tail for now (no food logic yet)
+  if (!ateFood) {
+    snake.pop(); // Only grow if food was eaten
+  }
   lastDirection = direction;
 }
 
