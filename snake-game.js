@@ -31,6 +31,14 @@ let elapsedSeconds = 0;
 let startTime = null;
 let win = false;
 let endlessMode = false;
+let snakeInMotion = false;
+
+function startSnakeMotion() {
+  snakeInMotion = true;
+}
+function stopSnakeMotion() {
+  snakeInMotion = false;
+}
 
 function resetGame() {
   direction = {x: 1, y: 0};
@@ -46,17 +54,18 @@ function resetGame() {
   startTime = Date.now();
   win = false;
   endlessMode = false;
+  startSnakeMotion(); // Start motion on game start
   // TODO: Add word logic, food placement, etc.
 }
 
 function drawArena() {
   ctx.fillStyle = '#f5f5ff';
-  ctx.fillRect(0, 0, WIDTH, HEIGHT);
-  // Draw arena border
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Draw border flush with grid
   ctx.save();
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 6;
-  ctx.strokeRect(MARGIN_LEFT-3, MARGIN_TOP-3, ARENA_WIDTH+6, ARENA_HEIGHT+6);
+  ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
   ctx.restore();
 }
 
@@ -64,7 +73,7 @@ function drawSnake() {
   ctx.save();
   for (let i = 0; i < snake.length; i++) {
     ctx.fillStyle = '#50c878';
-    ctx.fillRect(MARGIN_LEFT + snake[i].x * CELL_SIZE, MARGIN_TOP + snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   }
   ctx.restore();
 }
@@ -73,17 +82,17 @@ function drawFoods() {
   ctx.save();
   ctx.fillStyle = '#222';
   for (let food of foods) {
-    ctx.fillRect(MARGIN_LEFT + food.x * CELL_SIZE, MARGIN_TOP + food.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    ctx.fillRect(food.x * CELL_SIZE, food.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   }
   ctx.restore();
 }
 
 function drawScore() {
-  ctx.save();
-  ctx.font = '36px Avenir Next, Arial, sans-serif';
-  ctx.fillStyle = '#282828';
-  ctx.fillText('Score: ' + score, 10, 40);
-  ctx.restore();
+  // Remove canvas score drawing
+  const scoreboardDiv = document.getElementById('scoreboard');
+  if (scoreboardDiv) {
+    scoreboardDiv.textContent = 'Score: ' + score;
+  }
 }
 
 let lastKeyDir = null;
@@ -98,6 +107,9 @@ function getDirFromKey(e) {
 }
 
 document.addEventListener('keydown', (e) => {
+  if (snakeInMotion && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+    e.preventDefault();
+  }
   const newDir = getDirFromKey(e);
   if (!newDir) return;
   const now = Date.now();
@@ -157,6 +169,7 @@ function update() {
     newHead.y < 0 || newHead.y >= GRID_HEIGHT
   ) {
     running = false;
+    stopSnakeMotion(); // Stop motion on game over
     showShareModal();
     return;
   }
@@ -164,6 +177,7 @@ function update() {
   for (let i = 0; i < snake.length; i++) {
     if (snake[i].x === newHead.x && snake[i].y === newHead.y) {
       running = false;
+      stopSnakeMotion(); // Stop motion on game over
       showShareModal();
       return;
     }
