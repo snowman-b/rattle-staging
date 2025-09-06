@@ -66,12 +66,36 @@ function getFoodPositionsForWord(word) {
   // Evenly space letters across a horizontal row (row 10)
   const row = 10;
   const spacing = Math.floor(GRID_WIDTH / (word.length + 1));
+  // Deterministic shuffle based on today's date
+  function seededShuffle(array, seed) {
+    let arr = array.slice();
+    let rng = mulberry32(seed);
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+  // Simple seeded RNG
+  function mulberry32(a) {
+    return function() {
+      var t = a += 0x6D2B79F5;
+      t = Math.imul(t ^ t >>> 15, t | 1);
+      t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    }
+  }
+  // Use date as seed
+  const today = new Date();
+  const seed = today.getFullYear() * 10000 + (today.getMonth()+1) * 100 + today.getDate();
+  let letters = word.split('');
+  letters = seededShuffle(letters, seed);
   let positions = [];
-  for (let i = 0; i < word.length; i++) {
+  for (let i = 0; i < letters.length; i++) {
     positions.push({
       x: spacing * (i + 1),
       y: row,
-      letter: word[i].toUpperCase()
+      letter: letters[i].toUpperCase()
     });
   }
   return positions;
