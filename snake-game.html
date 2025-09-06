@@ -22,20 +22,27 @@
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="card" id="arenaCard">
-      <canvas id="gameCanvas" width="1000" height="800"></canvas>
+  <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px;">
+    <div class="card" id="scoreboardCard" style="width:320px; height:120px; display:flex; align-items:center; justify-content:center;">
+      <div id="scoreboard">Scoreboard</div>
     </div>
-    <div class="card" id="scoreboardCard">
-      <div id="scoreboard">Scoreboard & Timer</div>
+    <div class="card" id="arenaCard" style="padding:0; min-width:auto; min-height:auto; width:1000px; height:800px; display:flex; align-items:center; justify-content:center;">
+      <div style="width:1000px; height:800px; display:flex; align-items:center; justify-content:center;">
+        <canvas id="gameCanvas" width="800" height="600" style="display:block; margin:auto;"></canvas>
+      </div>
     </div>
-    <div class="card" id="wordCollectionCard">
+    <div class="card" id="timerCard" style="width:320px; height:120px; display:flex; align-items:center; justify-content:center;">
+      <div id="timer">Timer</div>
+    </div>
+  </div>
+  <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 16px;">
+    <div class="card" id="wordCollectionCard" style="width:320px; height:120px; display:flex; align-items:center; justify-content:center;">
       <div id="wordCollection">Word Collection Section</div>
     </div>
-    <div class="card" id="garbageCanCard">
+    <div class="card" id="garbageCanCard" style="width:320px; height:120px; display:flex; align-items:center; justify-content:center;">
       <div id="garbageCan">Garbage Can</div>
     </div>
-    <div class="card" id="movementControlCard">
+    <div class="card" id="movementControlCard" style="width:320px; height:120px; display:flex; align-items:center; justify-content:center;">
       <div id="movementControl">Movement Control (future)</div>
     </div>
   </div>

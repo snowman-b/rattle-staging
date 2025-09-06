@@ -60,12 +60,12 @@ function resetGame() {
 
 function drawArena() {
   ctx.fillStyle = '#f5f5ff';
-  ctx.fillRect(0, 0, WIDTH, HEIGHT);
-  // Draw arena border
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  // Draw arena border flush with canvas edges
   ctx.save();
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 6;
-  ctx.strokeRect(MARGIN_LEFT-3, MARGIN_TOP-3, ARENA_WIDTH+6, ARENA_HEIGHT+6);
+  ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
   ctx.restore();
 }
 
