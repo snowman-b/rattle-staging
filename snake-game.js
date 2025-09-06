@@ -44,8 +44,8 @@ function stopSnakeMotion() {
 }
 
 function getFoodPositionsForWord(word) {
-  // Evenly space letters across a horizontal row (row 5)
-  const row = 5;
+  // Evenly space letters across a horizontal row (row 10)
+  const row = 10; // was 9, now 10
   const spacing = Math.floor(GRID_WIDTH / (word.length + 1));
   let positions = [];
   for (let i = 0; i < word.length; i++) {
