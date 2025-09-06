@@ -88,11 +88,11 @@ function drawFoods() {
 }
 
 function drawScore() {
-  ctx.save();
-  ctx.font = '36px Avenir Next, Arial, sans-serif';
-  ctx.fillStyle = '#282828';
-  ctx.fillText('Score: ' + score, 10, 40);
-  ctx.restore();
+  // Remove canvas score drawing
+  const scoreboardDiv = document.getElementById('scoreboard');
+  if (scoreboardDiv) {
+    scoreboardDiv.textContent = 'Score: ' + score;
+  }
 }
 
 let lastKeyDir = null;
