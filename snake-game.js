@@ -31,6 +31,14 @@ let elapsedSeconds = 0;
 let startTime = null;
 let win = false;
 let endlessMode = false;
+let snakeInMotion = false;
+
+function startSnakeMotion() {
+  snakeInMotion = true;
+}
+function stopSnakeMotion() {
+  snakeInMotion = false;
+}
 
 function resetGame() {
   direction = {x: 1, y: 0};
@@ -46,6 +54,7 @@ function resetGame() {
   startTime = Date.now();
   win = false;
   endlessMode = false;
+  startSnakeMotion(); // Start motion on game start
   // TODO: Add word logic, food placement, etc.
 }
 
@@ -98,6 +107,9 @@ function getDirFromKey(e) {
 }
 
 document.addEventListener('keydown', (e) => {
+  if (snakeInMotion && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+    e.preventDefault();
+  }
   const newDir = getDirFromKey(e);
   if (!newDir) return;
   const now = Date.now();
@@ -157,6 +169,7 @@ function update() {
     newHead.y < 0 || newHead.y >= GRID_HEIGHT
   ) {
     running = false;
+    stopSnakeMotion(); // Stop motion on game over
     showShareModal();
     return;
   }
@@ -164,6 +177,7 @@ function update() {
   for (let i = 0; i < snake.length; i++) {
     if (snake[i].x === newHead.x && snake[i].y === newHead.y) {
       running = false;
+      stopSnakeMotion(); // Stop motion on game over
       showShareModal();
       return;
     }
