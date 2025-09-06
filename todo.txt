@@ -9,9 +9,6 @@ Todo
 
 """
 Core Gameplay
-speedup and slowdown fucntionality - 2 consecutive, then every one push
-Food spawning and eating (fixed positions, letter assignment)
-Score tracking and display
 Timer (elapsed time, highest time reached)
 Game over detection (wall/self collision, portal logic)
 Win condition (collecting all required words)
@@ -45,4 +42,7 @@ Maintainability & Security
 Modular, readable code structure
 No unsafe DOM manipulation or global variables
 Efficient rendering and game loop
+speedup and slowdown fucntionality - 2 consecutive, then every one push
+Score v2 - only valid words
+
 
