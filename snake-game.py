@@ -728,25 +728,6 @@ def main():
 			surf = pygame.transform.rotate(surf, angle)
 			screen.blit(surf, (int(x), int(y)))
 
-		# Draw leaderboard directly underneath the underscores
-		# Leaderboard rendering (commented out)
-		# try:
-		# 	font_leader = pygame.font.SysFont("Avenir Next", 20, bold=True)
-		# except:
-		# 	font_leader = pygame.font.SysFont(None, 20, bold=True)
-		# leaderboard_lines = [
-		# 	"LEADERBOARD",
-		# 	"benja       0:25",
-		# 	"WCasp    1:44",
-		# 	"DBrandt  1:48"
-		# ]
-		# leader_y = start_y + 170  # Move down another 20 pixels
-		# for line in leaderboard_lines:
-		# 	surf = font_leader.render(line, True, BLACK)
-		# 	surf_x = (WIDTH - surf.get_width()) // 2
-		# 	screen.blit(surf, (surf_x, leader_y))
-		# 	leader_y += surf.get_height() + 5
-
 		# Update the display every frame
 		pygame.display.flip()
 
