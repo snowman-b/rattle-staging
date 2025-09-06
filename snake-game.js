@@ -298,8 +298,17 @@ function showShareModal() {
   const modal = document.getElementById('shareModal');
   const dateDiv = document.getElementById('modalDate');
   const scoreDiv = document.getElementById('modalScore');
+  const timeDiv = document.getElementById('modalTime');
   dateDiv.textContent = new Date().toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'});
   scoreDiv.textContent = 'Score: ' + score;
+  // Show final time in MM:SS format
+  const minutes = Math.floor(elapsedSeconds / 60);
+  const seconds = elapsedSeconds % 60;
+  const mm = String(minutes).padStart(2, '0');
+  const ss = String(seconds).padStart(2, '0');
+  if (timeDiv) {
+    timeDiv.textContent = `Time: ${mm}:${ss}`;
+  }
   modal.style.display = 'flex';
 }
 
