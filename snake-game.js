@@ -61,7 +61,7 @@ function resetGame() {
 function drawArena() {
   ctx.fillStyle = '#f5f5ff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  // Draw arena border flush with canvas edges
+  // Draw border flush with grid
   ctx.save();
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 6;
@@ -73,7 +73,7 @@ function drawSnake() {
   ctx.save();
   for (let i = 0; i < snake.length; i++) {
     ctx.fillStyle = '#50c878';
-    ctx.fillRect(MARGIN_LEFT + snake[i].x * CELL_SIZE, MARGIN_TOP + snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   }
   ctx.restore();
 }
@@ -82,7 +82,7 @@ function drawFoods() {
   ctx.save();
   ctx.fillStyle = '#222';
   for (let food of foods) {
-    ctx.fillRect(MARGIN_LEFT + food.x * CELL_SIZE, MARGIN_TOP + food.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    ctx.fillRect(food.x * CELL_SIZE, food.y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   }
   ctx.restore();
 }
