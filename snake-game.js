@@ -230,6 +230,9 @@ function drawSnake() {
   ctx.save();
   for (let i = 0; i < snake.length; i++) {
     ctx.fillStyle = '#00c800'; // Match portal green
+    ctx.strokeStyle = '#000'; // Black outline for visibility
+    ctx.lineWidth = 2; // Outline width
+    ctx.strokeRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE); // Draw outline
     ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   }
   ctx.restore();
