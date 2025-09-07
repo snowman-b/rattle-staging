@@ -1,4 +1,60 @@
+// Respawn snake after loss (wall/self collision)
+function respawnSnakeAfterLoss() {
+  setTimeout(() => {
+    direction = {x: 1, y: 0};
+    directionQueue = [];
+    snake = [
+      {x: 3, y: GRID_HEIGHT - 3},
+      {x: 2, y: GRID_HEIGHT - 3},
+      {x: 1, y: GRID_HEIGHT - 3}
+    ];
+    collectedLetters = [];
+    // Foods remain as per today's word
+    const todayWord = getTodayWord();
+    foods = getFoodPositionsForWord(todayWord);
+    running = true;
+    win = false;
+    startSnakeMotion();
+    lastFrame = 0;
+    // Timer resumes
+    if (!timerInterval) {
+      startTime = Date.now();
+      timerInterval = setInterval(() => {
+        if (running) {
+          elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+          drawTimer();
+        }
+      }, 1000);
+    }
+    requestAnimationFrame(gameLoop);
+  }, 2000);
+}
 let submittedWords = new Set();
+// Track which rows are filled with a valid word
+let wordRowsFilled = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
+
+function checkWinCondition() {
+  for (let i = 1; i <= 6; i++) {
+    if (!wordRowsFilled[i]) return false;
+  }
+  return true;
+}
+// Update word collection UI: show word in corresponding row, one letter per box
+function updateWordCollectionUI(word) {
+  const len = word.length;
+  if (len < 1 || len > 6) return;
+  const row = document.getElementById('wordRow' + len);
+  if (!row) return;
+  const boxes = row.getElementsByClassName('word-box');
+  // Clear all boxes in the row
+  for (let i = 0; i < boxes.length; i++) {
+    boxes[i].textContent = '';
+  }
+  // Fill boxes with letters of the word
+  for (let i = 0; i < word.length && i < boxes.length; i++) {
+    boxes[i].textContent = word[i].toUpperCase();
+  }
+}
   submittedWords.clear();
 let collectedLetters = [];
 let wordsSet = null;
@@ -136,7 +192,7 @@ function resetGame() {
   // Start timer
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
-    if (running) {
+    if (!win) {
       elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
       drawTimer();
     }
@@ -372,7 +428,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 function gameLoop(timestamp) {
-  if (!running) return;
+  if (!running || win) return;
   if (!lastFrame) lastFrame = timestamp;
   const delta = timestamp - lastFrame;
   if (delta > 1000 / fps) {
@@ -411,9 +467,24 @@ function update() {
     if (collectedLetters.length > 0 && wordsSet) {
       const formedWord = collectedLetters.join('').toLowerCase();
       if (wordsSet.has(formedWord) && !submittedWords.has(formedWord)) {
-        score += collectedLetters.length;
-        drawScore();
-        submittedWords.add(formedWord);
+  score += collectedLetters.length;
+  drawScore();
+  submittedWords.add(formedWord);
+  updateWordCollectionUI(formedWord);
+  // Mark row as filled
+  let len = formedWord.length;
+  if (len >= 1 && len <= 6) {
+    wordRowsFilled[len] = true;
+  }
+  // Check win condition
+  if (checkWinCondition()) {
+    win = true;
+    running = false;
+    stopSnakeMotion();
+    if (timerInterval) clearInterval(timerInterval);
+    showShareModal();
+    return;
+  }
       }
     }
     // Respawn all collected letters to their original locations
@@ -430,19 +501,21 @@ function update() {
     collided = true;
   }
   if (collided) {
-    running = false;
-    stopSnakeMotion(); // Stop motion on game over
-    if (timerInterval) clearInterval(timerInterval);
-    showShareModal();
-    return;
+  running = false;
+  stopSnakeMotion(); // Stop motion on game over
+  // Do not show splash page; respawn after 2 seconds
+  collectedLetters = [];
+  respawnSnakeAfterLoss();
+  return;
   }
   // Self collision
   for (let i = 0; i < snake.length; i++) {
     if (snake[i].x === newHead.x && snake[i].y === newHead.y) {
       running = false;
       stopSnakeMotion(); // Stop motion on game over
-      if (timerInterval) clearInterval(timerInterval);
-      showShareModal();
+      // Do not show splash page; respawn after 2 seconds
+      collectedLetters = [];
+      respawnSnakeAfterLoss();
       return;
     }
   }
