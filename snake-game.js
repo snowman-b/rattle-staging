@@ -515,7 +515,9 @@ function update() {
       running = false;
       stopSnakeMotion(); // Stop motion on game over
       if (timerInterval) clearInterval(timerInterval);
-      showShareModal();
+      // Do not show splash page; respawn after 2 seconds
+      collectedLetters = [];
+      respawnSnakeAfterLoss();
       return;
     }
   }
