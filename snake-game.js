@@ -42,22 +42,10 @@ function checkWinCondition() {
 // Update word collection UI: show word in corresponding row, one letter per box
 // Update garbage collection UI: show invalid word in corresponding row, one letter per box
 function updateGarbageCollectionUI(word) {
-  // Clear all 36 grid cells
-  for (let row = 1; row <= 6; row++) {
-    for (let col = 1; col <= 6; col++) {
-      const cell = document.getElementById(`garbageCell-${row}-${col}`);
-      if (cell) cell.textContent = '';
-    }
-  }
-  // Place the word left to right in a random row, starting at a random column, keeping all letters within borders
-  const len = word.length;
-  if (len < 1 || len > 6) return;
-  const row = Math.floor(Math.random() * 6) + 1; // 1-6
-  const maxStartCol = 7 - len; // So word fits in grid
-  const startCol = Math.floor(Math.random() * maxStartCol) + 1; // 1 to maxStartCol
-  for (let i = 0; i < len; i++) {
-    const cell = document.getElementById(`garbageCell-${row}-${startCol + i}`);
-    if (cell) cell.textContent = word[i].toUpperCase();
+  // Show the invalid word as a single string with strikethrough
+  const garbageWordSpan = document.getElementById('garbageWord');
+  if (garbageWordSpan) {
+    garbageWordSpan.textContent = word.toUpperCase();
   }
 }
 function updateWordCollectionUI(word) {
