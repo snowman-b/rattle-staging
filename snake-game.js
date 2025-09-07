@@ -1,4 +1,13 @@
 let submittedWords = new Set();
+// Track which rows are filled with a valid word
+let wordRowsFilled = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
+
+function checkWinCondition() {
+  for (let i = 1; i <= 6; i++) {
+    if (!wordRowsFilled[i]) return false;
+  }
+  return true;
+}
 // Update word collection UI: show word in corresponding row, one letter per box
 function updateWordCollectionUI(word) {
   const len = word.length;
@@ -388,7 +397,7 @@ document.addEventListener('keydown', (e) => {
 });
 
 function gameLoop(timestamp) {
-  if (!running) return;
+  if (!running || win) return;
   if (!lastFrame) lastFrame = timestamp;
   const delta = timestamp - lastFrame;
   if (delta > 1000 / fps) {
@@ -431,6 +440,20 @@ function update() {
   drawScore();
   submittedWords.add(formedWord);
   updateWordCollectionUI(formedWord);
+  // Mark row as filled
+  let len = formedWord.length;
+  if (len >= 1 && len <= 6) {
+    wordRowsFilled[len] = true;
+  }
+  // Check win condition
+  if (checkWinCondition()) {
+    win = true;
+    running = false;
+    stopSnakeMotion();
+    if (timerInterval) clearInterval(timerInterval);
+    showShareModal();
+    return;
+  }
       }
     }
     // Respawn all collected letters to their original locations
