@@ -146,23 +146,26 @@ function drawArena() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   // Draw border flush with grid
   ctx.save();
-  // Draw left, top, bottom walls in default color
-  ctx.strokeStyle = '#222';
-  ctx.lineWidth = 6;
-  ctx.beginPath();
-  // Left wall (extended 5px at top and bottom)
-  ctx.moveTo(3, 3 - 5);
-  ctx.lineTo(3, canvas.height - 3 + 5);
-  // Top wall
-  ctx.moveTo(3, 3);
-  ctx.lineTo(canvas.width - 3, 3);
-  // Bottom wall
-  ctx.moveTo(3, canvas.height - 3);
-  ctx.lineTo(canvas.width - 3, canvas.height - 3);
-  ctx.stroke();
+    // Left wall (red, extended 5px at top and bottom)
+    ctx.strokeStyle = '#c80000'; // Red
+    ctx.lineWidth = 6;
+    ctx.beginPath();
+    ctx.moveTo(3, 3 - 5);
+    ctx.lineTo(3, canvas.height - 3 + 5);
+    ctx.stroke();
+    // Top and bottom walls (black)
+    ctx.strokeStyle = '#222';
+    ctx.beginPath();
+    // Top wall
+    ctx.moveTo(3, 3);
+    ctx.lineTo(canvas.width - 3, 3);
+    // Bottom wall
+    ctx.moveTo(3, canvas.height - 3);
+    ctx.lineTo(canvas.width - 3, canvas.height - 3);
+    ctx.stroke();
   // Draw right wall: top half plus 6 segments in black, bottommost segment in black, section between in green
   const wallX = canvas.width - 3;
-  const cellHeight = (canvas.height - 6) / GRID_HEIGHT;
+    const cellHeight = (canvas.height - 6) / GRID_HEIGHT; // Remove duplicate declaration
   // Black: from top to (half + 6 segments), extended 5px at top
   ctx.strokeStyle = '#222';
   ctx.beginPath();
