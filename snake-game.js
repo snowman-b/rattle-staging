@@ -1,4 +1,20 @@
 let submittedWords = new Set();
+// Update word collection UI: show word in corresponding row, one letter per box
+function updateWordCollectionUI(word) {
+  const len = word.length;
+  if (len < 1 || len > 6) return;
+  const row = document.getElementById('wordRow' + len);
+  if (!row) return;
+  const boxes = row.getElementsByClassName('word-box');
+  // Clear all boxes in the row
+  for (let i = 0; i < boxes.length; i++) {
+    boxes[i].textContent = '';
+  }
+  // Fill boxes with letters of the word
+  for (let i = 0; i < word.length && i < boxes.length; i++) {
+    boxes[i].textContent = word[i].toUpperCase();
+  }
+}
   submittedWords.clear();
 let collectedLetters = [];
 let wordsSet = null;
@@ -411,9 +427,10 @@ function update() {
     if (collectedLetters.length > 0 && wordsSet) {
       const formedWord = collectedLetters.join('').toLowerCase();
       if (wordsSet.has(formedWord) && !submittedWords.has(formedWord)) {
-        score += collectedLetters.length;
-        drawScore();
-        submittedWords.add(formedWord);
+  score += collectedLetters.length;
+  drawScore();
+  submittedWords.add(formedWord);
+  updateWordCollectionUI(formedWord);
       }
     }
     // Respawn all collected letters to their original locations
