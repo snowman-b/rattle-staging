@@ -245,7 +245,7 @@ function drawSnake() {
   for (let i = 0; i < snake.length; i++) {
   ctx.fillStyle = '#00c800'; // Match portal green
   ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
-  // Draw only the outer perimeter of the snake in black
+  // Draw only the true outer perimeter of the snake in black
   if (snake.length > 0) {
     ctx.save();
     ctx.strokeStyle = '#000';
@@ -254,30 +254,38 @@ function drawSnake() {
       const seg = snake[i];
       const x = seg.x * CELL_SIZE;
       const y = seg.y * CELL_SIZE;
-      // Check each edge: if not adjacent to another segment, draw that edge
+      // Helper to check if a segment is sequential (previous or next)
+      function isSequential(j) {
+        return (i > 0 && snake[j].x === snake[i-1].x && snake[j].y === snake[i-1].y) ||
+               (i < snake.length-1 && snake[j].x === snake[i+1].x && snake[j].y === snake[i+1].y);
+      }
       // Top edge
-      if (!snake.some(s => s.x === seg.x && s.y === seg.y - 1)) {
+      const topIdx = snake.findIndex(s => s.x === seg.x && s.y === seg.y - 1);
+      if (topIdx === -1 || !isSequential(topIdx)) {
         ctx.beginPath();
         ctx.moveTo(x, y);
         ctx.lineTo(x + CELL_SIZE, y);
         ctx.stroke();
       }
       // Bottom edge
-      if (!snake.some(s => s.x === seg.x && s.y === seg.y + 1)) {
+      const botIdx = snake.findIndex(s => s.x === seg.x && s.y === seg.y + 1);
+      if (botIdx === -1 || !isSequential(botIdx)) {
         ctx.beginPath();
         ctx.moveTo(x, y + CELL_SIZE);
         ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
         ctx.stroke();
       }
       // Left edge
-      if (!snake.some(s => s.x === seg.x - 1 && s.y === seg.y)) {
+      const leftIdx = snake.findIndex(s => s.x === seg.x - 1 && s.y === seg.y);
+      if (leftIdx === -1 || !isSequential(leftIdx)) {
         ctx.beginPath();
         ctx.moveTo(x, y);
         ctx.lineTo(x, y + CELL_SIZE);
         ctx.stroke();
       }
       // Right edge
-      if (!snake.some(s => s.x === seg.x + 1 && s.y === seg.y)) {
+      const rightIdx = snake.findIndex(s => s.x === seg.x + 1 && s.y === seg.y);
+      if (rightIdx === -1 || !isSequential(rightIdx)) {
         ctx.beginPath();
         ctx.moveTo(x + CELL_SIZE, y);
         ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
