@@ -243,11 +243,49 @@ function drawArena() {
 function drawSnake() {
   ctx.save();
   for (let i = 0; i < snake.length; i++) {
-    ctx.fillStyle = '#00c800'; // Match portal green
-    ctx.strokeStyle = '#000'; // Black outline for visibility
-    ctx.lineWidth = 2; // Outline width
-    ctx.strokeRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE); // Draw outline
-    ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  ctx.fillStyle = '#00c800'; // Match portal green
+  ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  // Draw only the outer perimeter of the snake in black
+  if (snake.length > 0) {
+    ctx.save();
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < snake.length; i++) {
+      const seg = snake[i];
+      const x = seg.x * CELL_SIZE;
+      const y = seg.y * CELL_SIZE;
+      // Check each edge: if not adjacent to another segment, draw that edge
+      // Top edge
+      if (!snake.some(s => s.x === seg.x && s.y === seg.y - 1)) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + CELL_SIZE, y);
+        ctx.stroke();
+      }
+      // Bottom edge
+      if (!snake.some(s => s.x === seg.x && s.y === seg.y + 1)) {
+        ctx.beginPath();
+        ctx.moveTo(x, y + CELL_SIZE);
+        ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+        ctx.stroke();
+      }
+      // Left edge
+      if (!snake.some(s => s.x === seg.x - 1 && s.y === seg.y)) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + CELL_SIZE);
+        ctx.stroke();
+      }
+      // Right edge
+      if (!snake.some(s => s.x === seg.x + 1 && s.y === seg.y)) {
+        ctx.beginPath();
+        ctx.moveTo(x + CELL_SIZE, y);
+        ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
     // Draw collected letters: newest always in second segment, older letters shift toward tail
     if (i > 0 && i <= collectedLetters.length) {
       ctx.save();
