@@ -146,13 +146,38 @@ function drawArena() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   // Draw border flush with grid
   ctx.save();
-  // Draw left, top, bottom walls in default color
+  // Wall coordinates and cell height (declare once)
+  const wallLeftX = 3;
+  const wallX = canvas.width - 3;
+  const cellHeight = (canvas.height - 6) / GRID_HEIGHT;
+  // Left wall: top sixteen segments black, rest red, bottommost segment black except top 5px red
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 6;
   ctx.beginPath();
-  // Left wall (extended 5px at top and bottom)
-  ctx.moveTo(3, 3 - 5);
-  ctx.lineTo(3, canvas.height - 3 + 5);
+  ctx.moveTo(wallLeftX, 3 - 5);
+  ctx.lineTo(wallLeftX, 3 + cellHeight * 16);
+  ctx.stroke();
+  // Red: from sixteen segments to one above bottom
+  ctx.strokeStyle = '#c80000';
+  ctx.beginPath();
+  ctx.moveTo(wallLeftX, 3 + cellHeight * 16);
+  ctx.lineTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.stroke();
+  // Red: top 5px of bottommost segment
+  ctx.strokeStyle = '#c80000';
+  ctx.beginPath();
+  ctx.moveTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.lineTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.stroke();
+  // Black: rest of bottommost segment
+  ctx.strokeStyle = '#222';
+  ctx.beginPath();
+  ctx.moveTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.lineTo(wallLeftX, canvas.height - 3 + 5);
+  ctx.stroke();
+  // Top and bottom walls (black)
+  ctx.strokeStyle = '#222';
+  ctx.beginPath();
   // Top wall
   ctx.moveTo(3, 3);
   ctx.lineTo(canvas.width - 3, 3);
@@ -160,9 +185,7 @@ function drawArena() {
   ctx.moveTo(3, canvas.height - 3);
   ctx.lineTo(canvas.width - 3, canvas.height - 3);
   ctx.stroke();
-  // Draw right wall: top half plus 6 segments in black, bottommost segment in black, section between in green
-  const wallX = canvas.width - 3;
-  const cellHeight = (canvas.height - 6) / GRID_HEIGHT;
+  // Right wall: top half plus 6 segments in black, bottommost segment in black, section between in green
   // Black: from top to (half + 6 segments), extended 5px at top
   ctx.strokeStyle = '#222';
   ctx.beginPath();
