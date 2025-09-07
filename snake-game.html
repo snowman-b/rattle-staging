@@ -5,6 +5,30 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RATTLE Snake Game</title>
   <style>
+  /* Garbage grid: 10px padding within all borders */
+  #garbageCanContainer {
+    display: grid;
+    grid-template-rows: repeat(6, 1fr);
+    grid-template-columns: repeat(6, 1fr);
+    gap: 4px;
+    width: 240px;
+    height: 240px;
+    padding: 10px;
+    box-sizing: border-box;
+    background: transparent;
+  }
+  .garbage-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    font-family: Avenir Next, Arial, sans-serif;
+    color: #c8a800;
+    background: none;
+    border: none;
+    width: 100%;
+    height: 100%;
+  }
     body { background: #fff; margin: 0; font-family: 'Avenir Next', Arial, sans-serif; }
     .container { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px; }
     .card { background: #f5f5ff; box-shadow: 0 0 20px #aaa; border-radius: 18px; padding: 24px; margin: 0 8px; min-width: 320px; min-height: 120px; display: flex; flex-direction: column; align-items: center; }
