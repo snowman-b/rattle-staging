@@ -40,6 +40,29 @@ function checkWinCondition() {
   return true;
 }
 // Update word collection UI: show word in corresponding row, one letter per box
+// Update garbage collection UI: show invalid word in corresponding row, one letter per box
+function updateGarbageCollectionUI(word) {
+  // Show the invalid word as a single string with strikethrough at a random location
+  const garbageWordSpan = document.getElementById('garbageWord');
+  const container = document.getElementById('garbageCanContainer');
+  if (garbageWordSpan && container) {
+    garbageWordSpan.textContent = word.toUpperCase();
+    // Calculate random position within container
+    // Container: 240px wide, 40px tall, 10px padding
+    // Word width: estimate 33px * word.length
+    const wordWidth = 33 * word.length;
+  const maxLeft = Math.max(0, container.clientWidth - wordWidth - 10);
+  const maxTop = Math.max(0, container.clientHeight - 33 - 10);
+  // Snap to 100px increments for maximum visible variation
+  const left = Math.round((Math.random() * maxLeft) / 100) * 100 + 5;
+  const top = Math.round((Math.random() * maxTop) / 100) * 100 + 5;
+  garbageWordSpan.style.left = left + 'px';
+  garbageWordSpan.style.top = top + 'px';
+    // Random tilt between -20 and +20 degrees
+    const tilt = (Math.random() * 40 - 20).toFixed(2);
+    garbageWordSpan.style.transform = `rotate(${tilt}deg)`;
+  }
+}
 function updateWordCollectionUI(word) {
   const len = word.length;
   if (len < 1 || len > 6) return;
@@ -486,6 +509,15 @@ function update() {
     return;
   }
       }
+          // Word is not valid: update garbage container
+          // Only show in garbage if truly invalid (not in wordsSet or already submitted)
+          // Only show in garbage if truly invalid (not in wordsSet or already submitted)
+          if (
+            formedWord.length > 0 &&
+            !wordsSet.has(formedWord.toLowerCase())
+          ) {
+            updateGarbageCollectionUI(formedWord);
+          }
     }
     // Respawn all collected letters to their original locations
     collectedLetters = [];
