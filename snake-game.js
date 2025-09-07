@@ -49,14 +49,18 @@ function updateGarbageCollectionUI(word) {
     garbageWordSpan.textContent = word.toUpperCase();
     // Calculate random position within container
     // Container: 240px wide, 40px tall, 10px padding
-    // Word width: estimate 22px * word.length
-    const wordWidth = 22 * word.length;
-    const maxLeft = Math.max(0, container.clientWidth - wordWidth - 10);
-    const maxTop = container.clientHeight - 22;
-    const left = Math.floor(Math.random() * maxLeft) + 5;
-    const top = Math.floor(Math.random() * maxTop) + 5;
-    garbageWordSpan.style.left = left + 'px';
-    garbageWordSpan.style.top = top + 'px';
+    // Word width: estimate 33px * word.length
+    const wordWidth = 33 * word.length;
+  const maxLeft = Math.max(0, container.clientWidth - wordWidth - 10);
+  const maxTop = Math.max(0, container.clientHeight - 33 - 10);
+  // Snap to 50px increments for even more visible variation
+  const left = Math.round((Math.random() * maxLeft) / 50) * 50 + 5;
+  const top = Math.round((Math.random() * maxTop) / 50) * 50 + 5;
+  garbageWordSpan.style.left = left + 'px';
+  garbageWordSpan.style.top = top + 'px';
+    // Random tilt between -20 and +20 degrees
+    const tilt = (Math.random() * 40 - 20).toFixed(2);
+    garbageWordSpan.style.transform = `rotate(${tilt}deg)`;
   }
 }
 function updateWordCollectionUI(word) {
