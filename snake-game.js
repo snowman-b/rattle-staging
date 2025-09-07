@@ -49,21 +49,14 @@ function updateGarbageCollectionUI(word) {
       if (cell) cell.textContent = '';
     }
   }
-  // Place each letter in a random cell
-  const cells = [];
-  for (let row = 1; row <= 6; row++) {
-    for (let col = 1; col <= 6; col++) {
-      cells.push(`garbageCell-${row}-${col}`);
-    }
-  }
-  // Shuffle cells
-  for (let i = cells.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [cells[i], cells[j]] = [cells[j], cells[i]];
-  }
-  // Place each letter
-  for (let i = 0; i < word.length && i < cells.length; i++) {
-    const cell = document.getElementById(cells[i]);
+  // Place the word left to right in a random row, starting at a random column, keeping all letters within borders
+  const len = word.length;
+  if (len < 1 || len > 6) return;
+  const row = Math.floor(Math.random() * 6) + 1; // 1-6
+  const maxStartCol = 7 - len; // So word fits in grid
+  const startCol = Math.floor(Math.random() * maxStartCol) + 1; // 1 to maxStartCol
+  for (let i = 0; i < len; i++) {
+    const cell = document.getElementById(`garbageCell-${row}-${startCol + i}`);
     if (cell) cell.textContent = word[i].toUpperCase();
   }
 }
