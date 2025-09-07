@@ -149,6 +149,19 @@ function drawArena() {
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 6;
   ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
+  // Draw portals
+  // Green portal (right)
+  ctx.save();
+  ctx.fillStyle = '#00c800'; // Green
+  let portalYStart = (GRID_HEIGHT - 4) * CELL_SIZE;
+  let portalHeight = 3 * CELL_SIZE;
+  ctx.fillRect(MARGIN_LEFT + ARENA_WIDTH - 8, MARGIN_TOP + portalYStart, 8, portalHeight);
+  ctx.restore();
+  // Red portal (left)
+  ctx.save();
+  ctx.fillStyle = '#c80000'; // Red
+  ctx.fillRect(MARGIN_LEFT, MARGIN_TOP + portalYStart, 8, portalHeight);
+  ctx.restore();
   ctx.restore();
 }
 
@@ -245,29 +258,41 @@ function update() {
     }
   }
   // Move snake
-  const newHead = {
+  let newHead = {
     x: snake[0].x + direction.x,
     y: snake[0].y + direction.y
   };
-  // Edge collision
+  // Portal logic: green portal (right) to red portal (left)
+  let portalYStart = GRID_HEIGHT - 4;
+  let portalYEnd = GRID_HEIGHT - 1;
+  let onGreenPortal = (snake[0].x === GRID_WIDTH - 1 && snake[0].y >= portalYStart && snake[0].y < portalYEnd && direction.x === 1);
+  if (onGreenPortal) {
+    // Teleport to red portal
+    newHead.x = 0;
+  }
+  // Edge collision (except for portal)
+  let collided = false;
   if (
-    newHead.x < 0 || newHead.x >= GRID_WIDTH ||
-    newHead.y < 0 || newHead.y >= GRID_HEIGHT
+    (newHead.x < 0 || newHead.x >= GRID_WIDTH || newHead.y < 0 || newHead.y >= GRID_HEIGHT)
+    && !onGreenPortal
   ) {
-  running = false;
-  stopSnakeMotion(); // Stop motion on game over
-  if (timerInterval) clearInterval(timerInterval);
-  showShareModal();
-  return;
+    collided = true;
+  }
+  if (collided) {
+    running = false;
+    stopSnakeMotion(); // Stop motion on game over
+    if (timerInterval) clearInterval(timerInterval);
+    showShareModal();
+    return;
   }
   // Self collision
   for (let i = 0; i < snake.length; i++) {
     if (snake[i].x === newHead.x && snake[i].y === newHead.y) {
-  running = false;
-  stopSnakeMotion(); // Stop motion on game over
-  if (timerInterval) clearInterval(timerInterval);
-  showShareModal();
-  return;
+      running = false;
+      stopSnakeMotion(); // Stop motion on game over
+      if (timerInterval) clearInterval(timerInterval);
+      showShareModal();
+      return;
     }
   }
   // Food eating
