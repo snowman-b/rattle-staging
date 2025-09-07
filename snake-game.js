@@ -503,7 +503,12 @@ function update() {
   }
       }
           // Word is not valid: update garbage container
-          if (formedWord.length > 0) {
+          // Only show in garbage if truly invalid (not in wordsSet or already submitted)
+          // Only show in garbage if truly invalid (not in wordsSet or already submitted)
+          if (
+            formedWord.length > 0 &&
+            !wordsSet.has(formedWord.toLowerCase())
+          ) {
             updateGarbageCollectionUI(formedWord);
           }
     }
