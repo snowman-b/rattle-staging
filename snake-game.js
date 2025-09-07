@@ -1,3 +1,15 @@
+let collectedLetters = [];
+let wordsSet = null;
+// Load all_words.txt once and cache
+function loadWordList() {
+  window.fetch('all_words.txt')
+    .then(response => response.text())
+    .then(text => {
+      wordsSet = new Set(text.split(/\r?\n/).map(w => w.trim().toLowerCase()));
+    });
+}
+loadWordList();
+  collectedLetters = [];
 // RATTLE Snake Game - HTML5/JS Conversion
 // Best practices, maintainable, secure, efficient
 
@@ -333,7 +345,16 @@ function update() {
   if (onGreenPortal) {
     // Teleport to red portal
     newHead.x = 0;
+    // Check if collected letters form a valid word
+    if (collectedLetters.length > 0 && wordsSet) {
+      const formedWord = collectedLetters.join('').toLowerCase();
+      if (wordsSet.has(formedWord)) {
+        score += collectedLetters.length;
+        drawScore();
+      }
+    }
     // Respawn all collected letters to their original locations
+    collectedLetters = [];
     const todayWord = getTodayWord();
     foods = getFoodPositionsForWord(todayWord);
   }
@@ -366,7 +387,7 @@ function update() {
   let ateFood = false;
   for (let i = 0; i < foods.length; i++) {
     if (foods[i].x === newHead.x && foods[i].y === newHead.y) {
-      score++;
+      collectedLetters.push(foods[i].letter);
       foods.splice(i, 1); // Remove eaten food
       ateFood = true;
       break;
