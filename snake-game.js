@@ -42,18 +42,29 @@ function checkWinCondition() {
 // Update word collection UI: show word in corresponding row, one letter per box
 // Update garbage collection UI: show invalid word in corresponding row, one letter per box
 function updateGarbageCollectionUI(word) {
-  const len = word.length;
-  if (len < 1 || len > 6) return;
-  const row = document.getElementById('garbageRow' + len);
-  if (!row) return;
-  const boxes = row.getElementsByClassName('garbage-box');
-  // Clear all boxes in the row
-  for (let i = 0; i < boxes.length; i++) {
-    boxes[i].textContent = '';
+  // Clear all 36 grid cells
+  for (let row = 1; row <= 6; row++) {
+    for (let col = 1; col <= 6; col++) {
+      const cell = document.getElementById(`garbageCell-${row}-${col}`);
+      if (cell) cell.textContent = '';
+    }
   }
-  // Fill boxes with letters of the word
-  for (let i = 0; i < word.length && i < boxes.length; i++) {
-    boxes[i].textContent = word[i].toUpperCase();
+  // Place each letter in a random cell
+  const cells = [];
+  for (let row = 1; row <= 6; row++) {
+    for (let col = 1; col <= 6; col++) {
+      cells.push(`garbageCell-${row}-${col}`);
+    }
+  }
+  // Shuffle cells
+  for (let i = cells.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [cells[i], cells[j]] = [cells[j], cells[i]];
+  }
+  // Place each letter
+  for (let i = 0; i < word.length && i < cells.length; i++) {
+    const cell = document.getElementById(cells[i]);
+    if (cell) cell.textContent = word[i].toUpperCase();
   }
 }
 function updateWordCollectionUI(word) {
