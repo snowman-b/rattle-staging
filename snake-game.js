@@ -248,6 +248,16 @@ function drawSnake() {
     ctx.lineWidth = 2; // Outline width
     ctx.strokeRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE); // Draw outline
     ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+    // Draw collected letter in body segments (not head)
+    if (i > 0 && i <= collectedLetters.length) {
+      ctx.save();
+  ctx.font = '20px Avenir Next, Arial, sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillStyle = '#000';
+  ctx.fillText(collectedLetters[i-1], snake[i].x * CELL_SIZE + CELL_SIZE/2, snake[i].y * CELL_SIZE + CELL_SIZE/2 + 2);
+      ctx.restore();
+    }
   }
   ctx.restore();
 }
