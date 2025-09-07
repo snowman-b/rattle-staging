@@ -192,7 +192,7 @@ function resetGame() {
   // Start timer
   if (timerInterval) clearInterval(timerInterval);
   timerInterval = setInterval(() => {
-    if (running) {
+    if (!win) {
       elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
       drawTimer();
     }
@@ -503,7 +503,6 @@ function update() {
   if (collided) {
   running = false;
   stopSnakeMotion(); // Stop motion on game over
-  if (timerInterval) clearInterval(timerInterval);
   // Do not show splash page; respawn after 2 seconds
   collectedLetters = [];
   respawnSnakeAfterLoss();
@@ -514,7 +513,6 @@ function update() {
     if (snake[i].x === newHead.x && snake[i].y === newHead.y) {
       running = false;
       stopSnakeMotion(); // Stop motion on game over
-      if (timerInterval) clearInterval(timerInterval);
       // Do not show splash page; respawn after 2 seconds
       collectedLetters = [];
       respawnSnakeAfterLoss();
