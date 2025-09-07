@@ -330,6 +330,9 @@ function update() {
   if (onGreenPortal) {
     // Teleport to red portal
     newHead.x = 0;
+    // Respawn all collected letters to their original locations
+    const todayWord = getTodayWord();
+    foods = getFoodPositionsForWord(todayWord);
   }
   // Edge collision (except for portal)
   let collided = false;
