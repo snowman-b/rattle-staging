@@ -1,3 +1,34 @@
+// Respawn snake after loss (wall/self collision)
+function respawnSnakeAfterLoss() {
+  setTimeout(() => {
+    direction = {x: 1, y: 0};
+    directionQueue = [];
+    snake = [
+      {x: 3, y: GRID_HEIGHT - 3},
+      {x: 2, y: GRID_HEIGHT - 3},
+      {x: 1, y: GRID_HEIGHT - 3}
+    ];
+    collectedLetters = [];
+    // Foods remain as per today's word
+    const todayWord = getTodayWord();
+    foods = getFoodPositionsForWord(todayWord);
+    running = true;
+    win = false;
+    startSnakeMotion();
+    lastFrame = 0;
+    // Timer resumes
+    if (!timerInterval) {
+      startTime = Date.now();
+      timerInterval = setInterval(() => {
+        if (running) {
+          elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+          drawTimer();
+        }
+      }, 1000);
+    }
+    requestAnimationFrame(gameLoop);
+  }, 2000);
+}
 let submittedWords = new Set();
 // Track which rows are filled with a valid word
 let wordRowsFilled = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
@@ -470,11 +501,13 @@ function update() {
     collided = true;
   }
   if (collided) {
-    running = false;
-    stopSnakeMotion(); // Stop motion on game over
-    if (timerInterval) clearInterval(timerInterval);
-    showShareModal();
-    return;
+  running = false;
+  stopSnakeMotion(); // Stop motion on game over
+  if (timerInterval) clearInterval(timerInterval);
+  // Do not show splash page; respawn after 2 seconds
+  collectedLetters = [];
+  respawnSnakeAfterLoss();
+  return;
   }
   // Self collision
   for (let i = 0; i < snake.length; i++) {
