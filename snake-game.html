@@ -8,28 +8,22 @@
   <style>
   /* Garbage grid: 10px padding within all borders */
   #garbageCanContainer {
-    display: grid;
-    grid-template-rows: repeat(6, 1fr);
-    grid-template-columns: repeat(6, 1fr);
-    gap: 4px;
-    width: 240px;
-    height: 240px;
-    padding: 10px;
-    box-sizing: border-box;
-    background: transparent;
+  position: relative;
+  width: 240px;
+  height: 40px;
+  padding: 10px;
+  box-sizing: border-box;
+  background: transparent;
   }
   .garbage-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: absolute;
   font-size: 22px;
   font-family: 'Indie Flower', cursive;
   color: #000;
   text-decoration: line-through;
-    background: none;
-    border: none;
-    width: 100%;
-    height: 100%;
+  background: none;
+  border: none;
+  white-space: nowrap;
   }
     body { background: #fff; margin: 0; font-family: 'Avenir Next', Arial, sans-serif; }
     .container { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px; }

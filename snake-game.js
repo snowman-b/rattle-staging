@@ -42,10 +42,21 @@ function checkWinCondition() {
 // Update word collection UI: show word in corresponding row, one letter per box
 // Update garbage collection UI: show invalid word in corresponding row, one letter per box
 function updateGarbageCollectionUI(word) {
-  // Show the invalid word as a single string with strikethrough
+  // Show the invalid word as a single string with strikethrough at a random location
   const garbageWordSpan = document.getElementById('garbageWord');
-  if (garbageWordSpan) {
+  const container = document.getElementById('garbageCanContainer');
+  if (garbageWordSpan && container) {
     garbageWordSpan.textContent = word.toUpperCase();
+    // Calculate random position within container
+    // Container: 240px wide, 40px tall, 10px padding
+    // Word width: estimate 22px * word.length
+    const wordWidth = 22 * word.length;
+    const maxLeft = Math.max(0, container.clientWidth - wordWidth - 10);
+    const maxTop = container.clientHeight - 22;
+    const left = Math.floor(Math.random() * maxLeft) + 5;
+    const top = Math.floor(Math.random() * maxTop) + 5;
+    garbageWordSpan.style.left = left + 'px';
+    garbageWordSpan.style.top = top + 'px';
   }
 }
 function updateWordCollectionUI(word) {
