@@ -29,6 +29,7 @@ let foods = [];
 let score = 0;
 let elapsedSeconds = 0;
 let startTime = null;
+let timerInterval = null;
 let win = false;
 let endlessMode = false;
 let snakeInMotion = false;
@@ -118,7 +119,26 @@ function resetGame() {
   win = false;
   endlessMode = false;
   startSnakeMotion(); // Start motion on game start
+  // Start timer
+  if (timerInterval) clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (running) {
+      elapsedSeconds = Math.floor((Date.now() - startTime) / 1000);
+      drawTimer();
+    }
+  }, 1000);
+  drawTimer();
   // TODO: Add word logic, food placement, etc.
+function drawTimer() {
+  const timerDiv = document.getElementById('timer');
+  if (timerDiv) {
+    const minutes = Math.floor(elapsedSeconds / 60);
+    const seconds = elapsedSeconds % 60;
+    const mm = String(minutes).padStart(2, '0');
+    const ss = String(seconds).padStart(2, '0');
+    timerDiv.textContent = `Time: ${mm}:${ss}`;
+  }
+}
 }
 
 function drawArena() {
@@ -126,16 +146,67 @@ function drawArena() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   // Draw border flush with grid
   ctx.save();
+  // Draw left, top, bottom walls in default color
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 6;
-  ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
+  ctx.beginPath();
+  // Left wall (extended 5px at top and bottom)
+  ctx.moveTo(3, 3 - 5);
+  ctx.lineTo(3, canvas.height - 3 + 5);
+  // Top wall
+  ctx.moveTo(3, 3);
+  ctx.lineTo(canvas.width - 3, 3);
+  // Bottom wall
+  ctx.moveTo(3, canvas.height - 3);
+  ctx.lineTo(canvas.width - 3, canvas.height - 3);
+  ctx.stroke();
+  // Draw right wall: top half plus 6 segments in black, bottommost segment in black, section between in green
+  const wallX = canvas.width - 3;
+  const cellHeight = (canvas.height - 6) / GRID_HEIGHT;
+  // Black: from top to (half + 6 segments), extended 5px at top
+  ctx.strokeStyle = '#222';
+  ctx.beginPath();
+  ctx.moveTo(wallX, 3 - 5);
+  ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
+  ctx.stroke();
+  // Green: from (half + 6 segments) to one above bottom
+  ctx.strokeStyle = '#00c800';
+  ctx.beginPath();
+  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
+  ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.stroke();
+  // Light green top 5px of bottommost segment (portal color)
+  ctx.strokeStyle = '#00c800'; // Portal light green
+  ctx.beginPath();
+  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.stroke();
+  // Black rest of bottommost segment
+  ctx.strokeStyle = '#222';
+  ctx.beginPath();
+  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.lineTo(wallX, canvas.height - 3 + 5);
+  ctx.stroke();
+  // Draw portals
+  // Green portal (right)
+  ctx.save();
+  ctx.fillStyle = '#00c800'; // Green
+  let portalYStart = (GRID_HEIGHT - 4) * CELL_SIZE;
+  let portalHeight = 3 * CELL_SIZE;
+  ctx.fillRect(MARGIN_LEFT + ARENA_WIDTH - 8, MARGIN_TOP + portalYStart, 8, portalHeight);
+  ctx.restore();
+  // Red portal (left)
+  ctx.save();
+  ctx.fillStyle = '#c80000'; // Red
+  ctx.fillRect(MARGIN_LEFT, MARGIN_TOP + portalYStart, 8, portalHeight);
+  ctx.restore();
   ctx.restore();
 }
 
 function drawSnake() {
   ctx.save();
   for (let i = 0; i < snake.length; i++) {
-    ctx.fillStyle = '#50c878';
+    ctx.fillStyle = '#00c800'; // Match portal green
     ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   }
   ctx.restore();
@@ -225,17 +296,30 @@ function update() {
     }
   }
   // Move snake
-  const newHead = {
+  let newHead = {
     x: snake[0].x + direction.x,
     y: snake[0].y + direction.y
   };
-  // Edge collision
+  // Portal logic: green portal (right) to red portal (left)
+  let portalYStart = GRID_HEIGHT - 4;
+  let portalYEnd = GRID_HEIGHT - 1;
+  let onGreenPortal = (snake[0].x === GRID_WIDTH - 1 && snake[0].y >= portalYStart && snake[0].y < portalYEnd && direction.x === 1);
+  if (onGreenPortal) {
+    // Teleport to red portal
+    newHead.x = 0;
+  }
+  // Edge collision (except for portal)
+  let collided = false;
   if (
-    newHead.x < 0 || newHead.x >= GRID_WIDTH ||
-    newHead.y < 0 || newHead.y >= GRID_HEIGHT
+    (newHead.x < 0 || newHead.x >= GRID_WIDTH || newHead.y < 0 || newHead.y >= GRID_HEIGHT)
+    && !onGreenPortal
   ) {
+    collided = true;
+  }
+  if (collided) {
     running = false;
     stopSnakeMotion(); // Stop motion on game over
+    if (timerInterval) clearInterval(timerInterval);
     showShareModal();
     return;
   }
@@ -244,6 +328,7 @@ function update() {
     if (snake[i].x === newHead.x && snake[i].y === newHead.y) {
       running = false;
       stopSnakeMotion(); // Stop motion on game over
+      if (timerInterval) clearInterval(timerInterval);
       showShareModal();
       return;
     }
@@ -276,8 +361,17 @@ function showShareModal() {
   const modal = document.getElementById('shareModal');
   const dateDiv = document.getElementById('modalDate');
   const scoreDiv = document.getElementById('modalScore');
+  const timeDiv = document.getElementById('modalTime');
   dateDiv.textContent = new Date().toLocaleDateString('en-US', {month: 'long', day: 'numeric', year: 'numeric'});
   scoreDiv.textContent = 'Score: ' + score;
+  // Show final time in MM:SS format
+  const minutes = Math.floor(elapsedSeconds / 60);
+  const seconds = elapsedSeconds % 60;
+  const mm = String(minutes).padStart(2, '0');
+  const ss = String(seconds).padStart(2, '0');
+  if (timeDiv) {
+    timeDiv.textContent = `Time: ${mm}:${ss}`;
+  }
   modal.style.display = 'flex';
 }
 
