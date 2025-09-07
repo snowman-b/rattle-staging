@@ -200,7 +200,7 @@ function drawArena() {
 function drawSnake() {
   ctx.save();
   for (let i = 0; i < snake.length; i++) {
-    ctx.fillStyle = '#50c878';
+    ctx.fillStyle = '#00c800'; // Match portal green
     ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
   }
   ctx.restore();
