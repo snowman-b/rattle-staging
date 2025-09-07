@@ -146,9 +146,41 @@ function drawArena() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   // Draw border flush with grid
   ctx.save();
+  // Draw left, top, bottom walls in default color
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 6;
-  ctx.strokeRect(3, 3, canvas.width - 6, canvas.height - 6);
+  ctx.beginPath();
+  // Left wall
+  ctx.moveTo(3, 3);
+  ctx.lineTo(3, canvas.height - 3);
+  // Top wall
+  ctx.moveTo(3, 3);
+  ctx.lineTo(canvas.width - 3, 3);
+  // Bottom wall
+  ctx.moveTo(3, canvas.height - 3);
+  ctx.lineTo(canvas.width - 3, canvas.height - 3);
+  ctx.stroke();
+  // Draw right wall: top half plus 6 segments in black, bottommost segment in black, section between in green
+  const wallX = canvas.width - 3;
+  const cellHeight = (canvas.height - 6) / GRID_HEIGHT;
+  // Black: from top to (half + 6 segments)
+  ctx.strokeStyle = '#222';
+  ctx.beginPath();
+  ctx.moveTo(wallX, 3);
+  ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
+  ctx.stroke();
+  // Green: from (half + 6 segments) to one above bottom
+  ctx.strokeStyle = '#00c800';
+  ctx.beginPath();
+  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
+  ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.stroke();
+  // Black: bottommost segment
+  ctx.strokeStyle = '#222';
+  ctx.beginPath();
+  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.lineTo(wallX, canvas.height - 3);
+  ctx.stroke();
   // Draw portals
   // Green portal (right)
   ctx.save();
