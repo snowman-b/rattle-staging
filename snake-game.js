@@ -150,16 +150,29 @@ function drawArena() {
   const wallLeftX = 3;
   const wallX = canvas.width - 3;
   const cellHeight = (canvas.height - 6) / GRID_HEIGHT;
-  // Left wall: top sixteen segments black, rest red
+  // Left wall: top sixteen segments black, rest red, bottommost segment black except top 5px red
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 6;
   ctx.beginPath();
   ctx.moveTo(wallLeftX, 3 - 5);
   ctx.lineTo(wallLeftX, 3 + cellHeight * 16);
   ctx.stroke();
+  // Red: from sixteen segments to one above bottom
   ctx.strokeStyle = '#c80000';
   ctx.beginPath();
   ctx.moveTo(wallLeftX, 3 + cellHeight * 16);
+  ctx.lineTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.stroke();
+  // Red: top 5px of bottommost segment
+  ctx.strokeStyle = '#c80000';
+  ctx.beginPath();
+  ctx.moveTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.lineTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.stroke();
+  // Black: rest of bottommost segment
+  ctx.strokeStyle = '#222';
+  ctx.beginPath();
+  ctx.moveTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
   ctx.lineTo(wallLeftX, canvas.height - 3 + 5);
   ctx.stroke();
   // Top and bottom walls (black)
