@@ -53,9 +53,9 @@ function updateGarbageCollectionUI(word) {
     const wordWidth = 33 * word.length;
   const maxLeft = Math.max(0, container.clientWidth - wordWidth - 10);
   const maxTop = Math.max(0, container.clientHeight - 33 - 10);
-  // Snap to 50px increments for even more visible variation
-  const left = Math.round((Math.random() * maxLeft) / 50) * 50 + 5;
-  const top = Math.round((Math.random() * maxTop) / 50) * 50 + 5;
+  // Snap to 100px increments for maximum visible variation
+  const left = Math.round((Math.random() * maxLeft) / 100) * 100 + 5;
+  const top = Math.round((Math.random() * maxTop) / 100) * 100 + 5;
   garbageWordSpan.style.left = left + 'px';
   garbageWordSpan.style.top = top + 'px';
     // Random tilt between -20 and +20 degrees

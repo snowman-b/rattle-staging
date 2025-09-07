@@ -24,3 +24,10 @@ Efficient rendering and game loop
 make https?
 """
 
+"""
+Bugs:
+share modal takes user back to a finished word collection state
+
+
+
+"""
