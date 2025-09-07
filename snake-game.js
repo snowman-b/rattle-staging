@@ -1,3 +1,5 @@
+let submittedWords = new Set();
+  submittedWords.clear();
 let collectedLetters = [];
 let wordsSet = null;
 // Load all_words.txt once and cache
@@ -348,9 +350,10 @@ function update() {
     // Check if collected letters form a valid word
     if (collectedLetters.length > 0 && wordsSet) {
       const formedWord = collectedLetters.join('').toLowerCase();
-      if (wordsSet.has(formedWord)) {
+      if (wordsSet.has(formedWord) && !submittedWords.has(formedWord)) {
         score += collectedLetters.length;
         drawScore();
+        submittedWords.add(formedWord);
       }
     }
     // Respawn all collected letters to their original locations
