@@ -163,10 +163,10 @@ function drawArena() {
   // Draw right wall: top half plus 6 segments in black, bottommost segment in black, section between in green
   const wallX = canvas.width - 3;
   const cellHeight = (canvas.height - 6) / GRID_HEIGHT;
-  // Black: from top to (half + 6 segments)
+  // Black: from top to (half + 6 segments), extended 5px at top
   ctx.strokeStyle = '#222';
   ctx.beginPath();
-  ctx.moveTo(wallX, 3);
+  ctx.moveTo(wallX, 3 - 5);
   ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
   ctx.stroke();
   // Green: from (half + 6 segments) to one above bottom
@@ -175,11 +175,11 @@ function drawArena() {
   ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
   ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
   ctx.stroke();
-  // Black: bottommost segment
+  // Black: bottommost segment, extended 5px at bottom
   ctx.strokeStyle = '#222';
   ctx.beginPath();
   ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
-  ctx.lineTo(wallX, canvas.height - 3);
+  ctx.lineTo(wallX, canvas.height - 3 + 5);
   ctx.stroke();
   // Draw portals
   // Green portal (right)
