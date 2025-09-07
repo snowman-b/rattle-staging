@@ -175,10 +175,16 @@ function drawArena() {
   ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
   ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
   ctx.stroke();
-  // Black: bottommost segment, extended 5px at bottom
-  ctx.strokeStyle = '#222';
+  // Light green top 5px of bottommost segment (portal color)
+  ctx.strokeStyle = '#00c800'; // Portal light green
   ctx.beginPath();
   ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.stroke();
+  // Black rest of bottommost segment
+  ctx.strokeStyle = '#222';
+  ctx.beginPath();
+  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
   ctx.lineTo(wallX, canvas.height - 3 + 5);
   ctx.stroke();
   // Draw portals
