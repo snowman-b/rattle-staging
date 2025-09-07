@@ -40,6 +40,22 @@ function checkWinCondition() {
   return true;
 }
 // Update word collection UI: show word in corresponding row, one letter per box
+// Update garbage collection UI: show invalid word in corresponding row, one letter per box
+function updateGarbageCollectionUI(word) {
+  const len = word.length;
+  if (len < 1 || len > 6) return;
+  const row = document.getElementById('garbageRow' + len);
+  if (!row) return;
+  const boxes = row.getElementsByClassName('garbage-box');
+  // Clear all boxes in the row
+  for (let i = 0; i < boxes.length; i++) {
+    boxes[i].textContent = '';
+  }
+  // Fill boxes with letters of the word
+  for (let i = 0; i < word.length && i < boxes.length; i++) {
+    boxes[i].textContent = word[i].toUpperCase();
+  }
+}
 function updateWordCollectionUI(word) {
   const len = word.length;
   if (len < 1 || len > 6) return;
@@ -486,6 +502,10 @@ function update() {
     return;
   }
       }
+          // Word is not valid: update garbage container
+          if (formedWord.length > 0) {
+            updateGarbageCollectionUI(formedWord);
+          }
     }
     // Respawn all collected letters to their original locations
     collectedLetters = [];
