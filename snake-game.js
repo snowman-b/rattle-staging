@@ -150,9 +150,9 @@ function drawArena() {
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 6;
   ctx.beginPath();
-  // Left wall
-  ctx.moveTo(3, 3);
-  ctx.lineTo(3, canvas.height - 3);
+  // Left wall (extended 5px at top and bottom)
+  ctx.moveTo(3, 3 - 5);
+  ctx.lineTo(3, canvas.height - 3 + 5);
   // Top wall
   ctx.moveTo(3, 3);
   ctx.lineTo(canvas.width - 3, 3);
