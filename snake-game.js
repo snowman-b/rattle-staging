@@ -1,3 +1,17 @@
+let submittedWords = new Set();
+  submittedWords.clear();
+let collectedLetters = [];
+let wordsSet = null;
+// Load all_words.txt once and cache
+function loadWordList() {
+  window.fetch('all_words.txt')
+    .then(response => response.text())
+    .then(text => {
+      wordsSet = new Set(text.split(/\r?\n/).map(w => w.trim().toLowerCase()));
+    });
+}
+loadWordList();
+  collectedLetters = [];
 // RATTLE Snake Game - HTML5/JS Conversion
 // Best practices, maintainable, secure, efficient
 
@@ -229,8 +243,71 @@ function drawArena() {
 function drawSnake() {
   ctx.save();
   for (let i = 0; i < snake.length; i++) {
-    ctx.fillStyle = '#00c800'; // Match portal green
-    ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  ctx.fillStyle = '#00c800'; // Match portal green
+  ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  // Draw only the true outer perimeter of the snake in black
+  if (snake.length > 0) {
+    ctx.save();
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < snake.length; i++) {
+      const seg = snake[i];
+      const x = seg.x * CELL_SIZE;
+      const y = seg.y * CELL_SIZE;
+      // Helper to check if a segment is sequential (previous or next)
+      function isSequential(j) {
+        return (i > 0 && snake[j].x === snake[i-1].x && snake[j].y === snake[i-1].y) ||
+               (i < snake.length-1 && snake[j].x === snake[i+1].x && snake[j].y === snake[i+1].y);
+      }
+      // Top edge
+      const topIdx = snake.findIndex(s => s.x === seg.x && s.y === seg.y - 1);
+      if (topIdx === -1 || !isSequential(topIdx)) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x + CELL_SIZE, y);
+        ctx.stroke();
+      }
+      // Bottom edge
+      const botIdx = snake.findIndex(s => s.x === seg.x && s.y === seg.y + 1);
+      if (botIdx === -1 || !isSequential(botIdx)) {
+        ctx.beginPath();
+        ctx.moveTo(x, y + CELL_SIZE);
+        ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+        ctx.stroke();
+      }
+      // Left edge
+      const leftIdx = snake.findIndex(s => s.x === seg.x - 1 && s.y === seg.y);
+      if (leftIdx === -1 || !isSequential(leftIdx)) {
+        ctx.beginPath();
+        ctx.moveTo(x, y);
+        ctx.lineTo(x, y + CELL_SIZE);
+        ctx.stroke();
+      }
+      // Right edge
+      const rightIdx = snake.findIndex(s => s.x === seg.x + 1 && s.y === seg.y);
+      if (rightIdx === -1 || !isSequential(rightIdx)) {
+        ctx.beginPath();
+        ctx.moveTo(x + CELL_SIZE, y);
+        ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+        ctx.stroke();
+      }
+    }
+    ctx.restore();
+  }
+    // Draw collected letters: newest always in second segment, older letters shift toward tail
+    if (i > 0 && i <= collectedLetters.length) {
+      ctx.save();
+      ctx.font = '20px Avenir Next, Arial, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillStyle = '#000';
+      // Place newest letter in second segment, older letters shift toward tail
+      let letterIndex = collectedLetters.length - i;
+      if (letterIndex >= 0) {
+        ctx.fillText(collectedLetters[letterIndex], snake[i].x * CELL_SIZE + CELL_SIZE/2, snake[i].y * CELL_SIZE + CELL_SIZE/2 + 2);
+      }
+      ctx.restore();
+    }
   }
   ctx.restore();
 }
@@ -330,6 +407,19 @@ function update() {
   if (onGreenPortal) {
     // Teleport to red portal
     newHead.x = 0;
+    // Check if collected letters form a valid word
+    if (collectedLetters.length > 0 && wordsSet) {
+      const formedWord = collectedLetters.join('').toLowerCase();
+      if (wordsSet.has(formedWord) && !submittedWords.has(formedWord)) {
+        score += collectedLetters.length;
+        drawScore();
+        submittedWords.add(formedWord);
+      }
+    }
+    // Respawn all collected letters to their original locations
+    collectedLetters = [];
+    const todayWord = getTodayWord();
+    foods = getFoodPositionsForWord(todayWord);
   }
   // Edge collision (except for portal)
   let collided = false;
@@ -360,7 +450,7 @@ function update() {
   let ateFood = false;
   for (let i = 0; i < foods.length; i++) {
     if (foods[i].x === newHead.x && foods[i].y === newHead.y) {
-      score++;
+      collectedLetters.push(foods[i].letter);
       foods.splice(i, 1); // Remove eaten food
       ateFood = true;
       break;
