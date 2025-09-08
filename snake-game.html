@@ -63,10 +63,18 @@
   </div>
   <!-- Time Trial Play Modal (moved outside splash container row) -->
   <div id="ttModal" class="modal" style="display:none; z-index:200;">
-    <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; display:flex; flex-direction:column; align-items:center;">
-      <div style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em;">Ready to Play?</div>
-      <div style="font-size:1.2em; color:#222; margin-bottom:1.5em; text-align:left;">Press Play to begin the Time Trial mode!</div>
-      <button id="ttPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#006400; color:#fff; border:none; cursor:pointer; margin-top:1em;">Play</button>
+    <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:900px; min-height:900px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
+      <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
+      <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">Time Trial</span>
+      <div style="font-size:1.3em; color:#222; margin-bottom:2em; margin-top:1.5em; text-align:left; max-width:360px;">
+        <ul style="padding-left:1.2em;">
+          <li>Move the snake to quickly find 6 words from the scrambled letters</li>
+          <li>Submit words by passing into the green portal</li>
+          <li>Speed Up: double click the arrow key in the snake's direction of travel</li>
+          <li>Slow Down: double click the arrow key against the snake's direction of travel</li>
+        </ul>
+      </div>
+      <button id="ttPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#006400; color:#fff; border:none; cursor:pointer; margin-top:auto; margin-bottom:2em;">Play</button>
     </div>
   </div>
   <div id="mainGame" style="display:none;">
