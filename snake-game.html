@@ -42,16 +42,32 @@
   </style>
 </head>
 <body>
-  <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px;">
-    <div class="card" id="scoreboardCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
-      <div id="scoreboard">Scoreboard</div>
+  <div id="splashPage" style="position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(255,255,255,0.98); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div style="display:flex; flex-direction:row; gap:48px;">
+      <div id="rattleContainer" style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+        <span style="font-size:4em; color:#006400; text-shadow:2px 2px #000; font-family:'Avenir Next', Arial, sans-serif;">RATTLE</span>
+      </div>
+      <div style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center;">
+        <span style="font-size:2em; color:#888;">placeholder 1</span>
+      </div>
+      <div style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center;">
+        <span style="font-size:2em; color:#888;">placeholder 2</span>
+      </div>
     </div>
-    <div class="card" id="arenaCard" style="padding:0; min-width:auto; min-height:auto; width:600px; height:400px; display:flex; align-items:center; justify-content:center; border-radius:0;">
-      <canvas id="gameCanvas" width="600" height="400" style="display:block; margin:0; padding:0; border-radius:0;"></canvas>
+  </div>
+  <div id="mainGame" style="display:none;">
+    <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px;">
+      <div class="card" id="scoreboardCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
+        <div id="scoreboard">Scoreboard</div>
+      </div>
+      <div class="card" id="arenaCard" style="padding:0; min-width:auto; min-height:auto; width:600px; height:400px; display:flex; align-items:center; justify-content:center; border-radius:0;">
+        <canvas id="gameCanvas" width="600" height="400" style="display:block; margin:0; padding:0; border-radius:0;"></canvas>
+      </div>
+      <div class="card" id="timerCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
+        <div id="timer">Timer</div>
+      </div>
     </div>
-    <div class="card" id="timerCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
-      <div id="timer">Timer</div>
-    </div>
+    <!-- ...rest of your game HTML... -->
   </div>
   <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 16px;">
   <div class="card" id="wordCollectionCard" style="width:320px; height:290px; display:flex; align-items:center; justify-content:center;">
@@ -111,5 +127,14 @@
     <button class="btn" id="modalHome">Return Home</button>
   </div>
   <script src="snake-game.js"></script>
+  <script>
+    // Hide splash, show game on click
+    document.getElementById('rattleContainer').onclick = function() {
+      document.getElementById('splashPage').style.display = 'none';
+      document.getElementById('mainGame').style.display = '';
+    };
+    // Optionally, prevent game JS from running until splash is dismissed
+    // You can add logic in snake-game.js to check if mainGame is visible before starting
+  </script>
 </body>
 </html>
