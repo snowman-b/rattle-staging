@@ -616,6 +616,8 @@ document.getElementById('modalClose').onclick = () => {
 function initializeSnakeAtSpawn() {
   direction = {x: 1, y: 0};
   directionQueue = [];
+  speedIndex = 2; // Start one level slower than normal ONLY on initialization
+  fps = BASE_FPS * SPEED_LEVELS[speedIndex];
   snake = [
     {x: 3, y: GRID_HEIGHT - 3},
     {x: 2, y: GRID_HEIGHT - 3},
