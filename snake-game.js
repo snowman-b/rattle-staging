@@ -599,9 +599,12 @@ function hideShareModal() {
 
 document.getElementById('modalHome').onclick = () => {
   hideShareModal();
-  resetGame();
-  running = true;
-  requestAnimationFrame(gameLoop);
+  // Show splash page, hide game
+  document.getElementById('splashPage').style.display = 'flex';
+  document.getElementById('mainGame').style.display = 'none';
+  // Optionally, re-initialize snake at spawn
+  initializeSnakeAtSpawn();
+  running = false;
 };
 document.getElementById('modalClose').onclick = () => {
   hideShareModal();
