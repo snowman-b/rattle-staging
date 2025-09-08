@@ -628,6 +628,21 @@ function initializeSnakeAtSpawn() {
   win = false;
   endlessMode = false;
   collectedLetters = [];
+  submittedWords.clear();
+  wordRowsFilled = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
+  // Clear garbage word display
+  const garbageWordSpan = document.getElementById('garbageWord');
+  if (garbageWordSpan) garbageWordSpan.textContent = '';
+  // Clear all word collection rows
+  for (let i = 1; i <= 6; i++) {
+    const row = document.getElementById('wordRow' + i);
+    if (row) {
+      const boxes = row.getElementsByClassName('word-box');
+      for (let j = 0; j < boxes.length; j++) {
+        boxes[j].textContent = '';
+      }
+    }
+  }
   // Draw initial state
   render();
 }

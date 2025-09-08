@@ -152,6 +152,10 @@
   <script>
     // Show modal on Time Trial click, only start game on Play
     document.getElementById('rattleContainer').onclick = function() {
+      // Always initialize a fresh game state
+      if (window.initializeSnakeAtSpawn) {
+        window.initializeSnakeAtSpawn();
+      }
       document.getElementById('ttModal').style.display = 'flex';
     };
     document.getElementById('ttPlayBtn').onclick = function() {
