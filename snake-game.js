@@ -608,6 +608,41 @@ document.getElementById('modalClose').onclick = () => {
   // TODO: Show view-only final game screen
 };
 
-resetGame();
-running = true;
-requestAnimationFrame(gameLoop);
+
+// Only initialize snake at spawn, motionless, timer stopped
+function initializeSnakeAtSpawn() {
+  direction = {x: 1, y: 0};
+  directionQueue = [];
+  snake = [
+    {x: 3, y: GRID_HEIGHT - 3},
+    {x: 2, y: GRID_HEIGHT - 3},
+    {x: 1, y: GRID_HEIGHT - 3}
+  ];
+  const todayWord = getTodayWord();
+  foods = getFoodPositionsForWord(todayWord);
+  score = 0;
+  elapsedSeconds = 0;
+  win = false;
+  endlessMode = false;
+  collectedLetters = [];
+  // Draw initial state
+  render();
+}
+
+initializeSnakeAtSpawn();
+
+// Listen for splash page dismissal
+document.addEventListener('DOMContentLoaded', function() {
+  const rattleContainer = document.getElementById('rattleContainer');
+  if (rattleContainer) {
+    rattleContainer.addEventListener('click', function() {
+      // Hide splash, show game
+      document.getElementById('splashPage').style.display = 'none';
+  document.getElementById('mainGame').style.display = '';
+  // Start game immediately
+  resetGame();
+  running = true;
+  requestAnimationFrame(gameLoop);
+    });
+  }
+});
