@@ -27,7 +27,7 @@
   }
     body { background: #fff; margin: 0; font-family: 'Avenir Next', Arial, sans-serif; }
     .container { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px; }
-    .card { background: #f5f5ff; box-shadow: 0 0 20px #aaa; border-radius: 18px; padding: 24px; margin: 0 8px; min-width: 320px; min-height: 120px; display: flex; flex-direction: column; align-items: center; }
+  .card { background: #f5f5ff; box-shadow: 0 0 20px #aaa; border-radius: 18px; padding: 24px; margin: 0 8px; display: flex; flex-direction: column; align-items: center; }
     #gameCanvas { background: #f5f5ff; border-radius: 18px; box-shadow: none; margin: 0; display: block; }
     .modal {
       position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
@@ -43,13 +43,13 @@
 </head>
 <body>
   <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px;">
-    <div class="card" id="scoreboardCard" style="width:320px; height:120px; display:flex; align-items:center; justify-content:center;">
+    <div class="card" id="scoreboardCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
       <div id="scoreboard">Scoreboard</div>
     </div>
     <div class="card" id="arenaCard" style="padding:0; min-width:auto; min-height:auto; width:600px; height:400px; display:flex; align-items:center; justify-content:center; border-radius:0;">
       <canvas id="gameCanvas" width="600" height="400" style="display:block; margin:0; padding:0; border-radius:0;"></canvas>
     </div>
-    <div class="card" id="timerCard" style="width:320px; height:120px; display:flex; align-items:center; justify-content:center;">
+    <div class="card" id="timerCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
       <div id="timer">Timer</div>
     </div>
   </div>
