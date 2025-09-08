@@ -633,16 +633,13 @@ initializeSnakeAtSpawn();
 
 // Listen for splash page dismissal
 document.addEventListener('DOMContentLoaded', function() {
-  const rattleContainer = document.getElementById('rattleContainer');
-  if (rattleContainer) {
-    rattleContainer.addEventListener('click', function() {
-      // Hide splash, show game
-      document.getElementById('splashPage').style.display = 'none';
-  document.getElementById('mainGame').style.display = '';
-  // Start game immediately
-  resetGame();
-  running = true;
-  requestAnimationFrame(gameLoop);
+  // Game should only start when Play button is clicked in modal
+  const ttPlayBtn = document.getElementById('ttPlayBtn');
+  if (ttPlayBtn) {
+    ttPlayBtn.addEventListener('click', function() {
+      resetGame();
+      running = true;
+      requestAnimationFrame(gameLoop);
     });
   }
 });

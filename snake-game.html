@@ -61,6 +61,14 @@
       </div>
     </div>
   </div>
+  <!-- Time Trial Play Modal (moved outside splash container row) -->
+  <div id="ttModal" class="modal" style="display:none; z-index:200;">
+    <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; display:flex; flex-direction:column; align-items:center;">
+      <div style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em;">Ready to Play?</div>
+      <div style="font-size:1.2em; color:#222; margin-bottom:1.5em; text-align:left;">Press Play to begin the Time Trial mode!</div>
+      <button id="ttPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#006400; color:#fff; border:none; cursor:pointer; margin-top:1em;">Play</button>
+    </div>
+  </div>
   <div id="mainGame" style="display:none;">
     <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px;">
       <div class="card" id="scoreboardCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
@@ -134,13 +142,16 @@
   </div>
   <script src="snake-game.js"></script>
   <script>
-    // Hide splash, show game on click
+    // Show modal on Time Trial click, only start game on Play
     document.getElementById('rattleContainer').onclick = function() {
-      document.getElementById('splashPage').style.display = 'none';
-      document.getElementById('mainGame').style.display = '';
+      document.getElementById('ttModal').style.display = 'flex';
     };
-    // Optionally, prevent game JS from running until splash is dismissed
-    // You can add logic in snake-game.js to check if mainGame is visible before starting
+    document.getElementById('ttPlayBtn').onclick = function() {
+      document.getElementById('splashPage').style.display = 'none';
+      document.getElementById('ttModal').style.display = 'none';
+      document.getElementById('mainGame').style.display = '';
+      // Start game logic is handled in snake-game.js
+    };
   </script>
 </body>
 </html>
