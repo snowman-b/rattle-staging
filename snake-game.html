@@ -50,18 +50,40 @@
           <span style="font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; margin-top:0.5em;">Time Trial</span>
         </div>
       </div>
-      <div style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center;">
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+      <div id="endlessContainer" style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%;">
           <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px;">RATTLE</span>
           <span style="font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; margin-top:0.5em;">Endless Mode</span>
         </div>
       </div>
-      <div style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center;">
+      <div id="placeholderContainer" style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
         <span style="font-size:2em; color:#888;">placeholder 2</span>
       </div>
     </div>
   </div>
   <!-- Time Trial Play Modal (moved outside splash container row) -->
+  <!-- Endless Mode Modal -->
+  <div id="endlessModal" class="modal" style="display:none; z-index:200;">
+    <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
+      <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
+      <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">Endless Mode</span>
+      <div style="font-size:1.3em; color:#222; margin-bottom:2em; margin-top:1.5em; text-align:center; max-width:360px;">
+        <span>Coming soon</span>
+      </div>
+      <button id="endlessPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#888; color:#fff; border:none; cursor:not-allowed; margin-top:auto; margin-bottom:2em;">Play</button>
+    </div>
+  </div>
+  <!-- Placeholder Modal -->
+  <div id="placeholderModal" class="modal" style="display:none; z-index:200;">
+    <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
+      <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
+      <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">placeholder 2</span>
+      <div style="font-size:1.3em; color:#222; margin-bottom:2em; margin-top:1.5em; text-align:center; max-width:360px;">
+        <span>Coming soon</span>
+      </div>
+      <button id="placeholderPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#888; color:#fff; border:none; cursor:not-allowed; margin-top:auto; margin-bottom:2em;">Play</button>
+    </div>
+  </div>
   <div id="ttModal" class="modal" style="display:none; z-index:200;">
   <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
       <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
@@ -152,7 +174,6 @@
   <script>
     // Show modal on Time Trial click, only start game on Play
     document.getElementById('rattleContainer').onclick = function() {
-      // Always initialize a fresh game state
       if (window.initializeSnakeAtSpawn) {
         window.initializeSnakeAtSpawn();
       }
@@ -162,8 +183,31 @@
       document.getElementById('splashPage').style.display = 'none';
       document.getElementById('ttModal').style.display = 'none';
       document.getElementById('mainGame').style.display = '';
-      // Start game logic is handled in snake-game.js
     };
+    // Endless Mode pop-up
+    document.getElementById('endlessContainer').onclick = function() {
+      document.getElementById('endlessModal').style.display = 'flex';
+    };
+    // Placeholder pop-up
+    document.getElementById('placeholderContainer').onclick = function() {
+      document.getElementById('placeholderModal').style.display = 'flex';
+    };
+    // Clicking Play in these popups does nothing
+    document.getElementById('endlessPlayBtn').onclick = function(e) {
+      e.preventDefault();
+    };
+    document.getElementById('placeholderPlayBtn').onclick = function(e) {
+      e.preventDefault();
+    };
+    // Clicking outside modal closes it
+    window.addEventListener('click', function(e) {
+      ['endlessModal','placeholderModal'].forEach(function(id) {
+        const modal = document.getElementById(id);
+        if (modal && modal.style.display === 'flex' && e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+    });
   </script>
 </body>
 </html>
