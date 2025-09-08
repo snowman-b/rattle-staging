@@ -599,15 +599,65 @@ function hideShareModal() {
 
 document.getElementById('modalHome').onclick = () => {
   hideShareModal();
-  resetGame();
-  running = true;
-  requestAnimationFrame(gameLoop);
+  // Show splash page, hide game
+  document.getElementById('splashPage').style.display = 'flex';
+  document.getElementById('mainGame').style.display = 'none';
+  // Optionally, re-initialize snake at spawn
+  initializeSnakeAtSpawn();
+  running = false;
 };
 document.getElementById('modalClose').onclick = () => {
   hideShareModal();
   // TODO: Show view-only final game screen
 };
 
-resetGame();
-running = true;
-requestAnimationFrame(gameLoop);
+
+// Only initialize snake at spawn, motionless, timer stopped
+function initializeSnakeAtSpawn() {
+  direction = {x: 1, y: 0};
+  directionQueue = [];
+  snake = [
+    {x: 3, y: GRID_HEIGHT - 3},
+    {x: 2, y: GRID_HEIGHT - 3},
+    {x: 1, y: GRID_HEIGHT - 3}
+  ];
+  const todayWord = getTodayWord();
+  foods = getFoodPositionsForWord(todayWord);
+  score = 0;
+  elapsedSeconds = 0;
+  win = false;
+  endlessMode = false;
+  collectedLetters = [];
+  submittedWords.clear();
+  wordRowsFilled = { 1: false, 2: false, 3: false, 4: false, 5: false, 6: false };
+  // Clear garbage word display
+  const garbageWordSpan = document.getElementById('garbageWord');
+  if (garbageWordSpan) garbageWordSpan.textContent = '';
+  // Clear all word collection rows
+  for (let i = 1; i <= 6; i++) {
+    const row = document.getElementById('wordRow' + i);
+    if (row) {
+      const boxes = row.getElementsByClassName('word-box');
+      for (let j = 0; j < boxes.length; j++) {
+        boxes[j].textContent = '';
+      }
+    }
+  }
+  // Draw initial state
+  render();
+}
+
+initializeSnakeAtSpawn();
+
+// Listen for splash page dismissal
+document.addEventListener('DOMContentLoaded', function() {
+  // Game should only start when Play button is clicked in modal
+  const ttPlayBtn = document.getElementById('ttPlayBtn');
+  if (ttPlayBtn) {
+    ttPlayBtn.addEventListener('click', function() {
+      resetGame();
+      running = true;
+      requestAnimationFrame(gameLoop);
+    });
+  }
+});

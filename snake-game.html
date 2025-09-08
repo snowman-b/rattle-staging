@@ -27,7 +27,7 @@
   }
     body { background: #fff; margin: 0; font-family: 'Avenir Next', Arial, sans-serif; }
     .container { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px; }
-    .card { background: #f5f5ff; box-shadow: 0 0 20px #aaa; border-radius: 18px; padding: 24px; margin: 0 8px; min-width: 320px; min-height: 120px; display: flex; flex-direction: column; align-items: center; }
+  .card { background: #f5f5ff; box-shadow: 0 0 20px #aaa; border-radius: 18px; padding: 24px; margin: 0 8px; display: flex; flex-direction: column; align-items: center; }
     #gameCanvas { background: #f5f5ff; border-radius: 18px; box-shadow: none; margin: 0; display: block; }
     .modal {
       position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
@@ -42,16 +42,76 @@
   </style>
 </head>
 <body>
-  <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px;">
-    <div class="card" id="scoreboardCard" style="width:320px; height:120px; display:flex; align-items:center; justify-content:center;">
-      <div id="scoreboard">Scoreboard</div>
+  <div id="splashPage" style="position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(255,255,255,0.98); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+    <div style="display:flex; flex-direction:row; gap:48px;">
+      <div id="rattleContainer" style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
+          <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px;">RATTLE</span>
+          <span style="font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; margin-top:0.5em;">Time Trial</span>
+        </div>
+      </div>
+      <div id="endlessContainer" style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%;">
+          <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px;">RATTLE</span>
+          <span style="font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; margin-top:0.5em;">Endless Mode</span>
+        </div>
+      </div>
+      <div id="placeholderContainer" style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+        <span style="font-size:2em; color:#888;">placeholder 2</span>
+      </div>
     </div>
-    <div class="card" id="arenaCard" style="padding:0; min-width:auto; min-height:auto; width:600px; height:400px; display:flex; align-items:center; justify-content:center; border-radius:0;">
-      <canvas id="gameCanvas" width="600" height="400" style="display:block; margin:0; padding:0; border-radius:0;"></canvas>
+  </div>
+  <!-- Time Trial Play Modal (moved outside splash container row) -->
+  <!-- Endless Mode Modal -->
+  <div id="endlessModal" class="modal" style="display:none; z-index:200;">
+    <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
+      <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
+      <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">Endless Mode</span>
+      <div style="font-size:1.3em; color:#222; margin-bottom:2em; margin-top:1.5em; text-align:center; max-width:360px;">
+        <span>Coming soon</span>
+      </div>
+      <button id="endlessPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#888; color:#fff; border:none; cursor:not-allowed; margin-top:auto; margin-bottom:2em;">Play</button>
     </div>
-    <div class="card" id="timerCard" style="width:320px; height:120px; display:flex; align-items:center; justify-content:center;">
-      <div id="timer">Timer</div>
+  </div>
+  <!-- Placeholder Modal -->
+  <div id="placeholderModal" class="modal" style="display:none; z-index:200;">
+    <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
+      <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
+      <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">placeholder 2</span>
+      <div style="font-size:1.3em; color:#222; margin-bottom:2em; margin-top:1.5em; text-align:center; max-width:360px;">
+        <span>Coming soon</span>
+      </div>
+      <button id="placeholderPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#888; color:#fff; border:none; cursor:not-allowed; margin-top:auto; margin-bottom:2em;">Play</button>
     </div>
+  </div>
+  <div id="ttModal" class="modal" style="display:none; z-index:200;">
+  <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
+      <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
+      <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">Time Trial</span>
+      <div style="font-size:1.3em; color:#222; margin-bottom:2em; margin-top:1.5em; text-align:left; max-width:360px;">
+        <ul style="padding-left:1.2em;">
+          <li>Move the snake to quickly find 6 words from the scrambled letters</li>
+          <li>Submit words by passing into the green portal</li>
+          <li>Speed Up: double click the arrow key in the snake's direction of travel</li>
+          <li>Slow Down: double click the arrow key against the snake's direction of travel</li>
+        </ul>
+      </div>
+      <button id="ttPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#006400; color:#fff; border:none; cursor:pointer; margin-top:auto; margin-bottom:2em;">Play</button>
+    </div>
+  </div>
+  <div id="mainGame" style="display:none;">
+    <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px;">
+      <div class="card" id="scoreboardCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
+        <div id="scoreboard">Scoreboard</div>
+      </div>
+      <div class="card" id="arenaCard" style="padding:0; min-width:auto; min-height:auto; width:600px; height:400px; display:flex; align-items:center; justify-content:center; border-radius:0;">
+        <canvas id="gameCanvas" width="600" height="400" style="display:block; margin:0; padding:0; border-radius:0;"></canvas>
+      </div>
+      <div class="card" id="timerCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
+        <div id="timer">Timer</div>
+      </div>
+    </div>
+    <!-- ...rest of your game HTML... -->
   </div>
   <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 16px;">
   <div class="card" id="wordCollectionCard" style="width:320px; height:290px; display:flex; align-items:center; justify-content:center;">
@@ -92,7 +152,13 @@
         </div>
     </div>
     <div class="card" id="movementControlCard" style="width:320px; height:120px; display:flex; align-items:center; justify-content:center;">
-      <div id="movementControl">Movement Control (future)</div>
+      <div id="movementControl" style="width:100px; height:100px; display:flex; align-items:center; justify-content:center; position:relative;">
+        <!-- Arrow pad cross -->
+        <button id="arrowUp" style="position:absolute; top:0; left:50%; transform:translateX(-50%); width:40px; height:40px; font-size:2em; border-radius:8px; border:2px solid #888; background:#f5f5ff; cursor:pointer;">&#8593;</button>
+        <button id="arrowLeft" style="position:absolute; top:50%; left:0; transform:translateY(-50%); width:40px; height:40px; font-size:2em; border-radius:8px; border:2px solid #888; background:#f5f5ff; cursor:pointer;">&#8592;</button>
+        <button id="arrowRight" style="position:absolute; top:50%; right:0; transform:translateY(-50%); width:40px; height:40px; font-size:2em; border-radius:8px; border:2px solid #888; background:#f5f5ff; cursor:pointer;">&#8594;</button>
+        <button id="arrowDown" style="position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:40px; height:40px; font-size:2em; border-radius:8px; border:2px solid #888; background:#f5f5ff; cursor:pointer;">&#8595;</button>
+      </div>
     </div>
   <div class="card" id="garbageCanCard" style="width:320px; height:290px; display:flex; align-items:center; justify-content:center;">
   <div style="width:260px; height:220px; background:#f5e6c8; border:4px solid #a67c52; position:relative; display:flex; align-items:center; justify-content:center;">
@@ -111,5 +177,43 @@
     <button class="btn" id="modalHome">Return Home</button>
   </div>
   <script src="snake-game.js"></script>
+  <script>
+    // Show modal on Time Trial click, only start game on Play
+    document.getElementById('rattleContainer').onclick = function() {
+      if (window.initializeSnakeAtSpawn) {
+        window.initializeSnakeAtSpawn();
+      }
+      document.getElementById('ttModal').style.display = 'flex';
+    };
+    document.getElementById('ttPlayBtn').onclick = function() {
+      document.getElementById('splashPage').style.display = 'none';
+      document.getElementById('ttModal').style.display = 'none';
+      document.getElementById('mainGame').style.display = '';
+    };
+    // Endless Mode pop-up
+    document.getElementById('endlessContainer').onclick = function() {
+      document.getElementById('endlessModal').style.display = 'flex';
+    };
+    // Placeholder pop-up
+    document.getElementById('placeholderContainer').onclick = function() {
+      document.getElementById('placeholderModal').style.display = 'flex';
+    };
+    // Clicking Play in these popups does nothing
+    document.getElementById('endlessPlayBtn').onclick = function(e) {
+      e.preventDefault();
+    };
+    document.getElementById('placeholderPlayBtn').onclick = function(e) {
+      e.preventDefault();
+    };
+    // Clicking outside modal closes it
+    window.addEventListener('click', function(e) {
+      ['endlessModal','placeholderModal'].forEach(function(id) {
+        const modal = document.getElementById(id);
+        if (modal && modal.style.display === 'flex' && e.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+    });
+  </script>
 </body>
 </html>
