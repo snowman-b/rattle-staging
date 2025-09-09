@@ -88,12 +88,13 @@
   <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
       <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
       <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">Time Trial</span>
-      <div style="font-size:1.3em; color:#222; margin-bottom:2em; margin-top:1.5em; text-align:left; max-width:360px;">
+      <div style="font-size:1.2em; color:#222; margin-bottom:2em; margin-top:calc(1.5em - 20px); text-align:left; max-width:360px;">
         <ul style="padding-left:1.2em;">
-          <li>Move the snake to quickly find 6 words from the scrambled letters</li>
-          <li>Submit words by passing into the green portal</li>
-          <li>Speed Up: double click the arrow key in the snake's direction of travel</li>
-          <li>Slow Down: double click the arrow key against the snake's direction of travel</li>
+          <li>Use the arrow keys to quickly find six words from the scrambled letters</li>
+          <li>Speed Up: double click the arrow key matching your direction of travel</li>
+          <li>Slow Down: double click the arrow key against your direction of travel</li>
+          <li>Submit words by passing through the green portal</li>
+          <li>Clear mistaken letters by passing through the green portal</li>
         </ul>
       </div>
       <button id="ttPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#006400; color:#fff; border:none; cursor:pointer; margin-top:auto; margin-bottom:2em;">Play</button>
@@ -151,13 +152,21 @@
           </div>
         </div>
     </div>
-    <div class="card" id="movementControlCard" style="width:320px; height:120px; display:flex; align-items:center; justify-content:center;">
-      <div id="movementControl" style="width:100px; height:100px; display:flex; align-items:center; justify-content:center; position:relative;">
-        <!-- Arrow pad cross -->
-        <button id="arrowUp" style="position:absolute; top:0; left:50%; transform:translateX(-50%); width:40px; height:40px; font-size:2em; border-radius:8px; border:2px solid #888; background:#f5f5ff; cursor:pointer;">&#8593;</button>
-        <button id="arrowLeft" style="position:absolute; top:50%; left:0; transform:translateY(-50%); width:40px; height:40px; font-size:2em; border-radius:8px; border:2px solid #888; background:#f5f5ff; cursor:pointer;">&#8592;</button>
-        <button id="arrowRight" style="position:absolute; top:50%; right:0; transform:translateY(-50%); width:40px; height:40px; font-size:2em; border-radius:8px; border:2px solid #888; background:#f5f5ff; cursor:pointer;">&#8594;</button>
-        <button id="arrowDown" style="position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:40px; height:40px; font-size:2em; border-radius:8px; border:2px solid #888; background:#f5f5ff; cursor:pointer;">&#8595;</button>
+    <div class="card" id="movementControlCard" style="width:320px; height:290px; display:flex; align-items:center; justify-content:center;">
+      <div id="movementControl" style="width:240px; height:240px; display:grid; grid-template-rows: 1fr 1fr 1fr; grid-template-columns: 1fr 1fr 1fr; gap:0px; background:#f5f5ff; border:2px solid #888; border-radius:16px;">
+        <!-- 3x3 grid: Up, Left, Right, Down arrows in correct cells -->
+        <div style="grid-row:1; grid-column:2; display:flex; align-items:center; justify-content:center;">
+          <button id="arrowUp" style="width:80px; height:80px; font-size:3em; border-radius:12px; border:2px solid #888; background:#e0e0e0; cursor:pointer;">&#8593;</button>
+        </div>
+        <div style="grid-row:2; grid-column:1; display:flex; align-items:center; justify-content:center;">
+          <button id="arrowLeft" style="width:80px; height:80px; font-size:3em; border-radius:12px; border:2px solid #888; background:#e0e0e0; cursor:pointer;">&#8592;</button>
+        </div>
+        <div style="grid-row:2; grid-column:3; display:flex; align-items:center; justify-content:center;">
+          <button id="arrowRight" style="width:80px; height:80px; font-size:3em; border-radius:12px; border:2px solid #888; background:#e0e0e0; cursor:pointer;">&#8594;</button>
+        </div>
+        <div style="grid-row:3; grid-column:2; display:flex; align-items:center; justify-content:center;">
+          <button id="arrowDown" style="width:80px; height:80px; font-size:3em; border-radius:12px; border:2px solid #888; background:#e0e0e0; cursor:pointer;">&#8595;</button>
+        </div>
       </div>
     </div>
   <div class="card" id="garbageCanCard" style="width:320px; height:290px; display:flex; align-items:center; justify-content:center;">

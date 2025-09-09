@@ -450,6 +450,24 @@ document.addEventListener('keydown', (e) => {
   lastKeyTime = now;
 });
 
+  // Make on-screen arrow buttons functional
+  ['arrowUp','arrowDown','arrowLeft','arrowRight'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.addEventListener('click', function() {
+        const keyMap = {
+          arrowUp: 'ArrowUp',
+          arrowDown: 'ArrowDown',
+          arrowLeft: 'ArrowLeft',
+          arrowRight: 'ArrowRight'
+        };
+        // Create a synthetic KeyboardEvent for the corresponding arrow key
+        const event = new KeyboardEvent('keydown', { key: keyMap[id] });
+        document.dispatchEvent(event);
+      });
+    }
+  });
+
 function gameLoop(timestamp) {
   if (!running || win) return;
   if (!lastFrame) lastFrame = timestamp;
@@ -616,6 +634,8 @@ document.getElementById('modalClose').onclick = () => {
 function initializeSnakeAtSpawn() {
   direction = {x: 1, y: 0};
   directionQueue = [];
+  speedIndex = 2; // Start one level slower than normal ONLY on initialization
+  fps = BASE_FPS * SPEED_LEVELS[speedIndex];
   snake = [
     {x: 3, y: GRID_HEIGHT - 3},
     {x: 2, y: GRID_HEIGHT - 3},
