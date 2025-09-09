@@ -90,6 +90,26 @@ function loadWordList() {
     });
 }
 loadWordList();
+
+// --- Daily Words CSV Loader ---
+let dailyWordsMap = null;
+let dailyWordsLoaded = false;
+
+function loadDailyWordsCSV() {
+  return window.fetch('daily-words.csv')
+    .then(response => response.text())
+    .then(text => {
+      dailyWordsMap = {};
+      const lines = text.split(/\r?\n/);
+      for (let i = 1; i < lines.length; i++) { // skip header
+        const [date, word] = lines[i].split(',');
+        if (date && word) dailyWordsMap[date.trim()] = word.trim();
+      }
+      dailyWordsLoaded = true;
+    });
+}
+// Load CSV on page load
+loadDailyWordsCSV();
   collectedLetters = [];
 // RATTLE Snake Game - HTML5/JS Conversion
 // Best practices, maintainable, secure, efficient
@@ -138,22 +158,13 @@ function stopSnakeMotion() {
 }
 
 function getTodayWord() {
-  // Hardcoded for demo; in production, fetch and parse word-list.csv
   const today = new Date();
   const todayStr = `${today.getMonth()+1}/${today.getDate()}/${today.getFullYear()}`;
-  // Map of date to word (should be loaded from CSV)
-  const wordMap = {
-    '8/31/2025': 'happen',
-    '9/1/2025': 'yanked',
-    '9/2/2025': 'images',
-    '9/3/2025': 'linked',
-    '9/4/2025': 'limits',
-    '9/5/2025': 'escape',
-    '9/6/2025': 'farmed',
-    '9/7/2025': 'driven',
-    '9/8/2025': 'detail'
-  };
-  return wordMap[todayStr] || 'SNAKE';
+  if (dailyWordsLoaded && dailyWordsMap) {
+    return dailyWordsMap[todayStr] || 'rattle';
+  }
+  // If not loaded yet, fallback
+  return 'rattle';
 }
 
 function getFoodPositionsForWord(word) {
