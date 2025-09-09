@@ -450,6 +450,24 @@ document.addEventListener('keydown', (e) => {
   lastKeyTime = now;
 });
 
+  // Make on-screen arrow buttons functional
+  ['arrowUp','arrowDown','arrowLeft','arrowRight'].forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+      btn.addEventListener('click', function() {
+        const keyMap = {
+          arrowUp: 'ArrowUp',
+          arrowDown: 'ArrowDown',
+          arrowLeft: 'ArrowLeft',
+          arrowRight: 'ArrowRight'
+        };
+        // Create a synthetic KeyboardEvent for the corresponding arrow key
+        const event = new KeyboardEvent('keydown', { key: keyMap[id] });
+        document.dispatchEvent(event);
+      });
+    }
+  });
+
 function gameLoop(timestamp) {
   if (!running || win) return;
   if (!lastFrame) lastFrame = timestamp;
