@@ -3551,6 +3551,7 @@ flush
 flute
 flux
 fo
+foal
 foam
 fob
 focal
