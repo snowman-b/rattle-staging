@@ -691,4 +691,16 @@ document.addEventListener('DOMContentLoaded', function() {
       requestAnimationFrame(gameLoop);
     });
   }
+
+  // Allow clicking outside Time Trial modal content to close it
+  const ttModal = document.getElementById('ttModal');
+  if (ttModal) {
+    ttModal.addEventListener('click', function(e) {
+      // Only close if clicking the background, not the modal content
+      if (e.target === ttModal) {
+        ttModal.style.display = 'none';
+        document.getElementById('splashPage').style.display = 'flex';
+      }
+    });
+  }
 });
