@@ -74,7 +74,8 @@
   <!-- Time Trial Play Modal (moved outside splash container row) -->
   <!-- Endless Mode Modal -->
   <div id="endlessModal" class="modal" style="display:none; z-index:200;">
-    <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
+  <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; position:relative;">
+    <span class="modalCloseX" id="endlessCloseX" style="position:absolute; top:24px; right:32px; font-size:2.5em; color:#888; cursor:pointer;">&times;</span>
       <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
       <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">Endless Mode</span>
       <div style="font-size:1.1em; color:#222; margin-bottom:2em; margin-top:1.5em; text-align:left; max-width:360px;">
@@ -89,7 +90,8 @@
   </div>
   <!-- Placeholder Modal -->
   <div id="placeholderModal" class="modal" style="display:none; z-index:200;">
-    <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
+  <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; position:relative;">
+    <span class="modalCloseX" id="placeholderCloseX" style="position:absolute; top:24px; right:32px; font-size:2.5em; color:#888; cursor:pointer;">&times;</span>
       <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
       <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">placeholder 2</span>
       <div style="font-size:1.3em; color:#222; margin-bottom:2em; margin-top:1.5em; text-align:center; max-width:360px;">
@@ -99,7 +101,8 @@
     </div>
   </div>
   <div id="ttModal" class="modal" style="display:none; z-index:200;">
-  <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start;">
+  <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; height:600px; min-height:600px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; position:relative;">
+    <span class="modalCloseX" id="ttCloseX" style="position:absolute; top:24px; right:32px; font-size:2.5em; color:#888; cursor:pointer;">&times;</span>
       <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
       <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">Time Trial</span>
       <div style="font-size:1.1em; color:#222; margin-bottom:2em; margin-top:calc(1.5em - 20px); text-align:left; max-width:360px;">
