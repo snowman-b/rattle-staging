@@ -3551,6 +3551,7 @@ flush
 flute
 flux
 fo
+foal
 foam
 fob
 focal
@@ -6766,6 +6767,7 @@ nut
 nutmeg
 nuts
 nutty
+oaf
 oak
 oakley
 oaks
