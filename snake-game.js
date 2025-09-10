@@ -682,6 +682,31 @@ initializeSnakeAtSpawn();
 
 // Listen for splash page dismissal
 document.addEventListener('DOMContentLoaded', function() {
+  // Add close functionality for modal 'x' buttons
+  const endlessCloseX = document.getElementById('endlessCloseX');
+  if (endlessCloseX) {
+    endlessCloseX.addEventListener('click', function(e) {
+      document.getElementById('endlessModal').style.display = 'none';
+      document.getElementById('splashPage').style.display = 'flex';
+      e.stopPropagation();
+    });
+  }
+  const placeholderCloseX = document.getElementById('placeholderCloseX');
+  if (placeholderCloseX) {
+    placeholderCloseX.addEventListener('click', function(e) {
+      document.getElementById('placeholderModal').style.display = 'none';
+      document.getElementById('splashPage').style.display = 'flex';
+      e.stopPropagation();
+    });
+  }
+  const ttCloseX = document.getElementById('ttCloseX');
+  if (ttCloseX) {
+    ttCloseX.addEventListener('click', function(e) {
+      document.getElementById('ttModal').style.display = 'none';
+      document.getElementById('splashPage').style.display = 'flex';
+      e.stopPropagation();
+    });
+  }
   // Game should only start when Play button is clicked in modal
   const ttPlayBtn = document.getElementById('ttPlayBtn');
   if (ttPlayBtn) {
@@ -689,6 +714,18 @@ document.addEventListener('DOMContentLoaded', function() {
       resetGame();
       running = true;
       requestAnimationFrame(gameLoop);
+    });
+  }
+
+  // Allow clicking outside Time Trial modal content to close it
+  const ttModal = document.getElementById('ttModal');
+  if (ttModal) {
+    ttModal.addEventListener('click', function(e) {
+      // Only close if clicking the background, not the modal content
+      if (e.target === ttModal) {
+        ttModal.style.display = 'none';
+        document.getElementById('splashPage').style.display = 'flex';
+      }
     });
   }
 });
