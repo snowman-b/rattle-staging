@@ -265,14 +265,14 @@ function drawArena() {
   const redPortalThickness = 30;
   const redPortalBorder = 2;
   // Draw red portal
-  ctx.strokeStyle = '#c80000';
+  ctx.strokeStyle = '#ff4d4d'; // lighter red
   ctx.lineWidth = redPortalThickness;
   ctx.beginPath();
   ctx.moveTo(wallLeftX, 3 + cellHeight * 16);
   ctx.lineTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
   ctx.stroke();
   // Red: top 5px of bottommost segment, 30px thick
-  ctx.strokeStyle = '#c80000';
+  ctx.strokeStyle = '#ff4d4d'; // lighter red
   ctx.lineWidth = redPortalThickness;
   ctx.beginPath();
   ctx.moveTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
