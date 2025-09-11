@@ -3,10 +3,13 @@ function respawnSnakeAfterLoss() {
   setTimeout(() => {
     direction = {x: 1, y: 0};
     directionQueue = [];
+    // Snake starts at 10% from left, 85% from top, 3 segments long horizontally
+    const startX = Math.floor(GRID_WIDTH * 0.10);
+    const startY = Math.floor(GRID_HEIGHT * 0.85);
     snake = [
-      {x: 3, y: GRID_HEIGHT - 3},
-      {x: 2, y: GRID_HEIGHT - 3},
-      {x: 1, y: GRID_HEIGHT - 3}
+      {x: startX, y: startY},
+      {x: startX - 1, y: startY},
+      {x: startX - 2, y: startY}
     ];
     collectedLetters = [];
     // Foods remain as per today's word
@@ -114,17 +117,11 @@ loadDailyWordsCSV();
 // RATTLE Snake Game - HTML5/JS Conversion
 // Best practices, maintainable, secure, efficient
 
-const CELL_SIZE = 20;
 const GRID_WIDTH = 30;
 const GRID_HEIGHT = 20;
-const ARENA_WIDTH = CELL_SIZE * GRID_WIDTH;
-const ARENA_HEIGHT = CELL_SIZE * GRID_HEIGHT;
-const MARGIN_TOP = 100;
-const MARGIN_LEFT = 200;
-const MARGIN_RIGHT = 200;
-const MARGIN_BOTTOM = 500;
-const WIDTH = ARENA_WIDTH + MARGIN_LEFT + MARGIN_RIGHT;
-const HEIGHT = ARENA_HEIGHT + MARGIN_TOP + MARGIN_BOTTOM;
+let cellWidth = 20;
+let cellHeight = 20;
+// cellWidth and cellHeight will be recalculated in resizeArenaCanvas after DOM is ready
 const BASE_FPS = 10;
 const SPEED_LEVELS = [0.25, 0.5, 0.75, 1.0, 1.25];
 let speedIndex = 3; // Start at normal speed
@@ -209,10 +206,13 @@ function getFoodPositionsForWord(word) {
 function resetGame() {
   direction = {x: 1, y: 0};
   directionQueue = [];
+  // Snake starts at 10% from left, 85% from top, 3 segments long horizontally
+  const startX = Math.floor(GRID_WIDTH * 0.10);
+  const startY = Math.floor(GRID_HEIGHT * 0.85);
   snake = [
-    {x: 3, y: GRID_HEIGHT - 3},
-    {x: 2, y: GRID_HEIGHT - 3},
-    {x: 1, y: GRID_HEIGHT - 3}
+    {x: startX, y: startY},
+    {x: startX - 1, y: startY},
+    {x: startX - 2, y: startY}
   ];
   // Use today's word from word-list
   const todayWord = getTodayWord();
@@ -251,8 +251,8 @@ function drawArena() {
   // Draw border flush with grid
   ctx.save();
   // Wall coordinates
-  const wallLeftX = 3;
-  const wallRightX = canvas.width - 3;
+  const wallLeftX = cellWidth * 0.15;
+  const wallRightX = canvas.width - cellWidth * 0.15;
   // Draw full-height left wall (black)
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 6;
@@ -276,11 +276,13 @@ function drawArena() {
   ctx.lineTo(canvas.width - 3, canvas.height - 3);
   ctx.stroke();
   // Responsive portal dimensions
-  const portalThickness = canvas.width * 0.03; // 3% of width
-  const portalBorder = canvas.width * 0.002;   // 0.2% of width
-  // Red portal (left): from 80% to 95% of height
-  const redPortalStartY = canvas.height * 0.80;
-  const redPortalEndY = canvas.height * 0.95;
+  const portalThickness = cellWidth * 1.5; // 1.5 cells wide
+  const portalBorder = cellWidth * 0.1;   // 0.1 cell wide
+  // Red portal (left): from 80% to 95% of grid height
+  const redPortalStartRow = Math.floor(GRID_HEIGHT * 0.80);
+  const redPortalEndRow = Math.floor(GRID_HEIGHT * 0.95);
+  const redPortalStartY = redPortalStartRow * cellHeight;
+  const redPortalEndY = redPortalEndRow * cellHeight;
   ctx.save();
   ctx.strokeStyle = '#ff4d4d';
   ctx.lineWidth = portalThickness;
@@ -312,9 +314,11 @@ function drawArena() {
   ctx.lineTo(wallLeftX + portalThickness / 2, redPortalEndY);
   ctx.stroke();
   ctx.restore();
-  // Green portal (right): from 80% to 95% of height
-  const greenPortalStartY = canvas.height * 0.80;
-  const greenPortalEndY = canvas.height * 0.95;
+  // Green portal (right): from 80% to 95% of grid height
+  const greenPortalStartRow = Math.floor(GRID_HEIGHT * 0.80);
+  const greenPortalEndRow = Math.floor(GRID_HEIGHT * 0.95);
+  const greenPortalStartY = greenPortalStartRow * cellHeight;
+  const greenPortalEndY = greenPortalEndRow * cellHeight;
   ctx.save();
   ctx.strokeStyle = '#00c800';
   ctx.lineWidth = portalThickness;
@@ -353,7 +357,7 @@ function drawSnake() {
   ctx.save();
   for (let i = 0; i < snake.length; i++) {
   ctx.fillStyle = '#00c800'; // Match portal green
-  ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  ctx.fillRect(snake[i].x * cellWidth, snake[i].y * cellHeight, cellWidth, cellHeight);
   // Draw only the true outer perimeter of the snake in black
   if (snake.length > 0) {
     ctx.save();
@@ -361,8 +365,8 @@ function drawSnake() {
     ctx.lineWidth = 2;
     for (let i = 0; i < snake.length; i++) {
       const seg = snake[i];
-      const x = seg.x * CELL_SIZE;
-      const y = seg.y * CELL_SIZE;
+  const x = seg.x * cellWidth;
+  const y = seg.y * cellHeight;
       // Helper to check if a segment is sequential (previous or next)
       function isSequential(j) {
         return (i > 0 && snake[j].x === snake[i-1].x && snake[j].y === snake[i-1].y) ||
@@ -372,32 +376,32 @@ function drawSnake() {
       const topIdx = snake.findIndex(s => s.x === seg.x && s.y === seg.y - 1);
       if (topIdx === -1 || !isSequential(topIdx)) {
         ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + CELL_SIZE, y);
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + cellWidth, y);
         ctx.stroke();
       }
       // Bottom edge
       const botIdx = snake.findIndex(s => s.x === seg.x && s.y === seg.y + 1);
       if (botIdx === -1 || !isSequential(botIdx)) {
         ctx.beginPath();
-        ctx.moveTo(x, y + CELL_SIZE);
-        ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+  ctx.moveTo(x, y + cellHeight);
+  ctx.lineTo(x + cellWidth, y + cellHeight);
         ctx.stroke();
       }
       // Left edge
       const leftIdx = snake.findIndex(s => s.x === seg.x - 1 && s.y === seg.y);
       if (leftIdx === -1 || !isSequential(leftIdx)) {
         ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x, y + CELL_SIZE);
+  ctx.moveTo(x, y);
+  ctx.lineTo(x, y + cellHeight);
         ctx.stroke();
       }
       // Right edge
       const rightIdx = snake.findIndex(s => s.x === seg.x + 1 && s.y === seg.y);
       if (rightIdx === -1 || !isSequential(rightIdx)) {
         ctx.beginPath();
-        ctx.moveTo(x + CELL_SIZE, y);
-        ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+  ctx.moveTo(x + cellWidth, y);
+  ctx.lineTo(x + cellWidth, y + cellHeight);
         ctx.stroke();
       }
     }
@@ -413,7 +417,7 @@ function drawSnake() {
       // Place newest letter in second segment, older letters shift toward tail
       let letterIndex = collectedLetters.length - i;
       if (letterIndex >= 0) {
-        ctx.fillText(collectedLetters[letterIndex], snake[i].x * CELL_SIZE + CELL_SIZE/2, snake[i].y * CELL_SIZE + CELL_SIZE/2 + 2);
+  ctx.fillText(collectedLetters[letterIndex], snake[i].x * cellWidth + cellWidth/2, snake[i].y * cellHeight + cellHeight/2 + 2);
       }
       ctx.restore();
     }
@@ -428,7 +432,7 @@ function drawFoods() {
   ctx.textBaseline = 'middle';
   for (let food of foods) {
     ctx.fillStyle = '#000';
-    ctx.fillText(food.letter, food.x * CELL_SIZE + CELL_SIZE/2, food.y * CELL_SIZE + CELL_SIZE/2);
+  ctx.fillText(food.letter, food.x * cellWidth + cellWidth/2, food.y * cellHeight + cellHeight/2);
   }
   ctx.restore();
 }
@@ -528,12 +532,12 @@ function update() {
     y: snake[0].y + direction.y
   };
   // Responsive portal logic: green portal (right) to red portal (left)
-  const portalStartY = Math.floor(GRID_HEIGHT * 0.80);
-  const portalEndY = Math.floor(GRID_HEIGHT * 0.95);
+  const portalStartRow = Math.floor(GRID_HEIGHT * 0.80);
+  const portalEndRow = Math.floor(GRID_HEIGHT * 0.95);
   let onGreenPortal = (
     snake[0].x === GRID_WIDTH - 1 &&
-    snake[0].y >= portalStartY &&
-    snake[0].y < portalEndY &&
+    snake[0].y >= portalStartRow &&
+    snake[0].y < portalEndRow &&
     direction.x === 1
   );
   if (onGreenPortal) {
@@ -671,10 +675,13 @@ function initializeSnakeAtSpawn() {
   directionQueue = [];
   speedIndex = 2; // Start one level slower than normal ONLY on initialization
   fps = BASE_FPS * SPEED_LEVELS[speedIndex];
+  // Snake starts at 10% from left, 85% from top, 3 segments long horizontally
+  const startX = Math.floor(GRID_WIDTH * 0.10);
+  const startY = Math.floor(GRID_HEIGHT * 0.85);
   snake = [
-    {x: 3, y: GRID_HEIGHT - 3},
-    {x: 2, y: GRID_HEIGHT - 3},
-    {x: 1, y: GRID_HEIGHT - 3}
+    {x: startX, y: startY},
+    {x: startX - 1, y: startY},
+    {x: startX - 2, y: startY}
   ];
   const todayWord = getTodayWord();
   foods = getFoodPositionsForWord(todayWord);

@@ -48,41 +48,20 @@
       box-sizing: border-box;
     }
 
-    @media (max-width: 900px) {
-      #mainGame .container {
-        flex-direction: column;
-        align-items: center;
-      }
-      #scoreboardTimerRow {
-        display: flex;
-        flex-direction: row;
-        justify-content: center;
-        align-items: center;
-        width: 100%;
-        gap: 2%;
-        margin-bottom: 12px;
-      }
-      #scoreboardCard, #timerCard {
-        width: 49%;
-        margin-bottom: 0;
-      }
-      #arenaCard {
-        width: 95vw;
-        max-width: 800px;
-        aspect-ratio: 3 / 2;
-        min-width: 0 !important;
-        box-sizing: border-box;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      #gameCanvas {
-        width: 100%;
-        height: 100%;
-        max-width: 800px;
-        aspect-ratio: 3 / 2;
-        display: block;
-      }
+    #arenaCard {
+      width: 90vw;
+      max-width: 800px;
+      aspect-ratio: 3 / 2;
+      min-width: 0 !important;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #gameCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
     }
   .card { background: #f5f5ff; box-shadow: 0 0 20px #aaa; border-radius: 18px; padding: 24px; margin: 0 8px; display: flex; flex-direction: column; align-items: center; }
     #gameCanvas { background: #f5f5ff; border-radius: 18px; box-shadow: none; margin: 0; display: block; }
@@ -172,7 +151,7 @@
           <div id="timer">Timer</div>
         </div>
       </div>
-      <div class="card" id="arenaCard" style="padding:0; min-width:auto; min-height:auto; width:600px; height:400px; display:flex; align-items:center; justify-content:center; border-radius:0;">
+  <div class="card" id="arenaCard">
   <canvas id="gameCanvas" style="display:block; margin:0; padding:0; border-radius:0;"></canvas>
       </div>
     </div>
