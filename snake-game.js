@@ -261,18 +261,48 @@ function drawArena() {
   ctx.moveTo(wallLeftX, 3 - 5);
   ctx.lineTo(wallLeftX, 3 + cellHeight * 16);
   ctx.stroke();
-  // Red: from sixteen segments to one above bottom
+  // Red portal: from sixteen segments to one above bottom, 30px thick with 2px black border
+  const redPortalThickness = 30;
+  const redPortalBorder = 2;
+  // Draw red portal
   ctx.strokeStyle = '#c80000';
+  ctx.lineWidth = redPortalThickness;
   ctx.beginPath();
   ctx.moveTo(wallLeftX, 3 + cellHeight * 16);
   ctx.lineTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
   ctx.stroke();
-  // Red: top 5px of bottommost segment
+  // Red: top 5px of bottommost segment, 30px thick
   ctx.strokeStyle = '#c80000';
+  ctx.lineWidth = redPortalThickness;
   ctx.beginPath();
   ctx.moveTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
   ctx.lineTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
   ctx.stroke();
+  // Draw black border around red portal
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth = redPortalBorder;
+  // Left edge of portal
+  ctx.beginPath();
+  ctx.moveTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * 16);
+  ctx.lineTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.stroke();
+  // Right edge of portal
+  ctx.beginPath();
+  ctx.moveTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * 16);
+  ctx.lineTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.stroke();
+  // Top edge of portal
+  ctx.beginPath();
+  ctx.moveTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * 16);
+  ctx.lineTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * 16);
+  ctx.stroke();
+  // Bottom edge of portal
+  ctx.beginPath();
+  ctx.moveTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.lineTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.stroke();
+  // Restore line width for other walls
+  ctx.lineWidth = 6;
   // Black: rest of bottommost segment
   ctx.strokeStyle = '#222';
   ctx.beginPath();
