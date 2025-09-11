@@ -739,7 +739,6 @@ function initializeSnakeAtSpawn() {
   render();
 }
 
-initializeSnakeAtSpawn();
 
 // Listen for splash page dismissal
 document.addEventListener('DOMContentLoaded', function() {
