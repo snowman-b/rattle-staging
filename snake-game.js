@@ -261,54 +261,6 @@ function drawArena() {
   ctx.moveTo(wallLeftX, 3 - 5);
   ctx.lineTo(wallLeftX, 3 + cellHeight * 16);
   ctx.stroke();
-  // Red portal: from sixteen segments to one above bottom, 30px thick with 2px black border
-  const redPortalThickness = 30;
-  const redPortalBorder = 2;
-  // Draw red portal
-  ctx.strokeStyle = '#ff4d4d'; // lighter red
-  ctx.lineWidth = redPortalThickness;
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX, 3 + cellHeight * 16);
-  ctx.lineTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
-  ctx.stroke();
-  // Red: top 5px of bottommost segment, 30px thick
-  ctx.strokeStyle = '#ff4d4d'; // lighter red
-  ctx.lineWidth = redPortalThickness;
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
-  ctx.lineTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.stroke();
-  // Draw black border around red portal
-  ctx.strokeStyle = '#222';
-  ctx.lineWidth = redPortalBorder;
-  // Left edge of portal
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * 16);
-  ctx.lineTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.stroke();
-  // Right edge of portal
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * 16);
-  ctx.lineTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.stroke();
-  // Top edge of portal
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * 16);
-  ctx.lineTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * 16);
-  ctx.stroke();
-  // Bottom edge of portal
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.lineTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.stroke();
-  // Restore line width for other walls
-  ctx.lineWidth = 6;
-  // Black: rest of bottommost segment
-  ctx.strokeStyle = '#222';
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.lineTo(wallLeftX, canvas.height - 3 + 5);
-  ctx.stroke();
   // Top and bottom walls (black)
   ctx.strokeStyle = '#222';
   ctx.beginPath();
@@ -327,53 +279,72 @@ function drawArena() {
   ctx.moveTo(wallX, 3 - 5);
   ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
   ctx.stroke();
-  // Green portal: from (half + 6 segments) to one above bottom, 30px thick with 2px black border
-  const portalThickness = 30;
-  const portalBorder = 2;
-  // Draw green portal
-  ctx.strokeStyle = '#00c800';
+  // Responsive portal dimensions
+  const portalThickness = canvas.width * 0.03; // 3% of width
+  const portalBorder = canvas.width * 0.002;   // 0.2% of width
+  // Red portal (left): from 80% to 95% of height
+  const redPortalStartY = canvas.height * 0.80;
+  const redPortalEndY = canvas.height * 0.95;
+  ctx.strokeStyle = '#ff4d4d';
   ctx.lineWidth = portalThickness;
   ctx.beginPath();
-  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
-  ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.moveTo(wallLeftX, redPortalStartY);
+  ctx.lineTo(wallLeftX, redPortalEndY);
   ctx.stroke();
-  // Light green top 5px of bottommost segment (portal color), 30px thick
-  ctx.strokeStyle = '#00c800';
-  ctx.lineWidth = portalThickness;
-  ctx.beginPath();
-  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
-  ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.stroke();
-  // Draw black border around portal
+  // Draw black border around red portal
   ctx.strokeStyle = '#222';
   ctx.lineWidth = portalBorder;
-  // Left edge of portal
+  // Left edge
   ctx.beginPath();
-  ctx.moveTo(wallX - portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
-  ctx.lineTo(wallX - portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.moveTo(wallLeftX - portalThickness / 2, redPortalStartY);
+  ctx.lineTo(wallLeftX - portalThickness / 2, redPortalEndY);
   ctx.stroke();
-  // Right edge of portal
+  // Right edge
   ctx.beginPath();
-  ctx.moveTo(wallX + portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
-  ctx.lineTo(wallX + portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.moveTo(wallLeftX + portalThickness / 2, redPortalStartY);
+  ctx.lineTo(wallLeftX + portalThickness / 2, redPortalEndY);
   ctx.stroke();
-  // Top edge of portal
+  // Top edge
   ctx.beginPath();
-  ctx.moveTo(wallX - portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
-  ctx.lineTo(wallX + portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
+  ctx.moveTo(wallLeftX - portalThickness / 2, redPortalStartY);
+  ctx.lineTo(wallLeftX + portalThickness / 2, redPortalStartY);
   ctx.stroke();
-  // Bottom edge of portal
+  // Bottom edge
   ctx.beginPath();
-  ctx.moveTo(wallX - portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.lineTo(wallX + portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.moveTo(wallLeftX - portalThickness / 2, redPortalEndY);
+  ctx.lineTo(wallLeftX + portalThickness / 2, redPortalEndY);
   ctx.stroke();
-  // Restore line width for other walls
-  ctx.lineWidth = 6;
-  // Black rest of bottommost segment
+  // Green portal (right): from 80% to 95% of height
+  const greenPortalStartY = canvas.height * 0.80;
+  const greenPortalEndY = canvas.height * 0.95;
+  ctx.strokeStyle = '#00c800';
+  ctx.lineWidth = portalThickness;
+  ctx.beginPath();
+  ctx.moveTo(wallX, greenPortalStartY);
+  ctx.lineTo(wallX, greenPortalEndY);
+  ctx.stroke();
+  // Draw black border around green portal
   ctx.strokeStyle = '#222';
+  ctx.lineWidth = portalBorder;
+  // Left edge
   ctx.beginPath();
-  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.lineTo(wallX, canvas.height - 3 + 5);
+  ctx.moveTo(wallX - portalThickness / 2, greenPortalStartY);
+  ctx.lineTo(wallX - portalThickness / 2, greenPortalEndY);
+  ctx.stroke();
+  // Right edge
+  ctx.beginPath();
+  ctx.moveTo(wallX + portalThickness / 2, greenPortalStartY);
+  ctx.lineTo(wallX + portalThickness / 2, greenPortalEndY);
+  ctx.stroke();
+  // Top edge
+  ctx.beginPath();
+  ctx.moveTo(wallX - portalThickness / 2, greenPortalStartY);
+  ctx.lineTo(wallX + portalThickness / 2, greenPortalStartY);
+  ctx.stroke();
+  // Bottom edge
+  ctx.beginPath();
+  ctx.moveTo(wallX - portalThickness / 2, greenPortalEndY);
+  ctx.lineTo(wallX + portalThickness / 2, greenPortalEndY);
   ctx.stroke();
   // Draw portals
   // Green portal (right)
