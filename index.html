@@ -36,7 +36,47 @@
   white-space: nowrap;
   }
     body { background: #fff; margin: 0; font-family: 'Avenir Next', Arial, sans-serif; }
-    .container { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px; }
+    .container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 32px;
+      margin-top: 40px;
+      width: 100vw;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 900px) {
+      #mainGame .container {
+        flex-direction: column;
+        align-items: center;
+      }
+      #scoreboardTimerRow {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        gap: 2%;
+        margin-bottom: 12px;
+      }
+      #scoreboardCard, #timerCard {
+        width: 49%;
+        margin-bottom: 0;
+      }
+      #arenaCard {
+        width: 90vw !important;
+        min-width: 0 !important;
+        max-width: 100vw !important;
+      }
+      #gameCanvas {
+        width: 100% !important;
+        height: auto !important;
+        max-width: 100vw !important;
+      }
+    }
   .card { background: #f5f5ff; box-shadow: 0 0 20px #aaa; border-radius: 18px; padding: 24px; margin: 0 8px; display: flex; flex-direction: column; align-items: center; }
     #gameCanvas { background: #f5f5ff; border-radius: 18px; box-shadow: none; margin: 0; display: block; }
     .modal {
@@ -116,15 +156,17 @@
     </div>
   </div>
   <div id="mainGame" style="display:none;">
-    <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px;">
-      <div class="card" id="scoreboardCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
-        <div id="scoreboard">Scoreboard</div>
+    <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 32px; margin-top: 40px; min-width: 0;">
+      <div id="scoreboardTimerRow" style="width:100%; display:flex; flex-direction:row; justify-content:center; align-items:center; gap:32px; margin-bottom:12px;">
+        <div class="card" id="scoreboardCard" style="height:80px; display:flex; align-items:center; justify-content:center;">
+          <div id="scoreboard">Scoreboard</div>
+        </div>
+        <div class="card" id="timerCard" style="height:80px; display:flex; align-items:center; justify-content:center;">
+          <div id="timer">Timer</div>
+        </div>
       </div>
       <div class="card" id="arenaCard" style="padding:0; min-width:auto; min-height:auto; width:600px; height:400px; display:flex; align-items:center; justify-content:center; border-radius:0;">
         <canvas id="gameCanvas" width="600" height="400" style="display:block; margin:0; padding:0; border-radius:0;"></canvas>
-      </div>
-      <div class="card" id="timerCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
-        <div id="timer">Timer</div>
       </div>
     </div>
     <!-- ...rest of your game HTML... -->
