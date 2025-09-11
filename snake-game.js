@@ -346,19 +346,6 @@ function drawArena() {
   ctx.moveTo(wallX - portalThickness / 2, greenPortalEndY);
   ctx.lineTo(wallX + portalThickness / 2, greenPortalEndY);
   ctx.stroke();
-  // Draw portals
-  // Green portal (right)
-  ctx.save();
-  ctx.fillStyle = '#00c800'; // Green
-  let portalYStart = (GRID_HEIGHT - 4) * CELL_SIZE;
-  let portalHeight = 3 * CELL_SIZE;
-  ctx.fillRect(MARGIN_LEFT + ARENA_WIDTH - 8, MARGIN_TOP + portalYStart, 8, portalHeight);
-  ctx.restore();
-  // Red portal (left)
-  ctx.save();
-  ctx.fillStyle = '#c80000'; // Red
-  ctx.fillRect(MARGIN_LEFT, MARGIN_TOP + portalYStart, 8, portalHeight);
-  ctx.restore();
   ctx.restore();
 }
 
@@ -540,10 +527,15 @@ function update() {
     x: snake[0].x + direction.x,
     y: snake[0].y + direction.y
   };
-  // Portal logic: green portal (right) to red portal (left)
-  let portalYStart = GRID_HEIGHT - 4;
-  let portalYEnd = GRID_HEIGHT - 1;
-  let onGreenPortal = (snake[0].x === GRID_WIDTH - 1 && snake[0].y >= portalYStart && snake[0].y < portalYEnd && direction.x === 1);
+  // Responsive portal logic: green portal (right) to red portal (left)
+  const portalStartY = Math.floor(GRID_HEIGHT * 0.80);
+  const portalEndY = Math.floor(GRID_HEIGHT * 0.95);
+  let onGreenPortal = (
+    snake[0].x === GRID_WIDTH - 1 &&
+    snake[0].y >= portalStartY &&
+    snake[0].y < portalEndY &&
+    direction.x === 1
+  );
   if (onGreenPortal) {
     // Teleport to red portal
     newHead.x = 0;
