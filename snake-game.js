@@ -117,8 +117,8 @@ loadDailyWordsCSV();
 // RATTLE Snake Game - HTML5/JS Conversion
 // Best practices, maintainable, secure, efficient
 
-const GRID_WIDTH = 30;
-const GRID_HEIGHT = 20;
+const GRID_WIDTH = 24;
+const GRID_HEIGHT = 16;
 let cellWidth = 20;
 let cellHeight = 20;
 // cellWidth and cellHeight will be recalculated in resizeArenaCanvas after DOM is ready
@@ -189,8 +189,8 @@ function getTodayWord() {
 }
 
 function getFoodPositionsForWord(word) {
-  // Evenly space letters across a horizontal row (row 10)
-  const row = 10;
+  // Evenly space letters across a horizontal row, 7 snake lengths from the bottom
+  const row = GRID_HEIGHT - 7;
   const spacing = Math.floor(GRID_WIDTH / (word.length + 1));
   // Deterministic shuffle based on today's date
   function seededShuffle(array, seed) {
@@ -216,10 +216,12 @@ function getFoodPositionsForWord(word) {
   const seed = today.getFullYear() * 10000 + (today.getMonth()+1) * 100 + today.getDate();
   let letters = word.split('');
   letters = seededShuffle(letters, seed);
+  // Fixed positions for 6 letters: 5,8,11,14,17,20
+  const fixedPositions = [4, 7, 10, 13, 16, 19];
   let positions = [];
-  for (let i = 0; i < letters.length; i++) {
+  for (let i = 0; i < Math.min(letters.length, fixedPositions.length); i++) {
     positions.push({
-      x: spacing * (i + 1),
+      x: fixedPositions[i],
       y: row,
       letter: letters[i].toUpperCase()
     });
