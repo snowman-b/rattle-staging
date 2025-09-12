@@ -328,7 +328,7 @@ function setScoreTimerRelativeToArena() {
     timerCard.style.height = newHeight + 'px';
     scoreboardCard.style.width = newWidth + 'px';
     timerCard.style.width = newWidth + 'px';
-    // Center values vertically and horizontally
+    // Center values vertically and horizontally, set font-size to 50% of container height
     ['scoreboard', 'timer'].forEach(id => {
       const el = document.getElementById(id);
       if (el) {
@@ -337,6 +337,7 @@ function setScoreTimerRelativeToArena() {
         el.style.justifyContent = 'center';
         el.style.height = '100%';
         el.style.width = '100%';
+        el.style.fontSize = (newHeight * 0.5) + 'px'; // 50% of container height
       }
     });
   }
