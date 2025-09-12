@@ -433,7 +433,7 @@ function drawSnake() {
     // Draw collected letters: newest always in second segment, older letters shift toward tail
     if (i > 0 && i <= collectedLetters.length) {
       ctx.save();
-      ctx.font = '20px Avenir Next, Arial, sans-serif';
+  ctx.font = (cellHeight * 0.9) + 'px Avenir Next, Arial, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = '#000';
@@ -450,7 +450,7 @@ function drawSnake() {
 
 function drawFoods() {
   ctx.save();
-  ctx.font = '20px Avenir Next, Arial, sans-serif';
+  ctx.font = (cellHeight * 0.9) + 'px Avenir Next, Arial, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   for (let food of foods) {
