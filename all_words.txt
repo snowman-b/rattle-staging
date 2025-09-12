@@ -3891,9 +3891,6 @@ gym
 gimme
 gyms
 gin
-gina
-ginger
-gino
 gypsy
 girl
 girly
@@ -6647,7 +6644,6 @@ nye
 niece
 nieces
 nifty
-nigel
 niger
 nigh
 night
