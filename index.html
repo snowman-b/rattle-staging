@@ -36,7 +36,54 @@
   white-space: nowrap;
   }
     body { background: #fff; margin: 0; font-family: 'Avenir Next', Arial, sans-serif; }
-    .container { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px; }
+    .container {
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 32px;
+      margin-top: 40px;
+      width: 100vw;
+      box-sizing: border-box;
+    }
+    #scoreboardCard, #timerCard {
+      height: 3vw;
+      width: 20vw;
+      max-width: 300px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      padding: 0;
+    }
+    #scoreboard, #timer {
+      height: 50%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2em;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    #arenaCard {
+      width: 90vw;
+      max-width: 800px;
+      aspect-ratio: 3 / 2;
+      min-width: 0 !important;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #gameCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
   .card { background: #f5f5ff; box-shadow: 0 0 20px #aaa; border-radius: 18px; padding: 24px; margin: 0 8px; display: flex; flex-direction: column; align-items: center; }
     #gameCanvas { background: #f5f5ff; border-radius: 18px; box-shadow: none; margin: 0; display: block; }
     .modal {
@@ -116,19 +163,21 @@
     </div>
   </div>
   <div id="mainGame" style="display:none;">
-    <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 40px;">
-      <div class="card" id="scoreboardCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
-        <div id="scoreboard">Scoreboard</div>
+    <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px; margin-top: 40px; min-width: 0;">
+      <div id="scoreboardTimerRow" style="width:100%; display:flex; flex-direction:row; justify-content:center; align-items:center; gap:16px; margin-bottom:6px;">
+  <div class="card" id="scoreboardCard" style="display:flex; align-items:center; justify-content:center;">
+          <div id="scoreboard">Scoreboard</div>
+        </div>
+  <div class="card" id="timerCard" style="display:flex; align-items:center; justify-content:center;">
+          <div id="timer">Timer</div>
+        </div>
       </div>
-      <div class="card" id="arenaCard" style="padding:0; min-width:auto; min-height:auto; width:600px; height:400px; display:flex; align-items:center; justify-content:center; border-radius:0;">
-        <canvas id="gameCanvas" width="600" height="400" style="display:block; margin:0; padding:0; border-radius:0;"></canvas>
-      </div>
-      <div class="card" id="timerCard" style="width:220px; height:80px; display:flex; align-items:center; justify-content:center;">
-        <div id="timer">Timer</div>
+  <div class="card" id="arenaCard">
+  <canvas id="gameCanvas" style="display:block; margin:0; padding:0; border-radius:0;"></canvas>
       </div>
     </div>
     <!-- ...rest of your game HTML... -->
-  </div>
+    </div>
   <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin-top: 16px;">
   <div class="card" id="wordCollectionCard" style="width:320px; height:290px; display:flex; align-items:center; justify-content:center;">
         <div id="wordCollectionRows">
@@ -202,6 +251,29 @@
   </div>
   <script src="snake-game.js"></script>
   <script>
+    function resizeArenaCanvas() {
+      const arena = document.getElementById('arenaCard');
+      const canvas = document.getElementById('gameCanvas');
+      if (arena && canvas) {
+        const rect = arena.getBoundingClientRect();
+        canvas.width = Math.round(rect.width);
+        canvas.height = Math.round(rect.height);
+      }
+    }
+    window.addEventListener('resize', resizeArenaCanvas);
+    window.addEventListener('DOMContentLoaded', resizeArenaCanvas);
+    // If mainGame is shown dynamically, call resizeArenaCanvas after display
+    document.getElementById('ttPlayBtn').onclick = function() {
+      document.getElementById('splashPage').style.display = 'none';
+      document.getElementById('ttModal').style.display = 'none';
+      document.getElementById('mainGame').style.display = '';
+      if (window.initializeSnakeAtSpawn) {
+        window.initializeSnakeAtSpawn();
+      }
+      resizeArenaCanvas();
+    };
+  </script>
+  <script>
     // Show modal on Time Trial click, only start game on Play
     document.getElementById('rattleContainer').onclick = function() {
       if (window.initializeSnakeAtSpawn) {
@@ -213,6 +285,10 @@
       document.getElementById('splashPage').style.display = 'none';
       document.getElementById('ttModal').style.display = 'none';
       document.getElementById('mainGame').style.display = '';
+      resizeArenaCanvas();
+      if (window.initializeSnakeAtSpawn) {
+        window.initializeSnakeAtSpawn();
+      }
     };
     // Endless Mode pop-up
     document.getElementById('endlessContainer').onclick = function() {
@@ -238,6 +314,46 @@
         }
       });
     });
+  </script>
+  <script>
+function setScoreTimerRelativeToArena() {
+  const arenaCard = document.getElementById('arenaCard');
+  const scoreboardCard = document.getElementById('scoreboardCard');
+  const timerCard = document.getElementById('timerCard');
+  if (arenaCard && scoreboardCard && timerCard) {
+    const arenaRect = arenaCard.getBoundingClientRect();
+    const newHeight = Math.max(20, arenaRect.height * 0.10); // 10% of arena height, min 20px
+    const newWidth = Math.max(60, arenaRect.width * 0.40);   // 40% of arena width, min 60px
+    scoreboardCard.style.height = newHeight + 'px';
+    timerCard.style.height = newHeight + 'px';
+    scoreboardCard.style.width = newWidth + 'px';
+    timerCard.style.width = newWidth + 'px';
+    // Center values vertically and horizontally, set font-size to 50% of container height
+    ['scoreboard', 'timer'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
+        el.style.justifyContent = 'center';
+        el.style.height = '100%';
+        el.style.width = '100%';
+        el.style.fontSize = (newHeight * 0.5) + 'px'; // 50% of container height
+      }
+    });
+  }
+}
+window.addEventListener('resize', setScoreTimerRelativeToArena);
+window.addEventListener('DOMContentLoaded', setScoreTimerRelativeToArena);
+window.addEventListener('load', setScoreTimerRelativeToArena);
+
+// Use ResizeObserver for arenaCard
+window.addEventListener('DOMContentLoaded', function() {
+  const arenaCard = document.getElementById('arenaCard');
+  if (arenaCard && window.ResizeObserver) {
+    const observer = new ResizeObserver(() => setScoreTimerRelativeToArena());
+    observer.observe(arenaCard);
+  }
+});
   </script>
 </body>
 </html>

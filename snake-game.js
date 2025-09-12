@@ -3,10 +3,13 @@ function respawnSnakeAfterLoss() {
   setTimeout(() => {
     direction = {x: 1, y: 0};
     directionQueue = [];
+    // Snake starts at 10% from left, 85% from top, 3 segments long horizontally
+    const startX = Math.floor(GRID_WIDTH * 0.10);
+    const startY = Math.floor(GRID_HEIGHT * 0.85);
     snake = [
-      {x: 3, y: GRID_HEIGHT - 3},
-      {x: 2, y: GRID_HEIGHT - 3},
-      {x: 1, y: GRID_HEIGHT - 3}
+      {x: startX, y: startY},
+      {x: startX - 1, y: startY},
+      {x: startX - 2, y: startY}
     ];
     collectedLetters = [];
     // Foods remain as per today's word
@@ -114,17 +117,35 @@ loadDailyWordsCSV();
 // RATTLE Snake Game - HTML5/JS Conversion
 // Best practices, maintainable, secure, efficient
 
-const CELL_SIZE = 20;
 const GRID_WIDTH = 30;
 const GRID_HEIGHT = 20;
-const ARENA_WIDTH = CELL_SIZE * GRID_WIDTH;
-const ARENA_HEIGHT = CELL_SIZE * GRID_HEIGHT;
-const MARGIN_TOP = 100;
-const MARGIN_LEFT = 200;
-const MARGIN_RIGHT = 200;
-const MARGIN_BOTTOM = 500;
-const WIDTH = ARENA_WIDTH + MARGIN_LEFT + MARGIN_RIGHT;
-const HEIGHT = ARENA_HEIGHT + MARGIN_TOP + MARGIN_BOTTOM;
+let cellWidth = 20;
+let cellHeight = 20;
+// cellWidth and cellHeight will be recalculated in resizeArenaCanvas after DOM is ready
+function resizeArenaCanvas() {
+  // Get arenaCard container
+  const arenaCard = document.getElementById('arenaCard');
+  if (!arenaCard || !canvas) return;
+  // Calculate width: 90vw, max 800px
+  const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  let width = Math.min(vw * 0.9, 800);
+  let height = width * 2 / 3;
+  // Set container size (for flex alignment)
+  arenaCard.style.width = width + 'px';
+  arenaCard.style.height = height + 'px';
+  // Set canvas size
+  canvas.width = width;
+  canvas.height = height;
+  // Update cell size for grid
+  cellWidth = width / GRID_WIDTH;
+  cellHeight = height / GRID_HEIGHT;
+  // Redraw everything
+  if (typeof render === 'function') render();
+}
+
+// Resize on load and window resize
+window.addEventListener('resize', resizeArenaCanvas);
+window.addEventListener('DOMContentLoaded', resizeArenaCanvas);
 const BASE_FPS = 10;
 const SPEED_LEVELS = [0.25, 0.5, 0.75, 1.0, 1.25];
 let speedIndex = 3; // Start at normal speed
@@ -209,10 +230,13 @@ function getFoodPositionsForWord(word) {
 function resetGame() {
   direction = {x: 1, y: 0};
   directionQueue = [];
+  // Snake starts at 10% from left, 85% from top, 3 segments long horizontally
+  const startX = Math.floor(GRID_WIDTH * 0.10);
+  const startY = Math.floor(GRID_HEIGHT * 0.85);
   snake = [
-    {x: 3, y: GRID_HEIGHT - 3},
-    {x: 2, y: GRID_HEIGHT - 3},
-    {x: 1, y: GRID_HEIGHT - 3}
+    {x: startX, y: startY},
+    {x: startX - 1, y: startY},
+    {x: startX - 2, y: startY}
   ];
   // Use today's word from word-list
   const todayWord = getTodayWord();
@@ -248,145 +272,106 @@ function drawTimer() {
 function drawArena() {
   ctx.fillStyle = '#f5f5ff';
   ctx.fillRect(0, 0, canvas.width, canvas.height);
-  // Draw border flush with grid
   ctx.save();
-  // Wall coordinates and cell height (declare once)
-  const wallLeftX = 3;
-  const wallX = canvas.width - 3;
-  const cellHeight = (canvas.height - 6) / GRID_HEIGHT;
-  // Left wall: top sixteen segments black, rest red, bottommost segment black except top 5px red
+  // Walls: grid-aligned
   ctx.strokeStyle = '#222';
   ctx.lineWidth = 6;
+  // Left wall
   ctx.beginPath();
-  ctx.moveTo(wallLeftX, 3 - 5);
-  ctx.lineTo(wallLeftX, 3 + cellHeight * 16);
+  ctx.moveTo(0, 0);
+  ctx.lineTo(0, GRID_HEIGHT * cellHeight);
   ctx.stroke();
-  // Red portal: from sixteen segments to one above bottom, 30px thick with 2px black border
-  const redPortalThickness = 30;
-  const redPortalBorder = 2;
-  // Draw red portal
-  ctx.strokeStyle = '#ff4d4d'; // lighter red
-  ctx.lineWidth = redPortalThickness;
+  // Right wall
   ctx.beginPath();
-  ctx.moveTo(wallLeftX, 3 + cellHeight * 16);
-  ctx.lineTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.moveTo(GRID_WIDTH * cellWidth, 0);
+  ctx.lineTo(GRID_WIDTH * cellWidth, GRID_HEIGHT * cellHeight);
   ctx.stroke();
-  // Red: top 5px of bottommost segment, 30px thick
-  ctx.strokeStyle = '#ff4d4d'; // lighter red
-  ctx.lineWidth = redPortalThickness;
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1));
-  ctx.lineTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.stroke();
-  // Draw black border around red portal
-  ctx.strokeStyle = '#222';
-  ctx.lineWidth = redPortalBorder;
-  // Left edge of portal
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * 16);
-  ctx.lineTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.stroke();
-  // Right edge of portal
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * 16);
-  ctx.lineTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.stroke();
-  // Top edge of portal
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * 16);
-  ctx.lineTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * 16);
-  ctx.stroke();
-  // Bottom edge of portal
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX - redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.lineTo(wallLeftX + redPortalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.stroke();
-  // Restore line width for other walls
-  ctx.lineWidth = 6;
-  // Black: rest of bottommost segment
-  ctx.strokeStyle = '#222';
-  ctx.beginPath();
-  ctx.moveTo(wallLeftX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.lineTo(wallLeftX, canvas.height - 3 + 5);
-  ctx.stroke();
-  // Top and bottom walls (black)
-  ctx.strokeStyle = '#222';
-  ctx.beginPath();
   // Top wall
-  ctx.moveTo(3, 3);
-  ctx.lineTo(canvas.width - 3, 3);
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  ctx.lineTo(GRID_WIDTH * cellWidth, 0);
+  ctx.stroke();
   // Bottom wall
-  ctx.moveTo(3, canvas.height - 3);
-  ctx.lineTo(canvas.width - 3, canvas.height - 3);
-  ctx.stroke();
-  // Right wall: top half plus 6 segments in black, bottommost segment in black, section between in green
-  // Black: from top to (half + 6 segments), extended 5px at top
-  ctx.strokeStyle = '#222';
-  ctx.lineWidth = 6;
   ctx.beginPath();
-  ctx.moveTo(wallX, 3 - 5);
-  ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
+  ctx.moveTo(0, GRID_HEIGHT * cellHeight);
+  ctx.lineTo(GRID_WIDTH * cellWidth, GRID_HEIGHT * cellHeight);
   ctx.stroke();
-  // Green portal: from (half + 6 segments) to one above bottom, 30px thick with 2px black border
-  const portalThickness = 30;
-  const portalBorder = 2;
-  // Draw green portal
-  ctx.strokeStyle = '#00c800';
+  // Portals: grid-aligned
+  const portalThickness = cellWidth * 1.5;
+  const portalBorder = cellWidth * 0.1;
+  // Red portal (left)
+  const redPortalStartRow = Math.floor(GRID_HEIGHT * 0.80);
+  const redPortalEndRow = Math.floor(GRID_HEIGHT * 0.95);
+  const redPortalX = 0;
+  const redPortalStartY = redPortalStartRow * cellHeight;
+  const redPortalEndY = redPortalEndRow * cellHeight;
+  ctx.save();
+  ctx.strokeStyle = '#ff4d4d';
   ctx.lineWidth = portalThickness;
   ctx.beginPath();
-  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
-  ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
+  ctx.moveTo(redPortalX, redPortalStartY);
+  ctx.lineTo(redPortalX, redPortalEndY);
   ctx.stroke();
-  // Light green top 5px of bottommost segment (portal color), 30px thick
-  ctx.strokeStyle = '#00c800';
-  ctx.lineWidth = portalThickness;
-  ctx.beginPath();
-  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1));
-  ctx.lineTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.stroke();
-  // Draw black border around portal
+  // Black border around red portal
   ctx.strokeStyle = '#222';
   ctx.lineWidth = portalBorder;
-  // Left edge of portal
+  // Left edge
   ctx.beginPath();
-  ctx.moveTo(wallX - portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
-  ctx.lineTo(wallX - portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.moveTo(redPortalX - portalThickness / 2, redPortalStartY);
+  ctx.lineTo(redPortalX - portalThickness / 2, redPortalEndY);
   ctx.stroke();
-  // Right edge of portal
+  // Right edge
   ctx.beginPath();
-  ctx.moveTo(wallX + portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
-  ctx.lineTo(wallX + portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.moveTo(redPortalX + portalThickness / 2, redPortalStartY);
+  ctx.lineTo(redPortalX + portalThickness / 2, redPortalEndY);
   ctx.stroke();
-  // Top edge of portal
+  // Top edge
   ctx.beginPath();
-  ctx.moveTo(wallX - portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
-  ctx.lineTo(wallX + portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT / 2 + 6));
+  ctx.moveTo(redPortalX - portalThickness / 2, redPortalStartY);
+  ctx.lineTo(redPortalX + portalThickness / 2, redPortalStartY);
   ctx.stroke();
-  // Bottom edge of portal
+  // Bottom edge
   ctx.beginPath();
-  ctx.moveTo(wallX - portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.lineTo(wallX + portalThickness / 2, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
+  ctx.moveTo(redPortalX - portalThickness / 2, redPortalEndY);
+  ctx.lineTo(redPortalX + portalThickness / 2, redPortalEndY);
   ctx.stroke();
-  // Restore line width for other walls
-  ctx.lineWidth = 6;
-  // Black rest of bottommost segment
-  ctx.strokeStyle = '#222';
-  ctx.beginPath();
-  ctx.moveTo(wallX, 3 + cellHeight * (GRID_HEIGHT - 1) + 5);
-  ctx.lineTo(wallX, canvas.height - 3 + 5);
-  ctx.stroke();
-  // Draw portals
-  // Green portal (right)
-  ctx.save();
-  ctx.fillStyle = '#00c800'; // Green
-  let portalYStart = (GRID_HEIGHT - 4) * CELL_SIZE;
-  let portalHeight = 3 * CELL_SIZE;
-  ctx.fillRect(MARGIN_LEFT + ARENA_WIDTH - 8, MARGIN_TOP + portalYStart, 8, portalHeight);
   ctx.restore();
-  // Red portal (left)
+  // Green portal (right)
+  const greenPortalStartRow = Math.floor(GRID_HEIGHT * 0.80);
+  const greenPortalEndRow = Math.floor(GRID_HEIGHT * 0.95);
+  const greenPortalX = GRID_WIDTH * cellWidth;
+  const greenPortalStartY = greenPortalStartRow * cellHeight;
+  const greenPortalEndY = greenPortalEndRow * cellHeight;
   ctx.save();
-  ctx.fillStyle = '#c80000'; // Red
-  ctx.fillRect(MARGIN_LEFT, MARGIN_TOP + portalYStart, 8, portalHeight);
+  ctx.strokeStyle = '#00c800';
+  ctx.lineWidth = portalThickness;
+  ctx.beginPath();
+  ctx.moveTo(greenPortalX, greenPortalStartY);
+  ctx.lineTo(greenPortalX, greenPortalEndY);
+  ctx.stroke();
+  // Black border around green portal
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth = portalBorder;
+  // Left edge
+  ctx.beginPath();
+  ctx.moveTo(greenPortalX - portalThickness / 2, greenPortalStartY);
+  ctx.lineTo(greenPortalX - portalThickness / 2, greenPortalEndY);
+  ctx.stroke();
+  // Right edge
+  ctx.beginPath();
+  ctx.moveTo(greenPortalX + portalThickness / 2, greenPortalStartY);
+  ctx.lineTo(greenPortalX + portalThickness / 2, greenPortalEndY);
+  ctx.stroke();
+  // Top edge
+  ctx.beginPath();
+  ctx.moveTo(greenPortalX - portalThickness / 2, greenPortalStartY);
+  ctx.lineTo(greenPortalX + portalThickness / 2, greenPortalStartY);
+  ctx.stroke();
+  // Bottom edge
+  ctx.beginPath();
+  ctx.moveTo(greenPortalX - portalThickness / 2, greenPortalEndY);
+  ctx.lineTo(greenPortalX + portalThickness / 2, greenPortalEndY);
+  ctx.stroke();
   ctx.restore();
   ctx.restore();
 }
@@ -395,7 +380,7 @@ function drawSnake() {
   ctx.save();
   for (let i = 0; i < snake.length; i++) {
   ctx.fillStyle = '#00c800'; // Match portal green
-  ctx.fillRect(snake[i].x * CELL_SIZE, snake[i].y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+  ctx.fillRect(snake[i].x * cellWidth, snake[i].y * cellHeight, cellWidth, cellHeight);
   // Draw only the true outer perimeter of the snake in black
   if (snake.length > 0) {
     ctx.save();
@@ -403,8 +388,8 @@ function drawSnake() {
     ctx.lineWidth = 2;
     for (let i = 0; i < snake.length; i++) {
       const seg = snake[i];
-      const x = seg.x * CELL_SIZE;
-      const y = seg.y * CELL_SIZE;
+  const x = seg.x * cellWidth;
+  const y = seg.y * cellHeight;
       // Helper to check if a segment is sequential (previous or next)
       function isSequential(j) {
         return (i > 0 && snake[j].x === snake[i-1].x && snake[j].y === snake[i-1].y) ||
@@ -414,32 +399,32 @@ function drawSnake() {
       const topIdx = snake.findIndex(s => s.x === seg.x && s.y === seg.y - 1);
       if (topIdx === -1 || !isSequential(topIdx)) {
         ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + CELL_SIZE, y);
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + cellWidth, y);
         ctx.stroke();
       }
       // Bottom edge
       const botIdx = snake.findIndex(s => s.x === seg.x && s.y === seg.y + 1);
       if (botIdx === -1 || !isSequential(botIdx)) {
         ctx.beginPath();
-        ctx.moveTo(x, y + CELL_SIZE);
-        ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+  ctx.moveTo(x, y + cellHeight);
+  ctx.lineTo(x + cellWidth, y + cellHeight);
         ctx.stroke();
       }
       // Left edge
       const leftIdx = snake.findIndex(s => s.x === seg.x - 1 && s.y === seg.y);
       if (leftIdx === -1 || !isSequential(leftIdx)) {
         ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x, y + CELL_SIZE);
+  ctx.moveTo(x, y);
+  ctx.lineTo(x, y + cellHeight);
         ctx.stroke();
       }
       // Right edge
       const rightIdx = snake.findIndex(s => s.x === seg.x + 1 && s.y === seg.y);
       if (rightIdx === -1 || !isSequential(rightIdx)) {
         ctx.beginPath();
-        ctx.moveTo(x + CELL_SIZE, y);
-        ctx.lineTo(x + CELL_SIZE, y + CELL_SIZE);
+  ctx.moveTo(x + cellWidth, y);
+  ctx.lineTo(x + cellWidth, y + cellHeight);
         ctx.stroke();
       }
     }
@@ -448,14 +433,14 @@ function drawSnake() {
     // Draw collected letters: newest always in second segment, older letters shift toward tail
     if (i > 0 && i <= collectedLetters.length) {
       ctx.save();
-      ctx.font = '20px Avenir Next, Arial, sans-serif';
+  ctx.font = (cellHeight * 0.9) + 'px Avenir Next, Arial, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillStyle = '#000';
       // Place newest letter in second segment, older letters shift toward tail
       let letterIndex = collectedLetters.length - i;
       if (letterIndex >= 0) {
-        ctx.fillText(collectedLetters[letterIndex], snake[i].x * CELL_SIZE + CELL_SIZE/2, snake[i].y * CELL_SIZE + CELL_SIZE/2 + 2);
+  ctx.fillText(collectedLetters[letterIndex], snake[i].x * cellWidth + cellWidth/2, snake[i].y * cellHeight + cellHeight/2 + 2);
       }
       ctx.restore();
     }
@@ -465,12 +450,12 @@ function drawSnake() {
 
 function drawFoods() {
   ctx.save();
-  ctx.font = '20px Avenir Next, Arial, sans-serif';
+  ctx.font = (cellHeight * 0.9) + 'px Avenir Next, Arial, sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   for (let food of foods) {
     ctx.fillStyle = '#000';
-    ctx.fillText(food.letter, food.x * CELL_SIZE + CELL_SIZE/2, food.y * CELL_SIZE + CELL_SIZE/2);
+  ctx.fillText(food.letter, food.x * cellWidth + cellWidth/2, food.y * cellHeight + cellHeight/2);
   }
   ctx.restore();
 }
@@ -569,10 +554,15 @@ function update() {
     x: snake[0].x + direction.x,
     y: snake[0].y + direction.y
   };
-  // Portal logic: green portal (right) to red portal (left)
-  let portalYStart = GRID_HEIGHT - 4;
-  let portalYEnd = GRID_HEIGHT - 1;
-  let onGreenPortal = (snake[0].x === GRID_WIDTH - 1 && snake[0].y >= portalYStart && snake[0].y < portalYEnd && direction.x === 1);
+  // Responsive portal logic: green portal (right) to red portal (left)
+  const portalStartRow = Math.floor(GRID_HEIGHT * 0.80);
+  const portalEndRow = Math.floor(GRID_HEIGHT * 0.95);
+  let onGreenPortal = (
+    snake[0].x === GRID_WIDTH - 1 &&
+    snake[0].y >= portalStartRow &&
+    snake[0].y < portalEndRow &&
+    direction.x === 1
+  );
   if (onGreenPortal) {
     // Teleport to red portal
     newHead.x = 0;
@@ -708,10 +698,13 @@ function initializeSnakeAtSpawn() {
   directionQueue = [];
   speedIndex = 2; // Start one level slower than normal ONLY on initialization
   fps = BASE_FPS * SPEED_LEVELS[speedIndex];
+  // Snake starts at 10% from left, 85% from top, 3 segments long horizontally
+  const startX = Math.floor(GRID_WIDTH * 0.10);
+  const startY = Math.floor(GRID_HEIGHT * 0.85);
   snake = [
-    {x: 3, y: GRID_HEIGHT - 3},
-    {x: 2, y: GRID_HEIGHT - 3},
-    {x: 1, y: GRID_HEIGHT - 3}
+    {x: startX, y: startY},
+    {x: startX - 1, y: startY},
+    {x: startX - 2, y: startY}
   ];
   const todayWord = getTodayWord();
   foods = getFoodPositionsForWord(todayWord);
@@ -739,7 +732,6 @@ function initializeSnakeAtSpawn() {
   render();
 }
 
-initializeSnakeAtSpawn();
 
 // Listen for splash page dismissal
 document.addEventListener('DOMContentLoaded', function() {
