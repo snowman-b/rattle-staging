@@ -117,8 +117,8 @@ loadDailyWordsCSV();
 // RATTLE Snake Game - HTML5/JS Conversion
 // Best practices, maintainable, secure, efficient
 
-const GRID_WIDTH = 19;
-const GRID_HEIGHT = 12;
+const GRID_WIDTH = 24;
+const GRID_HEIGHT = 16;
 let cellWidth = 20;
 let cellHeight = 20;
 // cellWidth and cellHeight will be recalculated in resizeArenaCanvas after DOM is ready
