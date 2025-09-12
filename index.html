@@ -48,11 +48,9 @@
       box-sizing: border-box;
     }
     #scoreboardCard, #timerCard {
-      height: 10vh;
-      width: 40vw;
-      max-width: 400px;
-      min-width: 120px;
-      min-height: 40px;
+      height: 3vw;
+      width: 20vw;
+      max-width: 300px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -167,10 +165,10 @@
   <div id="mainGame" style="display:none;">
     <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 32px; margin-top: 40px; min-width: 0;">
       <div id="scoreboardTimerRow" style="width:100%; display:flex; flex-direction:row; justify-content:center; align-items:center; gap:32px; margin-bottom:12px;">
-        <div class="card" id="scoreboardCard" style="height:80px; display:flex; align-items:center; justify-content:center;">
+  <div class="card" id="scoreboardCard" style="display:flex; align-items:center; justify-content:center;">
           <div id="scoreboard">Scoreboard</div>
         </div>
-        <div class="card" id="timerCard" style="height:80px; display:flex; align-items:center; justify-content:center;">
+  <div class="card" id="timerCard" style="display:flex; align-items:center; justify-content:center;">
           <div id="timer">Timer</div>
         </div>
       </div>
@@ -316,6 +314,45 @@
         }
       });
     });
+  </script>
+  <script>
+function setScoreTimerRelativeToArena() {
+  const arenaCard = document.getElementById('arenaCard');
+  const scoreboardCard = document.getElementById('scoreboardCard');
+  const timerCard = document.getElementById('timerCard');
+  if (arenaCard && scoreboardCard && timerCard) {
+    const arenaRect = arenaCard.getBoundingClientRect();
+    const newHeight = Math.max(20, arenaRect.height * 0.10); // 10% of arena height, min 20px
+    const newWidth = Math.max(60, arenaRect.width * 0.40);   // 40% of arena width, min 60px
+    scoreboardCard.style.height = newHeight + 'px';
+    timerCard.style.height = newHeight + 'px';
+    scoreboardCard.style.width = newWidth + 'px';
+    timerCard.style.width = newWidth + 'px';
+    // Center values vertically and horizontally
+    ['scoreboard', 'timer'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) {
+        el.style.display = 'flex';
+        el.style.alignItems = 'center';
+        el.style.justifyContent = 'center';
+        el.style.height = '100%';
+        el.style.width = '100%';
+      }
+    });
+  }
+}
+window.addEventListener('resize', setScoreTimerRelativeToArena);
+window.addEventListener('DOMContentLoaded', setScoreTimerRelativeToArena);
+window.addEventListener('load', setScoreTimerRelativeToArena);
+
+// Use ResizeObserver for arenaCard
+window.addEventListener('DOMContentLoaded', function() {
+  const arenaCard = document.getElementById('arenaCard');
+  if (arenaCard && window.ResizeObserver) {
+    const observer = new ResizeObserver(() => setScoreTimerRelativeToArena());
+    observer.observe(arenaCard);
+  }
+});
   </script>
 </body>
 </html>
