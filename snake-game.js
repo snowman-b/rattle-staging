@@ -216,10 +216,12 @@ function getFoodPositionsForWord(word) {
   const seed = today.getFullYear() * 10000 + (today.getMonth()+1) * 100 + today.getDate();
   let letters = word.split('');
   letters = seededShuffle(letters, seed);
+  // Fixed positions for 6 letters: 5,8,11,14,17,20
+  const fixedPositions = [4, 7, 10, 13, 16, 19];
   let positions = [];
-  for (let i = 0; i < letters.length; i++) {
+  for (let i = 0; i < Math.min(letters.length, fixedPositions.length); i++) {
     positions.push({
-      x: spacing * (i + 1) + 2,
+      x: fixedPositions[i],
       y: row,
       letter: letters[i].toUpperCase()
     });
