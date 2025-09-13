@@ -367,14 +367,17 @@ function setScoreTimerRelativeToArena() {
   const arenaCard = document.getElementById('arenaCard');
   const scoreboardCard = document.getElementById('scoreboardCard');
   const timerCard = document.getElementById('timerCard');
+    const speedCard = document.getElementById('speedCard');
   if (arenaCard && scoreboardCard && timerCard) {
     const arenaRect = arenaCard.getBoundingClientRect();
-    const newHeight = Math.max(20, arenaRect.height * 0.10); // 10% of arena height, min 20px
-    const newWidth = Math.max(60, arenaRect.width * 0.40);   // 40% of arena width, min 60px
-    scoreboardCard.style.height = newHeight + 'px';
-    timerCard.style.height = newHeight + 'px';
-    scoreboardCard.style.width = newWidth + 'px';
-    timerCard.style.width = newWidth + 'px';
+      const newHeight = Math.max(20, arenaRect.height * 0.10); // 10% of arena height, min 20px
+      const newWidth = Math.max(60, arenaRect.width * 0.33);   // 33% of arena width, min 60px
+      [scoreboardCard, timerCard, speedCard].forEach(card => {
+        if (card) {
+          card.style.height = newHeight + 'px';
+          card.style.width = newWidth + 'px';
+        }
+      });
     // Center values vertically and horizontally, set font-size to 50% of container height
     ['scoreboard', 'timer'].forEach(id => {
       const el = document.getElementById(id);
