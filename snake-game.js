@@ -56,25 +56,37 @@ function checkWinCondition() {
 // Update word collection UI: show word in corresponding row, one letter per box
 // Update garbage collection UI: show invalid word in corresponding row, one letter per box
 function updateGarbageCollectionUI(word) {
-  // Show the invalid word as a single string with strikethrough at a random location
-  const garbageWordSpan = document.getElementById('garbageWord');
-  const container = document.getElementById('garbageCanContainer');
-  if (garbageWordSpan && container) {
-    garbageWordSpan.textContent = word.toUpperCase();
-    // Calculate random position within container
-    // Container: 240px wide, 40px tall, 10px padding
-    // Word width: estimate 33px * word.length
-    const wordWidth = 33 * word.length;
-  const maxLeft = Math.max(0, container.clientWidth - wordWidth - 10);
-  const maxTop = Math.max(0, container.clientHeight - 33 - 10);
-  // Snap to 100px increments for maximum visible variation
-  const left = Math.round((Math.random() * maxLeft) / 100) * 100 + 5;
-  const top = Math.round((Math.random() * maxTop) / 100) * 100 + 5;
-  garbageWordSpan.style.left = left + 'px';
-  garbageWordSpan.style.top = top + 'px';
+  // Show the invalid word as a single string with strikethrough at a random location in the word collection card
+  const container = document.getElementById('invalidWordsContainer');
+  if (container) {
+    const span = document.createElement('span');
+    span.textContent = word.toUpperCase();
+    span.style.position = 'absolute';
+    span.style.textDecoration = 'line-through';
+    span.style.fontSize = '2vw';
+    span.style.color = '#a00';
+    // Container: full size of wordCollectionCard, but avoid center region (letter boxes)
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+    // Avoid center 60% horizontally, 60% vertically
+    let left, top;
+    if (Math.random() < 0.5) {
+      // Left side
+      left = Math.random() * (containerWidth * 0.15);
+    } else {
+      // Right side
+      left = containerWidth * 0.85 + Math.random() * (containerWidth * 0.15 - 50);
+    }
+    top = Math.random() * (containerHeight * 0.8);
+    span.style.left = left + 'px';
+    span.style.top = top + 'px';
     // Random tilt between -20 and +20 degrees
     const tilt = (Math.random() * 40 - 20).toFixed(2);
-    garbageWordSpan.style.transform = `rotate(${tilt}deg)`;
+    span.style.transform = `rotate(${tilt}deg)`;
+    span.style.pointerEvents = 'none';
+    container.appendChild(span);
+    // Optionally fade out after a few seconds
+    setTimeout(() => { span.remove(); }, 4000);
   }
 }
 function updateWordCollectionUI(word) {
