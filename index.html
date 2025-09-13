@@ -298,6 +298,22 @@
   </div>
   <script src="snake-game.js"></script>
   <script>
+    // Make the main speed slider functional
+    document.addEventListener('DOMContentLoaded', function() {
+      var speedSlider = document.getElementById('mainSpeedSlider');
+      if (speedSlider) {
+        speedSlider.addEventListener('input', function() {
+          var speedValue = parseInt(speedSlider.value, 10);
+          if (window.setSnakeSpeed) {
+            window.setSnakeSpeed(speedValue);
+          } else if (window.snake && typeof window.snake.setSpeed === 'function') {
+            window.snake.setSpeed(speedValue);
+          }
+        });
+      }
+    });
+  </script>
+  <script>
     function resizeArenaCanvas() {
       const arena = document.getElementById('arenaCard');
       const canvas = document.getElementById('gameCanvas');

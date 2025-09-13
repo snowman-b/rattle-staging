@@ -1,3 +1,14 @@
+// Main game speed slider logic (for in-game real-time speed adjustment)
+document.addEventListener('DOMContentLoaded', function() {
+  const mainSpeedSlider = document.getElementById('mainSpeedSlider');
+  if (mainSpeedSlider) {
+    mainSpeedSlider.addEventListener('input', function() {
+      let selectedSpeed = parseInt(mainSpeedSlider.value) || 3;
+      speedIndex = selectedSpeed - 1; // SPEED_LEVELS is 0-indexed
+      fps = BASE_FPS * SPEED_LEVELS[speedIndex];
+    });
+  }
+});
 // Respawn snake after loss (wall/self collision)
 function respawnSnakeAfterLoss() {
   setTimeout(() => {
