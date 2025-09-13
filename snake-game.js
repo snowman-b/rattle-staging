@@ -340,16 +340,7 @@ function drawArena() {
   // Black border around red portal
   ctx.strokeStyle = '#222';
   ctx.lineWidth = portalBorder;
-  // Left edge
-  ctx.beginPath();
-  ctx.moveTo(redPortalX - portalThickness / 2, redPortalStartY);
-  ctx.lineTo(redPortalX - portalThickness / 2, redPortalEndY);
-  ctx.stroke();
-  // Right edge
-  ctx.beginPath();
-  ctx.moveTo(redPortalX + portalThickness / 2, redPortalStartY);
-  ctx.lineTo(redPortalX + portalThickness / 2, redPortalEndY);
-  ctx.stroke();
+  // (Vertical black bars removed)
   // Top edge
   ctx.beginPath();
   ctx.moveTo(redPortalX - portalThickness / 2, redPortalStartY);
@@ -377,16 +368,7 @@ function drawArena() {
   // Black border around green portal
   ctx.strokeStyle = '#222';
   ctx.lineWidth = portalBorder;
-  // Left edge
-  ctx.beginPath();
-  ctx.moveTo(greenPortalX - portalThickness / 2, greenPortalStartY);
-  ctx.lineTo(greenPortalX - portalThickness / 2, greenPortalEndY);
-  ctx.stroke();
-  // Right edge
-  ctx.beginPath();
-  ctx.moveTo(greenPortalX + portalThickness / 2, greenPortalStartY);
-  ctx.lineTo(greenPortalX + portalThickness / 2, greenPortalEndY);
-  ctx.stroke();
+  // (Vertical black bars removed)
   // Top edge
   ctx.beginPath();
   ctx.moveTo(greenPortalX - portalThickness / 2, greenPortalStartY);
@@ -572,6 +554,24 @@ function update() {
   // Responsive portal logic: green portal (right) to red portal (left)
   const portalStartRow = Math.floor(GRID_HEIGHT * 0.80);
   const portalEndRow = Math.floor(GRID_HEIGHT * 0.95);
+  // Portal horizontal bar collision detection (only if moving vertically)
+  let hitsPortalBar = false;
+  // Red portal (left)
+  if (
+    newHead.x === 0 &&
+    (newHead.y === portalStartRow || newHead.y === portalEndRow) &&
+    direction.y !== 0
+  ) {
+    hitsPortalBar = true;
+  }
+  // Green portal (right)
+  if (
+    newHead.x === GRID_WIDTH - 1 &&
+    (newHead.y === portalStartRow || newHead.y === portalEndRow) &&
+    direction.y !== 0
+  ) {
+    hitsPortalBar = true;
+  }
   let onGreenPortal = (
     snake[0].x === GRID_WIDTH - 1 &&
     snake[0].y >= portalStartRow &&
@@ -619,12 +619,15 @@ function update() {
     const todayWord = getTodayWord();
     foods = getFoodPositionsForWord(todayWord);
   }
-  // Edge collision (except for portal)
+  // Edge collision (except for portal) and portal bar collision
   let collided = false;
   if (
     (newHead.x < 0 || newHead.x >= GRID_WIDTH || newHead.y < 0 || newHead.y >= GRID_HEIGHT)
     && !onGreenPortal
   ) {
+    collided = true;
+  }
+  if (hitsPortalBar) {
     collided = true;
   }
   if (collided) {
