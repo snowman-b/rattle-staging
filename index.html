@@ -228,6 +228,10 @@
       <button id="ttPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#006400; color:#fff; border:none; cursor:pointer; margin-top:auto; margin-bottom:2em;">Play</button>
     </div>
   </div>
+  <script>
+    // Detect if device supports touch
+    window.deviceSupportsTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  </script>
   <div id="mainGame" style="display:none;">
     <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px; margin-top: 40px; min-width: 0;">
   <div id="topInfoRow" style="width:90vw; max-width:800px; margin-left:auto; margin-right:auto; display:flex; flex-direction:row; justify-content:space-between; align-items:center; gap:0; margin-bottom:9px;">
