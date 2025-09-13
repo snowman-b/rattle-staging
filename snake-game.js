@@ -1,3 +1,14 @@
+// Main game speed slider logic (for in-game real-time speed adjustment)
+document.addEventListener('DOMContentLoaded', function() {
+  const mainSpeedSlider = document.getElementById('mainSpeedSlider');
+  if (mainSpeedSlider) {
+    mainSpeedSlider.addEventListener('input', function() {
+      let selectedSpeed = parseInt(mainSpeedSlider.value) || 3;
+      speedIndex = selectedSpeed - 1; // SPEED_LEVELS is 0-indexed
+      fps = BASE_FPS * SPEED_LEVELS[speedIndex];
+    });
+  }
+});
 // Respawn snake after loss (wall/self collision)
 function respawnSnakeAfterLoss() {
   setTimeout(() => {
@@ -489,17 +500,7 @@ document.addEventListener('keydown', (e) => {
   if (!newDir) return;
   const now = Date.now();
   // If this is the second consecutive press in the same direction within 500ms, treat as speed change
-  if (lastKeyDir && newDir.x === lastKeyDir.x && newDir.y === lastKeyDir.y && now - lastKeyTime < 500) {
-    // Speed control
-    if (newDir.x === direction.x && newDir.y === direction.y) {
-      if (speedIndex < SPEED_LEVELS.length - 1) speedIndex++;
-    } else if (isOpposite(newDir, direction)) {
-      if (speedIndex > 0) speedIndex--;
-    }
-    fps = BASE_FPS * SPEED_LEVELS[speedIndex];
-    lastKeyDir = null; // Reset so only double-tap triggers speed
-    return;
-  }
+  // Removed double-tap speed control logic
   // Otherwise, queue movement
   const last = directionQueue.length ? directionQueue[directionQueue.length - 1] : direction;
   if (!isOpposite(last, newDir)) {
@@ -737,6 +738,23 @@ function initializeSnakeAtSpawn() {
 
 // Listen for splash page dismissal
 document.addEventListener('DOMContentLoaded', function() {
+  // Speed slider logic for Endless Mode
+  const endlessSpeedSlider = document.getElementById('endlessSpeedSlider');
+  const endlessSpeedValue = document.getElementById('endlessSpeedValue');
+  if (endlessSpeedSlider && endlessSpeedValue) {
+    endlessSpeedSlider.addEventListener('input', function() {
+      endlessSpeedValue.textContent = `Speed: ${endlessSpeedSlider.value}`;
+    });
+  }
+
+  // Speed slider logic for Time Trial Mode
+  const ttSpeedSlider = document.getElementById('ttSpeedSlider');
+  const ttSpeedValue = document.getElementById('ttSpeedValue');
+  if (ttSpeedSlider && ttSpeedValue) {
+    ttSpeedSlider.addEventListener('input', function() {
+      ttSpeedValue.textContent = `Speed: ${ttSpeedSlider.value}`;
+    });
+  }
   // Add close functionality for modal 'x' buttons
   const endlessCloseX = document.getElementById('endlessCloseX');
   if (endlessCloseX) {
@@ -744,6 +762,21 @@ document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('endlessModal').style.display = 'none';
       document.getElementById('splashPage').style.display = 'flex';
       e.stopPropagation();
+    });
+  }
+  // Endless Play button logic with speed
+  const endlessPlayBtn = document.getElementById('endlessPlayBtn');
+  if (endlessPlayBtn) {
+    endlessPlayBtn.addEventListener('click', function() {
+      // Get speed from slider
+      const endlessSpeedSlider = document.getElementById('endlessSpeedSlider');
+      let selectedSpeed = endlessSpeedSlider ? parseInt(endlessSpeedSlider.value) : 3;
+      speedIndex = selectedSpeed - 1; // SPEED_LEVELS is 0-indexed
+      fps = BASE_FPS * SPEED_LEVELS[speedIndex];
+      resetGame();
+      endlessMode = true;
+      running = true;
+      requestAnimationFrame(gameLoop);
     });
   }
   const placeholderCloseX = document.getElementById('placeholderCloseX');
@@ -766,7 +799,13 @@ document.addEventListener('DOMContentLoaded', function() {
   const ttPlayBtn = document.getElementById('ttPlayBtn');
   if (ttPlayBtn) {
     ttPlayBtn.addEventListener('click', function() {
+      // Get speed from slider
+      const ttSpeedSlider = document.getElementById('ttSpeedSlider');
+      let selectedSpeed = ttSpeedSlider ? parseInt(ttSpeedSlider.value) : 3;
+      speedIndex = selectedSpeed - 1; // SPEED_LEVELS is 0-indexed
+      fps = BASE_FPS * SPEED_LEVELS[speedIndex];
       resetGame();
+      endlessMode = false;
       running = true;
       requestAnimationFrame(gameLoop);
     });

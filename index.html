@@ -86,7 +86,7 @@
       width: 100vw;
       box-sizing: border-box;
     }
-    #scoreboardCard, #timerCard {
+    #scoreboardCard, #timerCard, #speedCard {
       height: 3vw;
       width: 20vw;
       max-width: 300px;
@@ -186,11 +186,14 @@
       <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
       <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">Endless Mode</span>
       <div style="font-size:1.1em; color:#222; margin-bottom:2em; margin-top:1.5em; text-align:left; max-width:360px;">
-        <p>Use the arrow keys to find as many words as possible</p>
-        <p>Speed Up: double click the arrow key matching your direction of travel</p>
-        <p>Slow Down: double click the arrow key against your direction of travel</p>
+        <p>Move the snake to find as many words as possible</p>
         <p>Submit words by passing through the green portal</p>
         <p>Clear mistaken letters by passing through the green portal</p>
+      </div>
+      <div style="width:100%; display:flex; flex-direction:column; align-items:center; margin-bottom:1em;">
+        <label for="endlessSpeedSlider" style="font-size:1.1em; color:#222; margin-bottom:0.5em;">Snake Speed:</label>
+  <input type="range" id="endlessSpeedSlider" min="1" max="5" value="3" step="1" style="width:80%; accent-color:#006400;">
+        <div id="endlessSpeedValue" style="font-size:1em; color:#222; margin-top:0.2em;">Speed: 3</div>
       </div>
       <button id="endlessPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#888; color:#fff; border:none; cursor:not-allowed; margin-top:auto; margin-bottom:2em;">Play</button>
     </div>
@@ -213,26 +216,37 @@
       <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
       <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">Time Trial</span>
       <div style="font-size:1.1em; color:#222; margin-bottom:2em; margin-top:calc(1.5em - 20px); text-align:left; max-width:360px;">
-  <p>Use the arrow keys to quickly find six words from the scrambled letters</p>
-  <p>Speed Up: double click the arrow key matching your direction of travel</p>
-  <p>Slow Down: double click the arrow key against your direction of travel</p>
+  <p>Move the snake to quickly find six words from the scrambled letters</p>
   <p>Submit words by passing through the green portal</p>
   <p>Clear mistaken letters by passing through the green portal</p>
+      </div>
+      <div style="width:100%; display:flex; flex-direction:column; align-items:center; margin-bottom:1em;">
+        <label for="ttSpeedSlider" style="font-size:1.1em; color:#222; margin-bottom:0.5em;">Snake Speed:</label>
+  <input type="range" id="ttSpeedSlider" min="1" max="5" value="3" step="1" style="width:80%; accent-color:#006400;">
+        <div id="ttSpeedValue" style="font-size:1em; color:#222; margin-top:0.2em;">Speed: 3</div>
       </div>
       <button id="ttPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#006400; color:#fff; border:none; cursor:pointer; margin-top:auto; margin-bottom:2em;">Play</button>
     </div>
   </div>
   <div id="mainGame" style="display:none;">
     <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px; margin-top: 40px; min-width: 0;">
-      <div id="scoreboardTimerRow" style="width:100%; display:flex; flex-direction:row; justify-content:center; align-items:center; gap:16px; margin-bottom:6px;">
-  <div class="card" id="scoreboardCard" style="display:flex; align-items:center; justify-content:center;">
-          <div id="scoreboard">Scoreboard</div>
-        </div>
-  <div class="card" id="timerCard" style="display:flex; align-items:center; justify-content:center;">
+  <div id="topInfoRow" style="width:90vw; max-width:800px; margin-left:auto; margin-right:auto; display:flex; flex-direction:row; justify-content:space-between; align-items:center; gap:0; margin-bottom:9px;">
+        <div class="card" id="timerCard" style="display:flex; align-items:center; justify-content:center; width:30%; min-width:0; box-sizing:border-box;">
           <div id="timer">Timer</div>
         </div>
+        <div style="width:5%;"></div>
+        <div class="card" id="scoreboardCard" style="display:flex; align-items:center; justify-content:center; width:30%; min-width:0; box-sizing:border-box;">
+          <div id="scoreboard">Scoreboard</div>
+        </div>
+        <div style="width:5%;"></div>
+        <div class="card" id="speedCard" style="display:flex; align-items:center; justify-content:center; width:30%; min-width:0; box-sizing:border-box;">
+          <div style="width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+            <input type="range" id="mainSpeedSlider" min="1" max="5" value="3" step="1" style="width:80%; accent-color:#006400;">
+          </div>
+        </div>
       </div>
-  <div class="card" id="arenaCard">
+      </div>
+  <div class="card" id="arenaCard" style="margin-left:auto; margin-right:auto;">
     <canvas id="gameCanvas" style="display:block; margin:0; padding:0; border-radius:0;"></canvas>
   </div>
   <div class="arena-side-containers">
@@ -283,6 +297,22 @@
     <button class="btn" id="modalHome">Return Home</button>
   </div>
   <script src="snake-game.js"></script>
+  <script>
+    // Make the main speed slider functional
+    document.addEventListener('DOMContentLoaded', function() {
+      var speedSlider = document.getElementById('mainSpeedSlider');
+      if (speedSlider) {
+        speedSlider.addEventListener('input', function() {
+          var speedValue = parseInt(speedSlider.value, 10);
+          if (window.setSnakeSpeed) {
+            window.setSnakeSpeed(speedValue);
+          } else if (window.snake && typeof window.snake.setSpeed === 'function') {
+            window.snake.setSpeed(speedValue);
+          }
+        });
+      }
+    });
+  </script>
   <script>
     function resizeArenaCanvas() {
       const arena = document.getElementById('arenaCard');
@@ -353,14 +383,17 @@ function setScoreTimerRelativeToArena() {
   const arenaCard = document.getElementById('arenaCard');
   const scoreboardCard = document.getElementById('scoreboardCard');
   const timerCard = document.getElementById('timerCard');
+    const speedCard = document.getElementById('speedCard');
   if (arenaCard && scoreboardCard && timerCard) {
     const arenaRect = arenaCard.getBoundingClientRect();
-    const newHeight = Math.max(20, arenaRect.height * 0.10); // 10% of arena height, min 20px
-    const newWidth = Math.max(60, arenaRect.width * 0.40);   // 40% of arena width, min 60px
-    scoreboardCard.style.height = newHeight + 'px';
-    timerCard.style.height = newHeight + 'px';
-    scoreboardCard.style.width = newWidth + 'px';
-    timerCard.style.width = newWidth + 'px';
+      const newHeight = Math.max(20, arenaRect.height * 0.10); // 10% of arena height, min 20px
+      const newWidth = Math.max(60, arenaRect.width * 0.33);   // 33% of arena width, min 60px
+      [scoreboardCard, timerCard, speedCard].forEach(card => {
+        if (card) {
+          card.style.height = newHeight + 'px';
+          card.style.width = newWidth + 'px';
+        }
+      });
     // Center values vertically and horizontally, set font-size to 50% of container height
     ['scoreboard', 'timer'].forEach(id => {
       const el = document.getElementById(id);
