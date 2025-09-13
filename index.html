@@ -274,19 +274,13 @@
   </div>
   <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 16px; margin-top: 16px; width: 90vw; max-width: 800px; margin-left: auto; margin-right: auto;">
     <div class="card" id="movementControlCard" style="display:flex; align-items:center; justify-content:center;">
-      <div id="movementControl" style="width:240px; height:240px; display:grid; grid-template-rows: 1fr 1fr 1fr; grid-template-columns: 1fr 1fr 1fr; gap:0px; background:#f5f5ff; border:2px solid #888; border-radius:16px;">
-        <!-- 3x3 grid: Up, Left, Right, Down arrows in correct cells -->
-        <div style="grid-row:1; grid-column:2; display:flex; align-items:center; justify-content:center;">
-          <button id="arrowUp" style="width:80px; height:80px; font-size:3em; border-radius:12px; border:2px solid #888; background:#e0e0e0; cursor:pointer;">&#8593;</button>
-        </div>
-        <div style="grid-row:2; grid-column:1; display:flex; align-items:center; justify-content:center;">
-          <button id="arrowLeft" style="width:80px; height:80px; font-size:3em; border-radius:12px; border:2px solid #888; background:#e0e0e0; cursor:pointer;">&#8592;</button>
-        </div>
-        <div style="grid-row:2; grid-column:3; display:flex; align-items:center; justify-content:center;">
-          <button id="arrowRight" style="width:80px; height:80px; font-size:3em; border-radius:12px; border:2px solid #888; background:#e0e0e0; cursor:pointer;">&#8594;</button>
-        </div>
-        <div style="grid-row:3; grid-column:2; display:flex; align-items:center; justify-content:center;">
-          <button id="arrowDown" style="width:80px; height:80px; font-size:3em; border-radius:12px; border:2px solid #888; background:#e0e0e0; cursor:pointer;">&#8595;</button>
+  <div id="movementControl" style="background:#f5f5ff; border:2px solid #888; border-radius:16px; display:flex; align-items:center; justify-content:center; touch-action:none; width:100%; height:100%; min-width:0; min-height:0;">
+        <div style="width:100%; height:100%; display:flex; flex-direction:column; align-items:center; justify-content:center; position:relative;">
+          <span style="position:absolute; top:16px; left:50%; transform:translateX(-50%); font-size:2em; color:#888;">&#8593;</span>
+          <span style="position:absolute; bottom:16px; left:50%; transform:translateX(-50%); font-size:2em; color:#888;">&#8595;</span>
+          <span style="position:absolute; left:16px; top:50%; transform:translateY(-50%); font-size:2em; color:#888;">&#8592;</span>
+          <span style="position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:2em; color:#888;">&#8594;</span>
+          <span style="font-size:1.3em; color:#888; text-align:center; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);">swipe to move</span>
         </div>
       </div>
     </div>
@@ -301,6 +295,65 @@
     <button class="btn" id="modalHome">Return Home</button>
   </div>
   <script src="snake-game.js"></script>
+  <script>
+    // Sync movementControlCard dimensions to match arenaCard
+    function resizeMovementControl() {
+      var arena = document.getElementById('arenaCard');
+      var moveCard = document.getElementById('movementControlCard');
+      if (arena && moveCard) {
+        const rect = arena.getBoundingClientRect();
+        moveCard.style.width = rect.width + 'px';
+        moveCard.style.height = rect.height + 'px';
+      }
+    }
+    window.addEventListener('resize', resizeMovementControl);
+    window.addEventListener('DOMContentLoaded', resizeMovementControl);
+    window.addEventListener('load', resizeMovementControl);
+    // Use ResizeObserver for arenaCard
+    window.addEventListener('DOMContentLoaded', function() {
+      const arenaCard = document.getElementById('arenaCard');
+      if (arenaCard && window.ResizeObserver) {
+        const observer = new ResizeObserver(() => resizeMovementControl());
+        observer.observe(arenaCard);
+      }
+    });
+  </script>
+  <script>
+    // Swipe detection for movementControl
+    document.addEventListener('DOMContentLoaded', function() {
+      var box = document.getElementById('movementControl');
+      if (!box) return;
+      let startX = null, startY = null;
+      box.addEventListener('touchstart', function(e) {
+        if (e.touches.length === 1) {
+          startX = e.touches[0].clientX;
+          startY = e.touches[0].clientY;
+        }
+      });
+      box.addEventListener('touchend', function(e) {
+        if (startX === null || startY === null) return;
+        let endX = e.changedTouches[0].clientX;
+        let endY = e.changedTouches[0].clientY;
+        let dx = endX - startX;
+        let dy = endY - startY;
+        let absDx = Math.abs(dx);
+        let absDy = Math.abs(dy);
+        let direction = null;
+        if (absDx > absDy && absDx > 30) {
+          direction = dx > 0 ? 'right' : 'left';
+        } else if (absDy > absDx && absDy > 30) {
+          direction = dy > 0 ? 'down' : 'up';
+        }
+        if (direction) {
+          // Dispatch synthetic keyboard event for snake movement
+          const keyMap = { up: 'ArrowUp', down: 'ArrowDown', left: 'ArrowLeft', right: 'ArrowRight' };
+          document.dispatchEvent(new KeyboardEvent('keydown', { key: keyMap[direction] }));
+        }
+        startX = null;
+        startY = null;
+      });
+    });
+  </script>
   <script>
     // Make the main speed slider functional
     document.addEventListener('DOMContentLoaded', function() {
