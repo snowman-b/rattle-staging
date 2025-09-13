@@ -348,6 +348,14 @@
       document.getElementById('splashPage').style.display = 'none';
       document.getElementById('ttModal').style.display = 'none';
       document.getElementById('mainGame').style.display = '';
+      // Sync speed from instructions pop-up to main game speed slider
+      var ttSpeedSlider = document.getElementById('ttSpeedSlider');
+      var mainSpeedSlider = document.getElementById('mainSpeedSlider');
+      if (ttSpeedSlider && mainSpeedSlider) {
+        mainSpeedSlider.value = ttSpeedSlider.value;
+        // Trigger input event to update speed immediately
+        mainSpeedSlider.dispatchEvent(new Event('input'));
+      }
       resizeArenaCanvas();
       if (window.initializeSnakeAtSpawn) {
         window.initializeSnakeAtSpawn();
@@ -364,6 +372,13 @@
     // Clicking Play in these popups does nothing
     document.getElementById('endlessPlayBtn').onclick = function(e) {
       e.preventDefault();
+      // Sync speed from instructions pop-up to main game speed slider
+      var endlessSpeedSlider = document.getElementById('endlessSpeedSlider');
+      var mainSpeedSlider = document.getElementById('mainSpeedSlider');
+      if (endlessSpeedSlider && mainSpeedSlider) {
+        mainSpeedSlider.value = endlessSpeedSlider.value;
+        mainSpeedSlider.dispatchEvent(new Event('input'));
+      }
     };
     document.getElementById('placeholderPlayBtn').onclick = function(e) {
       e.preventDefault();
