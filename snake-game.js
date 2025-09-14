@@ -837,4 +837,16 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+
+    // Allow clicking outside Endless modal content to close it
+    const endlessModal = document.getElementById('endlessModal');
+    if (endlessModal) {
+      endlessModal.addEventListener('click', function(e) {
+        // Only close if clicking the background, not the modal content
+        if (e.target === endlessModal) {
+          endlessModal.style.display = 'none';
+          document.getElementById('splashPage').style.display = 'flex';
+        }
+      });
+    }
 });
