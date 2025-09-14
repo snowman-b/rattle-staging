@@ -691,12 +691,14 @@ baja
 bake
 baked
 baker
-bakery
 bakers
+bakery
 baking
 bal
 bald
+balds
 bale
+bales
 bali
 balkan
 ball
@@ -778,6 +780,7 @@ basel
 bases
 bash
 bashed
+bashes
 basic
 basics
 basil
@@ -813,6 +816,7 @@ beaded
 beads
 beagle
 beak
+beaks
 beale
 beam
 beams
