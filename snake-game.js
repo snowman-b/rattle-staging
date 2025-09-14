@@ -149,9 +149,9 @@ function resizeArenaCanvas() {
   // Get arenaCard container
   const arenaCard = document.getElementById('arenaCard');
   if (!arenaCard || !canvas) return;
-  // Calculate width: 90vw, max 800px
+  // Calculate width: 98vw, max 800px
   const vw = Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
-  let width = Math.min(vw * 0.9, 800);
+  let width = Math.min(vw * 0.98, 800);
   let height = width * 2 / 3;
   // Set container size (for flex alignment)
   arenaCard.style.width = width + 'px';
@@ -837,4 +837,16 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   }
+
+    // Allow clicking outside Endless modal content to close it
+    const endlessModal = document.getElementById('endlessModal');
+    if (endlessModal) {
+      endlessModal.addEventListener('click', function(e) {
+        // Only close if clicking the background, not the modal content
+        if (e.target === endlessModal) {
+          endlessModal.style.display = 'none';
+          document.getElementById('splashPage').style.display = 'flex';
+        }
+      });
+    }
 });

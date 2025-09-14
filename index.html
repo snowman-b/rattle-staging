@@ -144,7 +144,7 @@
       height: 100%;
       display: block;
     }
-  .card { background: #f5f5ff; box-shadow: 0 0 20px #aaa; border-radius: 18px; padding: 24px; margin: 0 8px; display: flex; flex-direction: column; align-items: center; }
+  .card { background: #f5f5ff; box-shadow: 0 0 20px #aaa; border-radius: 18px; padding: 12px; margin: 0 8px; display: flex; flex-direction: column; align-items: center; }
     #gameCanvas { background: #f5f5ff; border-radius: 18px; box-shadow: none; margin: 0; display: block; }
     .modal {
   position: fixed; left: 0; top: 0; width: 100vw; height: 100vh;
@@ -189,9 +189,8 @@
         <p>Clear mistaken letters by passing through the green portal</p>
       </div>
       <div style="width:100%; display:flex; flex-direction:column; align-items:center; margin-bottom:1em;">
-        <label for="endlessSpeedSlider" style="font-size:1.1em; color:#222; margin-bottom:0.5em;">Snake Speed:</label>
+    <label for="endlessSpeedSlider" style="font-size:1.1em; color:#222; margin-bottom:0.5em;">Snake Speed:</label>
   <input type="range" id="endlessSpeedSlider" min="1" max="5" value="3" step="1" style="width:80%; accent-color:#006400;">
-        <div id="endlessSpeedValue" style="font-size:1em; color:#222; margin-top:0.2em;">Speed: 3</div>
       </div>
       <button id="endlessPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#888; color:#fff; border:none; cursor:not-allowed; margin-top:auto; margin-bottom:2em;">Play</button>
     </div>
@@ -219,9 +218,8 @@
   <p>Clear mistaken letters by passing through the green portal</p>
       </div>
       <div style="width:100%; display:flex; flex-direction:column; align-items:center; margin-bottom:1em;">
-        <label for="ttSpeedSlider" style="font-size:1.1em; color:#222; margin-bottom:0.5em;">Snake Speed:</label>
+    <label for="ttSpeedSlider" style="font-size:1.1em; color:#222; margin-bottom:0.5em;">Snake Speed:</label>
   <input type="range" id="ttSpeedSlider" min="1" max="5" value="3" step="1" style="width:80%; accent-color:#006400;">
-        <div id="ttSpeedValue" style="font-size:1em; color:#222; margin-top:0.2em;">Speed: 3</div>
       </div>
       <button id="ttPlayBtn" style="font-size:1.3em; padding:0.5em 2em; border-radius:16px; background:#006400; color:#fff; border:none; cursor:pointer; margin-top:auto; margin-bottom:2em;">Play</button>
     </div>
@@ -231,7 +229,7 @@
     window.deviceSupportsTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
   </script>
   <div id="mainGame" style="display:none;">
-    <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px; margin-top: 40px; min-width: 0;">
+  <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px; margin-top: 40px; min-width: 0; width:98vw; max-width:none;">
       <div id="topInfoRow" style="width:90vw; max-width:800px; margin-left:auto; margin-right:auto; display:flex; flex-direction:row; justify-content:space-between; align-items:center; gap:0; margin-bottom:9px;">
         <div class="card" id="timerCard" style="display:flex; align-items:center; justify-content:center; width:30%; min-width:0; box-sizing:border-box;"><div id="timer">Timer</div></div>
         <div style="width:5%;"></div>
@@ -239,9 +237,9 @@
         <div style="width:5%;"></div>
         <div class="card" id="speedCard" style="display:flex; align-items:center; justify-content:center; width:30%; min-width:0; box-sizing:border-box;"><div style="width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;"><input type="range" id="mainSpeedSlider" min="1" max="5" value="3" step="1" style="width:80%; accent-color:#006400;"></div></div>
       </div>
-      <div class="card" id="arenaCard" style="margin-left:auto; margin-right:auto;"><canvas id="gameCanvas" style="display:block; margin:0; padding:0; border-radius:0;"></canvas></div>
-      <div class="arena-side-containers">
-        <div class="card" id="wordCollectionCard" style="height: 20vh; width: 90vw; max-width: 800px; margin-left: auto; margin-right: auto;">
+      <div class="card" id="arenaCard" style="margin-left:auto; margin-right:auto; width:98vw; max-width:800px;"><canvas id="gameCanvas" style="display:block; margin:0; padding:0; border-radius:0;"></canvas></div>
+      <div class="arena-side-containers" style="width:98vw; max-width:none;">
+        <div class="card" id="wordCollectionCard" style="height: 20vh; width: 98vw; max-width:none; margin-left: auto; margin-right: auto;">
           <div id="wordCollectionRows" style="width:100%; height:220px; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#f5f5ff; position:relative;">
             <div id="invalidWordsContainer" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></div>
             <div class="word-row" id="wordRow1" style="display:flex; justify-content:center; margin:0.5% 0;"><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div></div>
