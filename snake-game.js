@@ -63,21 +63,41 @@ function updateGarbageCollectionUI(word) {
     span.textContent = word.toUpperCase();
     span.style.position = 'absolute';
     span.style.textDecoration = 'line-through';
-    span.style.fontSize = '2vw';
-    span.style.color = '#a00';
+  span.style.fontSize = '4vw';
+  span.style.color = 'black';
     // Container: full size of wordCollectionCard, but avoid center region (letter boxes)
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
     // Avoid center 60% horizontally, 60% vertically
-    let left, top;
-    if (Math.random() < 0.5) {
-      // Left side
-      left = Math.random() * (containerWidth * 0.15);
-    } else {
-      // Right side
-      left = containerWidth * 0.85 + Math.random() * (containerWidth * 0.15 - 50);
-    }
-    top = Math.random() * (containerHeight * 0.8);
+    // Removed duplicate declaration of left, top
+  const maxWordLength = 6;
+  const fontSize = containerWidth * 0.04; // 4vw in px
+  const wordPixelLength = fontSize * word.length;
+  const safeMargin = 12; // px from edge
+  // Avoid center 60% horizontally
+  const leftRegions = [
+    [safeMargin, containerWidth * 0.2 - wordPixelLength],
+    [containerWidth * 0.8, containerWidth - wordPixelLength - safeMargin]
+  ];
+  let left;
+  if (Math.random() < 0.5) {
+    // Left region
+    left = leftRegions[0][0] + Math.random() * (leftRegions[0][1] - leftRegions[0][0]);
+  } else {
+    // Right region
+    left = leftRegions[1][0] + Math.random() * (leftRegions[1][1] - leftRegions[1][0]);
+  }
+  // Avoid center 60% vertically
+  const topRegions = [
+    [safeMargin, containerHeight * 0.2],
+    [containerHeight * 0.8, containerHeight - fontSize - safeMargin]
+  ];
+  let top;
+  if (Math.random() < 0.5) {
+    top = topRegions[0][0] + Math.random() * (topRegions[0][1] - topRegions[0][0]);
+  } else {
+    top = topRegions[1][0] + Math.random() * (topRegions[1][1] - topRegions[1][0]);
+  }
     span.style.left = left + 'px';
     span.style.top = top + 'px';
     // Random tilt between -20 and +20 degrees
@@ -140,8 +160,8 @@ loadDailyWordsCSV();
 // RATTLE Snake Game - HTML5/JS Conversion
 // Best practices, maintainable, secure, efficient
 
-const GRID_WIDTH = 24;
-const GRID_HEIGHT = 16;
+const GRID_WIDTH = 20;
+const GRID_HEIGHT = 14;
 let cellWidth = 20;
 let cellHeight = 20;
 // cellWidth and cellHeight will be recalculated in resizeArenaCanvas after DOM is ready
@@ -213,7 +233,7 @@ function getTodayWord() {
 
 function getFoodPositionsForWord(word) {
   // Evenly space letters across a horizontal row, 7 snake lengths from the bottom
-  const row = GRID_HEIGHT - 7;
+  const row = GRID_HEIGHT - 8;
   const spacing = Math.floor(GRID_WIDTH / (word.length + 1));
   // Deterministic shuffle based on today's date
   function seededShuffle(array, seed) {
@@ -239,8 +259,8 @@ function getFoodPositionsForWord(word) {
   const seed = today.getFullYear() * 10000 + (today.getMonth()+1) * 100 + today.getDate();
   let letters = word.split('');
   letters = seededShuffle(letters, seed);
-  // Fixed positions for 6 letters: 5,8,11,14,17,20
-  const fixedPositions = [4, 7, 10, 13, 16, 19];
+  // Fixed positions for 6 letters: 2,5,8,11,14,17
+  const fixedPositions = [2, 5, 8, 11, 14, 17];
   let positions = [];
   for (let i = 0; i < Math.min(letters.length, fixedPositions.length); i++) {
     positions.push({
@@ -325,8 +345,8 @@ function drawArena() {
   const portalThickness = cellWidth * 1.5;
   const portalBorder = cellWidth * 0.1;
   // Red portal (left)
-  const redPortalStartRow = Math.floor(GRID_HEIGHT * 0.80);
-  const redPortalEndRow = Math.floor(GRID_HEIGHT * 0.95);
+  const redPortalEndRow = GRID_HEIGHT - 1;
+  const redPortalStartRow = redPortalEndRow - 3;
   const redPortalX = 0;
   const redPortalStartY = redPortalStartRow * cellHeight;
   const redPortalEndY = redPortalEndRow * cellHeight;
@@ -353,8 +373,8 @@ function drawArena() {
   ctx.stroke();
   ctx.restore();
   // Green portal (right)
-  const greenPortalStartRow = Math.floor(GRID_HEIGHT * 0.80);
-  const greenPortalEndRow = Math.floor(GRID_HEIGHT * 0.95);
+  const greenPortalEndRow = GRID_HEIGHT - 1;
+  const greenPortalStartRow = greenPortalEndRow - 3;
   const greenPortalX = GRID_WIDTH * cellWidth;
   const greenPortalStartY = greenPortalStartRow * cellHeight;
   const greenPortalEndY = greenPortalEndRow * cellHeight;
@@ -551,9 +571,9 @@ function update() {
     x: snake[0].x + direction.x,
     y: snake[0].y + direction.y
   };
-  // Responsive portal logic: green portal (right) to red portal (left)
-  const portalStartRow = Math.floor(GRID_HEIGHT * 0.80);
-  const portalEndRow = Math.floor(GRID_HEIGHT * 0.95);
+  // Portal logic: green portal (right) to red portal (left)
+  const portalEndRow = GRID_HEIGHT - 1;
+  const portalStartRow = portalEndRow - 3;
   // Portal horizontal bar collision detection (only if moving vertically)
   let hitsPortalBar = false;
   // Red portal (left)
