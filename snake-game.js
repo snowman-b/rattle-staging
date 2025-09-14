@@ -63,20 +63,20 @@ function updateGarbageCollectionUI(word) {
     span.textContent = word.toUpperCase();
     span.style.position = 'absolute';
     span.style.textDecoration = 'line-through';
-    span.style.fontSize = '2vw';
+  span.style.fontSize = '4vw';
     span.style.color = '#a00';
     // Container: full size of wordCollectionCard, but avoid center region (letter boxes)
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
     // Avoid center 60% horizontally, 60% vertically
     let left, top;
-    if (Math.random() < 0.5) {
-      // Left side
-      left = Math.random() * (containerWidth * 0.15);
-    } else {
-      // Right side
-      left = containerWidth * 0.85 + Math.random() * (containerWidth * 0.15 - 50);
-    }
+  const maxWordLength = 6;
+  const fontSize = containerWidth * 0.04; // 4vw in px
+  const wordPixelLength = fontSize * word.length;
+  const safeMargin = 12; // px from edge
+  const maxLeft = containerWidth - wordPixelLength - safeMargin;
+  const minLeft = safeMargin;
+  left = minLeft + Math.random() * (maxLeft - minLeft);
     top = Math.random() * (containerHeight * 0.8);
     span.style.left = left + 'px';
     span.style.top = top + 'px';
