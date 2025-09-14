@@ -64,20 +64,40 @@ function updateGarbageCollectionUI(word) {
     span.style.position = 'absolute';
     span.style.textDecoration = 'line-through';
   span.style.fontSize = '4vw';
-    span.style.color = '#a00';
+  span.style.color = 'black';
     // Container: full size of wordCollectionCard, but avoid center region (letter boxes)
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
     // Avoid center 60% horizontally, 60% vertically
-    let left, top;
+    // Removed duplicate declaration of left, top
   const maxWordLength = 6;
   const fontSize = containerWidth * 0.04; // 4vw in px
   const wordPixelLength = fontSize * word.length;
   const safeMargin = 12; // px from edge
-  const maxLeft = containerWidth - wordPixelLength - safeMargin;
-  const minLeft = safeMargin;
-  left = minLeft + Math.random() * (maxLeft - minLeft);
-    top = Math.random() * (containerHeight * 0.8);
+  // Avoid center 60% horizontally
+  const leftRegions = [
+    [safeMargin, containerWidth * 0.2 - wordPixelLength],
+    [containerWidth * 0.8, containerWidth - wordPixelLength - safeMargin]
+  ];
+  let left;
+  if (Math.random() < 0.5) {
+    // Left region
+    left = leftRegions[0][0] + Math.random() * (leftRegions[0][1] - leftRegions[0][0]);
+  } else {
+    // Right region
+    left = leftRegions[1][0] + Math.random() * (leftRegions[1][1] - leftRegions[1][0]);
+  }
+  // Avoid center 60% vertically
+  const topRegions = [
+    [safeMargin, containerHeight * 0.2],
+    [containerHeight * 0.8, containerHeight - fontSize - safeMargin]
+  ];
+  let top;
+  if (Math.random() < 0.5) {
+    top = topRegions[0][0] + Math.random() * (topRegions[0][1] - topRegions[0][0]);
+  } else {
+    top = topRegions[1][0] + Math.random() * (topRegions[1][1] - topRegions[1][0]);
+  }
     span.style.left = left + 'px';
     span.style.top = top + 'px';
     // Random tilt between -20 and +20 degrees
