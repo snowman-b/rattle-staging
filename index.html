@@ -200,7 +200,7 @@
     document.getElementById('ttPlayBtn').onclick = function() {
       var speed = document.getElementById('ttSpeedSlider').value;
       localStorage.setItem('snakeSpeed', speed);
-      window.location.href = 'games/time-trial.html';
+  window.location.href = 'time-trial/';
     };
   </script>
       <div id="endlessContainer" style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
@@ -263,7 +263,7 @@
     // Detect if device supports touch
     window.deviceSupportsTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
   </script>
-  <!-- Gameplay UI moved to games/time-trial.html -->
+  <!-- Gameplay UI moved to time-trial/index.html -->
   <div id="shareModal" class="modal" style="display:none;">
     <span class="close" id="modalClose">×</span>
     <div class="title">RATTLE</div>
@@ -411,7 +411,7 @@
     document.getElementById('ttPlayBtn').onclick = function() {
       var speed = document.getElementById('ttSpeedSlider').value;
       localStorage.setItem('snakeSpeed', speed);
-      window.location.href = 'games/time-trial.html';
+  window.location.href = 'time-trial/';
     };
     // Endless Mode pop-up
     document.getElementById('endlessContainer').onclick = function() {
