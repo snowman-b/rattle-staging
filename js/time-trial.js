@@ -2,10 +2,22 @@
 document.addEventListener('DOMContentLoaded', function() {
   const mainSpeedSlider = document.getElementById('mainSpeedSlider');
   if (mainSpeedSlider) {
+    // Set slider and game speed from localStorage if available
+    let savedSpeed = localStorage.getItem('snakeSpeed');
+    if (savedSpeed !== null) {
+      let speedInt = parseInt(savedSpeed);
+      if (speedInt >= 1 && speedInt <= 5) {
+        mainSpeedSlider.value = speedInt;
+        speedIndex = speedInt - 1;
+        fps = BASE_FPS * SPEED_LEVELS[speedIndex];
+      }
+    }
     mainSpeedSlider.addEventListener('input', function() {
       let selectedSpeed = parseInt(mainSpeedSlider.value) || 3;
       speedIndex = selectedSpeed - 1; // SPEED_LEVELS is 0-indexed
       fps = BASE_FPS * SPEED_LEVELS[speedIndex];
+      // Optionally update localStorage so user preference persists
+      localStorage.setItem('snakeSpeed', selectedSpeed);
     });
   }
 });
