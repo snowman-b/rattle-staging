@@ -767,6 +767,43 @@ function initializeSnakeAtSpawn() {
 
 
 // Listen for DOMContentLoaded for speed slider logic
+// Wait for both word lists to load before starting the game
+let wordListLoaded = false;
+let dailyWordsLoadedFlag = false;
+
+function tryStartGame() {
+  if (wordListLoaded && dailyWordsLoadedFlag) {
+    resetGame();
+    running = true;
+    requestAnimationFrame(gameLoop);
+  }
+}
+
+function loadWordListFixed() {
+  window.fetch('../all_words.txt')
+    .then(response => response.text())
+    .then(text => {
+      wordsSet = new Set(text.split(/\r?\n/).map(w => w.trim().toLowerCase()));
+      wordListLoaded = true;
+      tryStartGame();
+    });
+}
+function loadDailyWordsCSVFixed() {
+  window.fetch('../daily-words.csv')
+    .then(response => response.text())
+    .then(text => {
+      dailyWordsMap = {};
+      const lines = text.split(/\r?\n/);
+      for (let i = 1; i < lines.length; i++) { // skip header
+        const [date, word] = lines[i].split(',');
+        if (date && word) dailyWordsMap[date.trim()] = word.trim();
+      }
+      dailyWordsLoaded = true;
+      dailyWordsLoadedFlag = true;
+      tryStartGame();
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
   // Speed slider logic for Time Trial Mode
   const mainSpeedSlider = document.getElementById('mainSpeedSlider');
@@ -777,4 +814,7 @@ document.addEventListener('DOMContentLoaded', function() {
       fps = BASE_FPS * SPEED_LEVELS[speedIndex];
     });
   }
+  // Load word lists and start game only when both are ready
+  loadWordListFixed();
+  loadDailyWordsCSVFixed();
 });
