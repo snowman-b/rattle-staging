@@ -1,6 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <style>
+    .splash-cards-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+      width: 100vw;
+      gap: 4vw;
+    }
+    .splash-card {
+      width: 40vw;
+      height: 40vw;
+      max-width: 40vh;
+      max-height: 40vh;
+      min-width: 180px;
+      min-height: 180px;
+      aspect-ratio: 1 / 1;
+      background: #f5f5ff;
+      box-shadow: 0 0 20px #aaa;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: max-width 0.2s, max-height 0.2s;
+      padding: 2vw;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .splash-card * {
+      width: 100%;
+      height: auto;
+      font-size: clamp(1em, 1.2vw, 1.5em);
+      text-align: center;
+    }
+    @media (max-width: 900px) {
+      .splash-cards-row {
+        flex-direction: column;
+        height: 80vh;
+      }
+      .splash-card {
+        width: 80vw;
+        height: 40vw;
+        max-width: 80vw;
+        max-height: 40vh;
+      }
+    }
+  </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SL5RZBBEZE"></script>
 <script>
@@ -161,11 +210,15 @@
 </head>
 <body>
   <div id="splashPage" style="position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(255,255,255,0.98); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden;">
-  <div style="display:flex; flex-direction:column; gap:48px;">
-      <div id="rattleContainer" style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-          <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px;">RATTLE</span>
-          <span style="font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; margin-top:0.5em;">Time Trial</span>
+  <div class="splash-cards-row">
+  <div id="rattleContainer" class="splash-card">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%;">
+          <div style="width:100%; text-align:center;">
+            <span style="display:block; font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; line-height:1.1;">RATTLE</span>
+          </div>
+          <div style="width:100%; text-align:center; margin-top:0.5em;">
+            <span style="display:block; font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; line-height:1.1;">Time Trial</span>
+          </div>
         </div>
       </div>
       <div id="ttModal" class="modal" style="display:none; z-index:200;">
@@ -203,10 +256,14 @@
   window.location.href = 'time-trial/';
     };
   </script>
-      <div id="endlessContainer" style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+  <div id="endlessContainer" class="splash-card">
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%;">
-          <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px;">RATTLE</span>
-          <span style="font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; margin-top:0.5em;">Endless Mode</span>
+          <div style="width:100%; text-align:center;">
+            <span style="display:block; font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; line-height:1.1;">RATTLE</span>
+          </div>
+          <div style="width:100%; text-align:center; margin-top:0.5em;">
+            <span style="display:block; font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; line-height:1.1;">Endless Mode</span>
+          </div>
         </div>
       </div>
     </div>
