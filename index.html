@@ -2,6 +2,145 @@
 <html lang="en">
 <head>
   <style>
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 10vh;
+      background: #006400;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      z-index: 200;
+      font-size: 2em;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-sizing: border-box;
+    }
+    .navbar-title {
+      font-family: 'Avenir Next', Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-size: 2.2em;
+    }
+    .navbar-menu {
+      position: relative;
+      display: flex;
+      align-items: center;
+      height: 100%;
+    }
+    .hamburger {
+      width: 1.3em;
+      height: 1.3em;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      z-index: 201;
+    }
+    .hamburger span {
+      display: block;
+      width: 1.1em;
+      height: 0.18em;
+      background: #fff;
+      margin: 0.15em 0;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+    .menu-dropdown {
+      display: none;
+      position: absolute;
+      top: 110%;
+      right: 0;
+      background: #fff;
+      color: #222;
+      min-width: 180px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      border-radius: 10px;
+      font-size: 0.7em;
+      padding: 0.5em 0;
+      z-index: 202;
+    }
+    .menu-dropdown.show {
+      display: block;
+    }
+    .menu-dropdown a {
+      display: block;
+      padding: 0.7em 1.2em;
+      color: #222;
+      text-decoration: none;
+      font-family: 'Avenir Next', Arial, sans-serif;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s;
+    }
+    .menu-dropdown a:last-child {
+      border-bottom: none;
+    }
+    .menu-dropdown a:hover {
+      background: #f5f5ff;
+    }
+    @media (max-width: 900px) {
+      .navbar {
+        font-size: 1.2em;
+        padding: 0 2vw;
+      }
+    }
+  </style>
+  <style>
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 10vh;
+      background: #006400;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 3vw;
+      z-index: 200;
+      font-size: 2em;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+    .navbar-title {
+      font-family: 'Avenir Next', Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-size: 1.2em;
+    }
+    .navbar-links {
+      display: flex;
+      gap: 2vw;
+      font-size: 0.9em;
+    }
+    .navbar-links a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .navbar-links a:hover {
+      color: #cfc;
+    }
+    @media (max-width: 900px) {
+      .navbar {
+        font-size: 1.2em;
+        padding: 0 2vw;
+      }
+      .navbar-links {
+        gap: 1vw;
+      }
+    }
+    /* Push splash page down below navbar */
+    #splashPage {
+      margin-top: 10vh;
+    }
+  </style>
+  <style>
     .splash-cards-row {
       display: flex;
       flex-direction: row;
@@ -209,6 +348,38 @@
   </style>
 </head>
 <body>
+  <nav class="navbar">
+    <div class="navbar-title">RATTLE</div>
+    <div class="navbar-menu">
+      <div class="hamburger" id="hamburgerMenu" tabindex="0" aria-label="Menu" role="button">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="menu-dropdown" id="menuDropdown">
+        <a href="#instructions">Instructions</a>
+        <a href="#about">About</a>
+        <a href="#report">Report a Bug</a>
+      </div>
+    </div>
+  </nav>
+  <script>
+    const hamburger = document.getElementById('hamburgerMenu');
+    const dropdown = document.getElementById('menuDropdown');
+    hamburger.addEventListener('click', function() {
+      dropdown.classList.toggle('show');
+    });
+    document.addEventListener('click', function(e) {
+      if (!hamburger.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+    hamburger.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        dropdown.classList.toggle('show');
+      }
+    });
+  </script>
   <div id="splashPage" style="position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(255,255,255,0.98); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden;">
   <div class="splash-cards-row">
   <div id="rattleContainer" class="splash-card">
