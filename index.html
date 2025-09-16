@@ -1,6 +1,194 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <style>
+    .navbar-menu {
+      position: relative;
+    }
+    .navbar-menu {
+      overflow: visible !important;
+    }
+    .navbar {
+      overflow: visible !important;
+    }
+    .hamburger {
+      height: 60%;
+      aspect-ratio: 1 / 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      background: none;
+      border: none;
+      box-sizing: content-box;
+      min-height: 32px;
+      min-width: 32px;
+      max-height: 48px;
+      max-width: 48px;
+    }
+    .hamburger span {
+      display: block;
+      width: 70%;
+      height: 12%;
+      background: #fff;
+      margin: 10% 0;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+  /* .navbar style is defined below for normal flow */
+    .navbar-title {
+      font-family: 'Avenir Next', Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-size: 2.2em;
+    }
+    .navbar {
+      width: 100vw;
+      height: 10vh;
+      background: #006400;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      font-size: 2em;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-sizing: border-box;
+    }
+    }
+    .hamburger span {
+      display: block;
+      width: 1.1em;
+      height: 0.18em;
+      background: #fff;
+      margin: 0.15em 0;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+    .menu-dropdown {
+      display: none;
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background: #fff;
+      color: #222;
+      min-width: 180px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+      border-radius: 10px;
+  font-size: 14px !important;
+      padding: 0.5em 0;
+      z-index: 9999;
+    }
+    .menu-dropdown.show {
+      display: block;
+    }
+    .menu-dropdown a {
+      display: block;
+      padding: 0.7em 1.2em;
+      color: #222;
+      text-decoration: none;
+      font-family: 'Avenir Next', Arial, sans-serif;
+      border-bottom: 1px solid #eee;
+      transition: background 0.2s;
+    }
+    .menu-dropdown a:last-child {
+      border-bottom: none;
+    }
+    .menu-dropdown a:hover {
+      background: #f5f5ff;
+    }
+    @media (max-width: 900px) {
+      .navbar {
+        font-size: 1.2em;
+        padding: 0 2vw;
+      }
+    }
+  </style>
+  <style>
+    .navbar-title {
+      font-family: 'Avenir Next', Arial, sans-serif;
+      font-weight: 700;
+      letter-spacing: 2px;
+      font-size: 1.2em;
+    }
+    .navbar-links {
+      display: flex;
+      gap: 2vw;
+      font-size: 0.9em;
+    }
+    .navbar-links a {
+      color: #fff;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .navbar-links a:hover {
+      color: #cfc;
+    }
+    @media (max-width: 900px) {
+      .navbar {
+        font-size: 1.2em;
+        padding: 0 2vw;
+      }
+      .navbar-links {
+        gap: 1vw;
+      }
+    }
+    /* Push splash page down below navbar */
+    #splashPage {
+      /* margin-top removed to prevent white block */
+    }
+  </style>
+  <style>
+    .splash-cards-row {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      height: 80vh;
+      width: 100vw;
+      gap: 4vw;
+    }
+    .splash-card {
+      width: 40vw;
+      height: 40vw;
+      max-width: 40vh;
+      max-height: 40vh;
+      min-width: 180px;
+      min-height: 180px;
+      aspect-ratio: 1 / 1;
+      background: #f5f5ff;
+      box-shadow: 0 0 20px #aaa;
+      border-radius: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: max-width 0.2s, max-height 0.2s;
+      padding: 2vw;
+      box-sizing: border-box;
+      overflow: hidden;
+    }
+    .splash-card * {
+      width: 100%;
+      height: auto;
+      font-size: clamp(1em, 1vh, 1.5em);
+      text-align: center;
+    }
+    @media (max-width: 900px) {
+      .splash-cards-row {
+        flex-direction: column;
+        height: 80vh;
+      }
+      .splash-card {
+        width: 80vw;
+        height: 35vh;
+        max-width: 80vw;
+        max-height: 35vh;
+      }
+    }
+  </style>
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-SL5RZBBEZE"></script>
 <script>
@@ -13,7 +201,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RATTLE - daily word game</title>
-  <link rel="icon" href="favicon.png" type="image/png">
+  <link rel="icon" href="/favicon.png" type="image/png">
   <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&display=swap" rel="stylesheet">
   <style>
   .arena-side-containers {
@@ -160,18 +348,109 @@
   </style>
 </head>
 <body>
-  <div id="splashPage" style="position:fixed; left:0; top:0; width:100vw; height:100vh; background:rgba(255,255,255,0.98); z-index:100; display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden;">
-  <div style="display:flex; flex-direction:column; gap:48px;">
-      <div id="rattleContainer" style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
-        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center;">
-          <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px;">RATTLE</span>
-          <span style="font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; margin-top:0.5em;">Time Trial</span>
+  <div id="mainLayout" style="display:flex; flex-direction:column; height:100vh; width:100vw; margin:0; padding:0;">
+    <nav class="navbar" style="height:10vh; min-height:48px;">
+      <div class="navbar-title">RATTLE</div>
+      <div class="navbar-menu">
+        <div class="hamburger" id="hamburgerMenu" tabindex="0" aria-label="Menu" role="button">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="menu-dropdown" id="menuDropdown">
+          <a href="#instructions">Instructions</a>
+          <a href="#about">About</a>
+          <a href="#report">Report a Bug</a>
         </div>
       </div>
-      <div id="endlessContainer" style="width:320px; height:320px; background:#f5f5ff; box-shadow:0 0 20px #aaa; border-radius:18px; display:flex; align-items:center; justify-content:center; cursor:pointer;">
+    </nav>
+  <div id="adBanner" style="width:100vw; height:10vh; min-height:48px; background:#fff; display:flex; align-items:center; justify-content:center; border-bottom:3px solid #006400; box-sizing:border-box; opacity:1; z-index:1; position:relative;">
+      <span style="font-size:1.3em; color:#228B22; font-family:'Avenir Next', Arial, sans-serif; margin-right:32px;">future ad space</span>
+      <svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:1;">
+        <!-- Snake body -->
+        <path d="M20 80 Q40 40, 70 70 Q90 90, 80 40" stroke="#228B22" stroke-width="10" fill="none" />
+        <!-- Snake head -->
+        <ellipse cx="85" cy="35" rx="13" ry="10" fill="#228B22" />
+        <!-- Snake eye -->
+        <circle cx="90" cy="33" r="2.2" fill="#fff" />
+        <circle cx="90" cy="33" r="1.1" fill="#222" />
+        <!-- Snake tongue -->
+        <path d="M97 37 Q100 39, 97 41" stroke="#FF2B2B" stroke-width="2" fill="none" />
+      </svg>
+      <span style="font-size:1.3em; color:#228B22; font-family:'Avenir Next', Arial, sans-serif; margin-left:32px;">future ad space</span>
+    </div>
+  <script>
+    const hamburger = document.getElementById('hamburgerMenu');
+    const dropdown = document.getElementById('menuDropdown');
+    hamburger.addEventListener('click', function() {
+      dropdown.classList.toggle('show');
+    });
+    document.addEventListener('click', function(e) {
+      if (!hamburger.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('show');
+      }
+    });
+    hamburger.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        dropdown.classList.toggle('show');
+      }
+    });
+  </script>
+  <div id="splashPage" style="flex:1; width:100vw; background:rgba(255,255,255,0.98); display:flex; flex-direction:column; align-items:center; justify-content:center; overflow:hidden;">
+  <div class="splash-cards-row">
+  <div id="rattleContainer" class="splash-card">
         <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%;">
-          <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px;">RATTLE</span>
-          <span style="font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; margin-top:0.5em;">Endless Mode</span>
+          <div style="width:100%; text-align:center;">
+            <span style="display:block; font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; line-height:1.1;">RATTLE</span>
+          </div>
+          <div style="width:100%; text-align:center; margin-top:0.5em;">
+            <span style="display:block; font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; line-height:1.1;">Time Trial</span>
+          </div>
+        </div>
+      </div>
+      <div id="ttModal" class="modal" style="display:none; z-index:200;">
+        <div style="background:#fff; border-radius:18px; box-shadow:0 0 20px #aaa; padding:40px 32px; max-width:420px; min-width:320px; min-height:400px; display:flex; flex-direction:column; align-items:center; justify-content:flex-start; position:relative;">
+          <span class="close" id="ttCloseX" style="position:absolute; top:24px; right:32px; font-size:2.5em; color:#888; cursor:pointer;">&times;</span>
+          <span style="font-size:4em; color:#006400; text-shadow:3px 3px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; margin-top:0.2em;">RATTLE</span>
+          <span style="font-size:2.2em; color:#006400; font-weight:700; margin-bottom:0.5em; margin-top:0.2em;">Time Trial</span>
+          <div style="font-size:1.1em; color:#222; margin-bottom:2em; margin-top:1.5em; text-align:left; max-width:360px;">
+            <p>Move the snake to quickly find six words from the scrambled letters</p>
+            <p>Submit words by passing through the green portal</p>
+            <p>Clear mistaken letters by passing through the green portal</p>
+          </div>
+          <div style="width:100%; display:flex; flex-direction:column; align-items:center; margin-bottom:1em;">
+            <label for="ttSpeedSlider" style="font-size:1.1em; color:#222; margin-bottom:0.5em;">Snake Speed:</label>
+            <input type="range" id="ttSpeedSlider" min="1" max="5" value="3" step="1" style="width:80%; accent-color:#006400;">
+          </div>
+          <div style="width:100%; display:flex; flex-direction:row; justify-content:center; gap:24px; margin-top:24px;">
+            <button id="ttPlayBtn" style="font-size:1.2em; padding:0.5em 2em; border-radius:16px; background:#006400; color:#fff; border:none; cursor:pointer;">Play Game</button>
+          </div>
+        </div>
+      </div>
+  <script>
+    // Show modal when Time Trial card is clicked
+    document.getElementById('rattleContainer').onclick = function() {
+      document.getElementById('ttModal').style.display = 'flex';
+    };
+    // Close modal (X or Back)
+    document.getElementById('ttCloseX').onclick = function() {
+      document.getElementById('ttModal').style.display = 'none';
+    };
+    // Play Game button: set speed and go to gameplay page
+    document.getElementById('ttPlayBtn').onclick = function() {
+      var speed = document.getElementById('ttSpeedSlider').value;
+      localStorage.setItem('snakeSpeed', speed);
+  window.location.href = 'time-trial/';
+    };
+  </script>
+  <div id="endlessContainer" class="splash-card">
+        <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; width:100%; height:100%;">
+          <div style="width:100%; text-align:center;">
+            <span style="display:block; font-size:4em; color:#006400; text-shadow:3px 3px #000, 0 0 2px #000; font-family:'Avenir Next', Arial, sans-serif; font-weight:700; letter-spacing:2px; line-height:1.1;">RATTLE</span>
+          </div>
+          <div style="width:100%; text-align:center; margin-top:0.5em;">
+            <span style="display:block; font-size:2em; color:#000; font-family:'Avenir Next', Arial, sans-serif; line-height:1.1;">Endless Mode</span>
+          </div>
         </div>
       </div>
     </div>
@@ -228,34 +507,7 @@
     // Detect if device supports touch
     window.deviceSupportsTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
   </script>
-  <div id="mainGame" style="display:none;">
-  <div class="container" style="display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 16px; margin-top: 40px; min-width: 0; width:98vw; max-width:none;">
-      <div id="topInfoRow" style="width:90vw; max-width:800px; margin-left:auto; margin-right:auto; display:flex; flex-direction:row; justify-content:space-between; align-items:center; gap:0; margin-bottom:9px;">
-        <div class="card" id="timerCard" style="display:flex; align-items:center; justify-content:center; width:30%; min-width:0; box-sizing:border-box;"><div id="timer">Timer</div></div>
-        <div style="width:5%;"></div>
-        <div class="card" id="scoreboardCard" style="display:flex; align-items:center; justify-content:center; width:30%; min-width:0; box-sizing:border-box;"><div id="scoreboard">Scoreboard</div></div>
-        <div style="width:5%;"></div>
-        <div class="card" id="speedCard" style="display:flex; align-items:center; justify-content:center; width:30%; min-width:0; box-sizing:border-box;"><div style="width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;"><input type="range" id="mainSpeedSlider" min="1" max="5" value="3" step="1" style="width:80%; accent-color:#006400;"></div></div>
-      </div>
-      <div class="card" id="arenaCard" style="margin-left:auto; margin-right:auto; width:98vw; max-width:800px;"><canvas id="gameCanvas" style="display:block; margin:0; padding:0; border-radius:0;"></canvas></div>
-      <div class="arena-side-containers" style="width:98vw; max-width:none;">
-  <div class="card" id="wordCollectionCard" style="height: 20vh; width: 98vw; max-width:800px; margin-left: auto; margin-right: auto;">
-          <div id="wordCollectionRows" style="width:100%; height:220px; display:flex; flex-direction:column; justify-content:center; align-items:center; background:#f5f5ff; position:relative;">
-            <div id="invalidWordsContainer" style="position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none;"></div>
-            <div class="word-row" id="wordRow1" style="display:flex; justify-content:center; margin:0.5% 0;"><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div></div>
-            <div class="word-row" id="wordRow2" style="display:flex; justify-content:center; margin:0.5% 0;"><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div></div>
-            <div class="word-row" id="wordRow3" style="display:flex; justify-content:center; margin:0.5% 0;"><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div></div>
-            <div class="word-row" id="wordRow4" style="display:flex; justify-content:center; margin:0.5% 0;"><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div></div>
-            <div class="word-row" id="wordRow5" style="display:flex; justify-content:center; margin:0.5% 0;"><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div></div>
-            <div class="word-row" id="wordRow6" style="display:flex; justify-content:center; margin:0.5% 0;"><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div><div class="word-box" style="width:12%; height:16%; font-size:2vw;"></div></div>
-          </div>
-        </div>
-      </div>
-      <div class="container" style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 16px; margin-top: 16px; width: 90vw; max-width: 800px; margin-left: auto; margin-right: auto;">
-  <div id="movementControlCardContainer"></div>
-      </div>
-    </div>
-  </div>
+  <!-- Gameplay UI moved to time-trial/index.html -->
   <div id="shareModal" class="modal" style="display:none;">
     <span class="close" id="modalClose">×</span>
     <div class="title">RATTLE</div>
@@ -264,7 +516,6 @@
     <div class="score" id="modalTime"></div>
     <button class="btn" id="modalHome">Return Home</button>
   </div>
-  <script src="snake-game.js"></script>
   <script>
     // Conditionally render movement control card based on touchscreen
     document.addEventListener('DOMContentLoaded', function() {
@@ -395,28 +646,15 @@
   </script>
   <script>
     // Show modal on Time Trial click, only start game on Play
+    // Only show modal when Time Trial card is clicked
     document.getElementById('rattleContainer').onclick = function() {
-      if (window.initializeSnakeAtSpawn) {
-        window.initializeSnakeAtSpawn();
-      }
       document.getElementById('ttModal').style.display = 'flex';
     };
+    // Play Game button: set speed and go to gameplay page
     document.getElementById('ttPlayBtn').onclick = function() {
-      document.getElementById('splashPage').style.display = 'none';
-      document.getElementById('ttModal').style.display = 'none';
-      document.getElementById('mainGame').style.display = '';
-      // Sync speed from instructions pop-up to main game speed slider
-      var ttSpeedSlider = document.getElementById('ttSpeedSlider');
-      var mainSpeedSlider = document.getElementById('mainSpeedSlider');
-      if (ttSpeedSlider && mainSpeedSlider) {
-        mainSpeedSlider.value = ttSpeedSlider.value;
-        // Trigger input event to update speed immediately
-        mainSpeedSlider.dispatchEvent(new Event('input'));
-      }
-      resizeArenaCanvas();
-      if (window.initializeSnakeAtSpawn) {
-        window.initializeSnakeAtSpawn();
-      }
+      var speed = document.getElementById('ttSpeedSlider').value;
+      localStorage.setItem('snakeSpeed', speed);
+  window.location.href = 'time-trial/';
     };
     // Endless Mode pop-up
     document.getElementById('endlessContainer').onclick = function() {

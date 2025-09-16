@@ -2,10 +2,22 @@
 document.addEventListener('DOMContentLoaded', function() {
   const mainSpeedSlider = document.getElementById('mainSpeedSlider');
   if (mainSpeedSlider) {
+    // Set slider and game speed from localStorage if available
+    let savedSpeed = localStorage.getItem('snakeSpeed');
+    if (savedSpeed !== null) {
+      let speedInt = parseInt(savedSpeed);
+      if (speedInt >= 1 && speedInt <= 5) {
+        mainSpeedSlider.value = speedInt;
+        speedIndex = speedInt - 1;
+        fps = BASE_FPS * SPEED_LEVELS[speedIndex];
+      }
+    }
     mainSpeedSlider.addEventListener('input', function() {
       let selectedSpeed = parseInt(mainSpeedSlider.value) || 3;
       speedIndex = selectedSpeed - 1; // SPEED_LEVELS is 0-indexed
       fps = BASE_FPS * SPEED_LEVELS[speedIndex];
+      // Optionally update localStorage so user preference persists
+      localStorage.setItem('snakeSpeed', selectedSpeed);
     });
   }
 });
@@ -129,7 +141,7 @@ let collectedLetters = [];
 let wordsSet = null;
 // Load all_words.txt once and cache
 function loadWordList() {
-  window.fetch('all_words.txt')
+  window.fetch('../all_words.txt')
     .then(response => response.text())
     .then(text => {
       wordsSet = new Set(text.split(/\r?\n/).map(w => w.trim().toLowerCase()));
@@ -142,7 +154,7 @@ let dailyWordsMap = null;
 let dailyWordsLoaded = false;
 
 function loadDailyWordsCSV() {
-  return window.fetch('daily-words.csv')
+  return window.fetch('../daily-words.csv')
     .then(response => response.text())
     .then(text => {
       dailyWordsMap = {};
@@ -717,16 +729,11 @@ function hideShareModal() {
 
 document.getElementById('modalHome').onclick = () => {
   hideShareModal();
-  // Show splash page, hide game
-  document.getElementById('splashPage').style.display = 'flex';
-  document.getElementById('mainGame').style.display = 'none';
-  // Optionally, re-initialize snake at spawn
-  initializeSnakeAtSpawn();
-  running = false;
+  // Just reload the page to return home
+  window.location.href = '../index.html';
 };
 document.getElementById('modalClose').onclick = () => {
   hideShareModal();
-  // TODO: Show view-only final game screen
 };
 
 
@@ -771,102 +778,55 @@ function initializeSnakeAtSpawn() {
 }
 
 
-// Listen for splash page dismissal
-document.addEventListener('DOMContentLoaded', function() {
-  // Speed slider logic for Endless Mode
-  const endlessSpeedSlider = document.getElementById('endlessSpeedSlider');
-  const endlessSpeedValue = document.getElementById('endlessSpeedValue');
-  if (endlessSpeedSlider && endlessSpeedValue) {
-    endlessSpeedSlider.addEventListener('input', function() {
-      endlessSpeedValue.textContent = `Speed: ${endlessSpeedSlider.value}`;
-    });
-  }
+// Listen for DOMContentLoaded for speed slider logic
+// Wait for both word lists to load before starting the game
+let wordListLoaded = false;
+let dailyWordsLoadedFlag = false;
 
-  // Speed slider logic for Time Trial Mode
-  const ttSpeedSlider = document.getElementById('ttSpeedSlider');
-  const ttSpeedValue = document.getElementById('ttSpeedValue');
-  if (ttSpeedSlider && ttSpeedValue) {
-    ttSpeedSlider.addEventListener('input', function() {
-      ttSpeedValue.textContent = `Speed: ${ttSpeedSlider.value}`;
-    });
+function tryStartGame() {
+  if (wordListLoaded && dailyWordsLoadedFlag) {
+    resetGame();
+    running = true;
+    requestAnimationFrame(gameLoop);
   }
-  // Add close functionality for modal 'x' buttons
-  const endlessCloseX = document.getElementById('endlessCloseX');
-  if (endlessCloseX) {
-    endlessCloseX.addEventListener('click', function(e) {
-      document.getElementById('endlessModal').style.display = 'none';
-      document.getElementById('splashPage').style.display = 'flex';
-      e.stopPropagation();
-    });
-  }
-  // Endless Play button logic with speed
-  const endlessPlayBtn = document.getElementById('endlessPlayBtn');
-  if (endlessPlayBtn) {
-    endlessPlayBtn.addEventListener('click', function() {
-      // Get speed from slider
-      const endlessSpeedSlider = document.getElementById('endlessSpeedSlider');
-      let selectedSpeed = endlessSpeedSlider ? parseInt(endlessSpeedSlider.value) : 3;
-      speedIndex = selectedSpeed - 1; // SPEED_LEVELS is 0-indexed
-      fps = BASE_FPS * SPEED_LEVELS[speedIndex];
-      resetGame();
-      endlessMode = true;
-      running = true;
-      requestAnimationFrame(gameLoop);
-    });
-  }
-  const placeholderCloseX = document.getElementById('placeholderCloseX');
-  if (placeholderCloseX) {
-    placeholderCloseX.addEventListener('click', function(e) {
-      document.getElementById('placeholderModal').style.display = 'none';
-      document.getElementById('splashPage').style.display = 'flex';
-      e.stopPropagation();
-    });
-  }
-  const ttCloseX = document.getElementById('ttCloseX');
-  if (ttCloseX) {
-    ttCloseX.addEventListener('click', function(e) {
-      document.getElementById('ttModal').style.display = 'none';
-      document.getElementById('splashPage').style.display = 'flex';
-      e.stopPropagation();
-    });
-  }
-  // Game should only start when Play button is clicked in modal
-  const ttPlayBtn = document.getElementById('ttPlayBtn');
-  if (ttPlayBtn) {
-    ttPlayBtn.addEventListener('click', function() {
-      // Get speed from slider
-      const ttSpeedSlider = document.getElementById('ttSpeedSlider');
-      let selectedSpeed = ttSpeedSlider ? parseInt(ttSpeedSlider.value) : 3;
-      speedIndex = selectedSpeed - 1; // SPEED_LEVELS is 0-indexed
-      fps = BASE_FPS * SPEED_LEVELS[speedIndex];
-      resetGame();
-      endlessMode = false;
-      running = true;
-      requestAnimationFrame(gameLoop);
-    });
-  }
+}
 
-  // Allow clicking outside Time Trial modal content to close it
-  const ttModal = document.getElementById('ttModal');
-  if (ttModal) {
-    ttModal.addEventListener('click', function(e) {
-      // Only close if clicking the background, not the modal content
-      if (e.target === ttModal) {
-        ttModal.style.display = 'none';
-        document.getElementById('splashPage').style.display = 'flex';
+function loadWordListFixed() {
+  window.fetch('../all_words.txt')
+    .then(response => response.text())
+    .then(text => {
+      wordsSet = new Set(text.split(/\r?\n/).map(w => w.trim().toLowerCase()));
+      wordListLoaded = true;
+      tryStartGame();
+    });
+}
+function loadDailyWordsCSVFixed() {
+  window.fetch('../daily-words.csv')
+    .then(response => response.text())
+    .then(text => {
+      dailyWordsMap = {};
+      const lines = text.split(/\r?\n/);
+      for (let i = 1; i < lines.length; i++) { // skip header
+        const [date, word] = lines[i].split(',');
+        if (date && word) dailyWordsMap[date.trim()] = word.trim();
       }
+      dailyWordsLoaded = true;
+      dailyWordsLoadedFlag = true;
+      tryStartGame();
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Speed slider logic for Time Trial Mode
+  const mainSpeedSlider = document.getElementById('mainSpeedSlider');
+  if (mainSpeedSlider) {
+    mainSpeedSlider.addEventListener('input', function() {
+      let selectedSpeed = parseInt(mainSpeedSlider.value) || 3;
+      speedIndex = selectedSpeed - 1; // SPEED_LEVELS is 0-indexed
+      fps = BASE_FPS * SPEED_LEVELS[speedIndex];
     });
   }
-
-    // Allow clicking outside Endless modal content to close it
-    const endlessModal = document.getElementById('endlessModal');
-    if (endlessModal) {
-      endlessModal.addEventListener('click', function(e) {
-        // Only close if clicking the background, not the modal content
-        if (e.target === endlessModal) {
-          endlessModal.style.display = 'none';
-          document.getElementById('splashPage').style.display = 'flex';
-        }
-      });
-    }
+  // Load word lists and start game only when both are ready
+  loadWordListFixed();
+  loadDailyWordsCSVFixed();
 });
