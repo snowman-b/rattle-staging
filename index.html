@@ -2,9 +2,18 @@
 <html lang="en">
 <head>
   <style>
+    .navbar-menu {
+      position: relative;
+    }
+    .navbar-menu {
+      overflow: visible !important;
+    }
+    .navbar {
+      overflow: visible !important;
+    }
     .hamburger {
-      width: 2em;
-      height: 2em;
+      height: 60%;
+      aspect-ratio: 1 / 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
@@ -13,24 +22,19 @@
       background: none;
       border: none;
       box-sizing: content-box;
+      min-height: 32px;
+      min-width: 32px;
+      max-height: 48px;
+      max-width: 48px;
     }
     .hamburger span {
       display: block;
-      width: 1.6em;
-      height: 0.22em;
+      width: 70%;
+      height: 12%;
       background: #fff;
-      margin: 0.22em 0;
+      margin: 10% 0;
       border-radius: 2px;
       transition: all 0.2s;
-    }
-    .hamburger {
-      width: 2em;
-      height: 2em;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
     }
   /* .navbar style is defined below for normal flow */
     .navbar-title {
@@ -65,7 +69,7 @@
     .menu-dropdown {
       display: none;
       position: absolute;
-      top: 110%;
+      top: 100%;
       right: 0;
       background: #fff;
       color: #222;
@@ -74,7 +78,7 @@
       border-radius: 10px;
       font-size: 0.7em;
       padding: 0.5em 0;
-      z-index: 202;
+      z-index: 9999;
     }
     .menu-dropdown.show {
       display: block;
@@ -360,7 +364,7 @@
         </div>
       </div>
     </nav>
-    <div id="adBanner" style="width:100vw; height:10vh; min-height:48px; background:#fff; display:flex; align-items:center; justify-content:center; border-bottom:3px solid #006400; box-sizing:border-box; opacity:1;">
+  <div id="adBanner" style="width:100vw; height:10vh; min-height:48px; background:#fff; display:flex; align-items:center; justify-content:center; border-bottom:3px solid #006400; box-sizing:border-box; opacity:1; z-index:1; position:relative;">
       <span style="font-size:1.3em; color:#228B22; font-family:'Avenir Next', Arial, sans-serif; margin-right:32px;">future ad space</span>
       <svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg" style="opacity:1;">
         <!-- Snake body -->
