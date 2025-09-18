@@ -829,4 +829,36 @@ document.addEventListener('DOMContentLoaded', function() {
   // Load word lists and start game only when both are ready
   loadWordListFixed();
   loadDailyWordsCSVFixed();
+
+  // Add swipe detection to movement control area
+  const movementControl = document.getElementById('movementControl');
+  if (movementControl) {
+    let touchStartX = null;
+    let touchStartY = null;
+    movementControl.addEventListener('touchstart', function(e) {
+      if (e.touches.length === 1) {
+        touchStartX = e.touches[0].clientX;
+        touchStartY = e.touches[0].clientY;
+      }
+    });
+    movementControl.addEventListener('touchend', function(e) {
+      if (touchStartX === null || touchStartY === null) return;
+      const touchEndX = e.changedTouches[0].clientX;
+      const touchEndY = e.changedTouches[0].clientY;
+      const dx = touchEndX - touchStartX;
+      const dy = touchEndY - touchStartY;
+      let swipeDir = null;
+      if (Math.abs(dx) > Math.abs(dy)) {
+        swipeDir = dx > 0 ? 'ArrowRight' : 'ArrowLeft';
+      } else {
+        swipeDir = dy > 0 ? 'ArrowDown' : 'ArrowUp';
+      }
+      // Simulate arrow key press for snake movement
+      const event = new KeyboardEvent('keydown', { key: swipeDir });
+      document.dispatchEvent(event);
+      // Reset
+      touchStartX = null;
+      touchStartY = null;
+    });
+  }
 });
